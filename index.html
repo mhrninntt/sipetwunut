@@ -113,17 +113,18 @@
         .main-container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
 
         /* MAP SECTION */
-        .map-grid { display: grid; grid-template-columns: 300px 1fr; gap: 30px; align-items: stretch; }
+        .map-grid { display: grid; grid-template-columns: 320px 1fr; gap: 30px; align-items: stretch; }
         .panel-glass {
             background: var(--card-bg); border-radius: 16px; padding: 25px;
             box-shadow: var(--soft-shadow); border: 1px solid var(--border-color);
+            max-height: 70vh; overflow-y: auto;
         }
         #map-container { height: 65vh; border-radius: 16px; overflow: hidden; box-shadow: var(--soft-shadow); border: 1px solid var(--border-color); }
         #map { height: 100%; width: 100%; z-index: 1;}
         
         .panel-title { font-size: 1.2rem; border-bottom: 2px solid var(--bg-color); padding-bottom: 10px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;}
-        .legend-item { display: flex; align-items: center; font-size: 14px; margin-bottom: 12px; color: var(--text-muted); }
-        .legend-box { width: 18px; height: 18px; border-radius: 4px; margin-right: 12px; border: 2px solid rgba(0,0,0,0.1); }
+        .legend-item { display: flex; align-items: center; font-size: 12px; margin-bottom: 10px; color: var(--text-main); font-weight: 700; }
+        .legend-box { width: 16px; height: 16px; border-radius: 4px; margin-right: 12px; border: 1px solid rgba(0,0,0,0.15); flex-shrink: 0; }
 
         .leaflet-control-zoom a { background: #fff !important; color: var(--text-main) !important; border: 1px solid var(--border-color) !important; }
         .leaflet-control-zoom a:hover { background: var(--bg-color) !important; color: var(--accent-primary) !important; }
@@ -207,7 +208,7 @@
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
                         Pilihan Peta
                     </h3>
-                    <div style="margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color);">
+                    <div style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);">
                         <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; color: var(--text-muted); font-size: 14px;">
                             <input type="radio" name="basemap" value="osm" checked style="margin-right: 10px; accent-color: var(--accent-primary);"> OpenStreetMap (Jalan)
                         </label>
@@ -218,7 +219,7 @@
 
                     <h3 class="panel-title">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-                        Legenda Peta
+                        Sub Zona Tata Ruang
                     </h3>
                     <div id="legenda-container">
                         </div>
@@ -313,34 +314,45 @@
             });
         });
 
-        // DAFTAR WARNA & KATEGORI (Sesuaikan dengan data isi SUB_ZONA kamu)
+        // DAFTAR 12 SUB-ZONA RESMI SESUAI DATA ATRIBUT TUAN PUTRI
         const kategoriWarna = {
-            'Permukiman': '#D5C5B3',  // Beige
-            'Pertanian': '#8DA399',   // Sage Green
-            'Perdagangan': '#F2D388', // Soft Gold
-            'Industri': '#BCAAA4',    // Soft Brown
-            'Lainnya': '#E0E0E0'      // Default (Abu-abu)
+            'Badan Air': '#A5CAD2',                        /* Biru Air Pastel */
+            'Badan Jalan': '#D4D7DD',                       /* Abu-abu Jalan */
+            'Kawasan Peruntukan Industri': '#D8B4A6',       /* Cokelat Industri Pastel */
+            'Pariwisata': '#F5C6AA',                        /* Jingga Pastel */
+            'Pemakaman': '#C3C7A7',                         /* Hijau Tua Muted */
+            'Perdagangan dan Jasa Skala SWP': '#FCE38A',    /* Kuning Cerah Pastel */
+            'Perikanan Budidaya': '#95E1D3',                /* Toska Air */
+            'Rumah Kepadatan Sedang': '#E8D4BE',            /* Beige Terang */
+            'Rumah Kepadatan Tinggi': '#D5C5B3',            /* Beige Solid */
+            'SPU Skala Kelurahan': '#EAFFD0',               /* Hijau Muda SPU */
+            'SPU Skala RW': '#F38181',                      /* Merah Soft SPU */
+            'Tanaman Pangan': '#A8DF8E',                    /* Hijau Sawah Pastel */
+            'Lainnya': '#E0E0E0'                            /* Default Abu-abu */
         };
 
-        // Bikin Legenda Otomatis
+        // Bikin Legenda Otomatis dari daftar di atas
         const legendaContainer = document.getElementById('legenda-container');
         for (const [kategori, warna] of Object.entries(kategoriWarna)) {
-            legendaContainer.innerHTML += `
-                <div class="legend-item">
-                    <div class="legend-box" style="background-color: ${warna};"></div>
-                    ${kategori}
-                </div>
-            `;
+            if (kategori !== 'Lainnya') {
+                legendaContainer.innerHTML += `
+                    <div class="legend-item">
+                        <div class="legend-box" style="background-color: ${warna};"></div>
+                        ${kategori}
+                    </div>
+                `;
+            }
         }
 
-        function getColor(kategori) {
-            return kategoriWarna[kategori] || kategoriWarna['Lainnya'];
+        function getColor(subZona) {
+            // Trimming spasi opsional biar pencocokan datanya aman luar-dalam
+            return kategoriWarna[subZona ? subZona.trim() : ''] || kategoriWarna['Lainnya'];
         }
 
         function stylePeta(feature) {
             return {
                 fillColor: getColor(feature.properties.SUB_ZONA), 
-                weight: 1.5,
+                weight: 1.2,
                 opacity: 1,
                 color: '#ffffff',
                 fillOpacity: 0.8
@@ -357,19 +369,19 @@
                     style: stylePeta,
                     onEachFeature: function(feature, layer) {
                         
-                        // Efek Hover
+                        // Efek Hover pas mouse masuk
                         layer.on('mouseover', function(e) {
                             var layer = e.target;
-                            layer.setStyle({ weight: 3, color: '#2C3E50', fillOpacity: 1 });
+                            layer.setStyle({ weight: 2.5, color: '#2C3E50', fillOpacity: 0.95 });
                             layer.bringToFront();
                         });
                         layer.on('mouseout', function(e) { geojsonLayer.resetStyle(e.target); });
 
-                        // Pop-up pas di klik membaca field SUB_ZONA
+                        // Pop-up pas lahan diklik
                         layer.bindPopup(`
-                            <div style="font-family:'Lato'; text-align:center;">
-                                <h4 style="margin:0 0 5px 0; color:#2C3E50;">Info Lahan</h4>
-                                <span style="background:${getColor(feature.properties.SUB_ZONA)}; color:#fff; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:bold;">
+                            <div style="font-family:'Lato'; text-align:center; padding: 5px;">
+                                <h4 style="margin:0 0 8px 0; color:#2C3E50; font-size:14px; border-bottom:1px solid #eee; padding-bottom:5px;">Rencana Struktur Ruang</h4>
+                                <span style="background:${getColor(feature.properties.SUB_ZONA)}; color:${feature.properties.SUB_ZONA === 'Badan Jalan' ? '#2C3E50' : '#2C3E50'}; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:bold; border:1px solid rgba(0,0,0,0.1); display:inline-block;">
                                     ${feature.properties.SUB_ZONA}
                                 </span>
                             </div>
@@ -377,10 +389,10 @@
                     }
                 }).addTo(map);
 
-                // Diberi batas maksimal zoom level 16 agar satelit tidak pecah / abu-abu
+                // Mengunci zoom otomatis biar proporsional dan tidak kabur ke luar angkasa
                 map.fitBounds(geojsonLayer.getBounds(), { maxZoom: 16, padding: [20, 20] });
             })
-            .catch(err => console.log("Petanya baru bisa jalan kalau udah online di GitHub ya!", err));
+            .catch(err => console.log("Pastikan file polaruangwunutbaru.geojson sudah di-upload bersebelahan ya!", err));
 
     </script>
 </body>
