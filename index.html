@@ -314,24 +314,24 @@
             });
         });
 
-        // DAFTAR 12 SUB-ZONA RESMI SESUAI DATA ATRIBUT TUAN PUTRI
+        // DAFTAR WARNA 12 SUB-ZONA RESMI
         const kategoriWarna = {
-            'Badan Air': '#A5CAD2',                        /* Biru Air Pastel */
-            'Badan Jalan': '#D4D7DD',                       /* Abu-abu Jalan */
-            'Kawasan Peruntukan Industri': '#D8B4A6',       /* Cokelat Industri Pastel */
-            'Pariwisata': '#F5C6AA',                        /* Jingga Pastel */
-            'Pemakaman': '#C3C7A7',                         /* Hijau Tua Muted */
-            'Perdagangan dan Jasa Skala SWP': '#FCE38A',    /* Kuning Cerah Pastel */
-            'Perikanan Budidaya': '#95E1D3',                /* Toska Air */
-            'Rumah Kepadatan Sedang': '#E8D4BE',            /* Beige Terang */
-            'Rumah Kepadatan Tinggi': '#D5C5B3',            /* Beige Solid */
-            'SPU Skala Kelurahan': '#EAFFD0',               /* Hijau Muda SPU */
-            'SPU Skala RW': '#F38181',                      /* Merah Soft SPU */
-            'Tanaman Pangan': '#A8DF8E',                    /* Hijau Sawah Pastel */
-            'Lainnya': '#E0E0E0'                            /* Default Abu-abu */
+            'Badan Air': '#A5CAD2',
+            'Badan Jalan': '#D4D7DD',
+            'Kawasan Peruntukan Industri': '#D8B4A6',
+            'Pariwisata': '#F5C6AA',
+            'Pemakaman': '#C3C7A7',
+            'Perdagangan dan Jasa Skala SWP': '#FCE38A',
+            'Perikanan Budidaya': '#95E1D3',
+            'Rumah Kepadatan Sedang': '#E8D4BE',
+            'Rumah Kepadatan Tinggi': '#D5C5B3',
+            'SPU Skala Kelurahan': '#EAFFD0',
+            'SPU Skala RW': '#F38181',
+            'Tanaman Pangan': '#A8DF8E',
+            'Lainnya': '#E0E0E0'
         };
 
-        // Bikin Legenda Otomatis dari daftar di atas
+        // Bikin Legenda Otomatis
         const legendaContainer = document.getElementById('legenda-container');
         for (const [kategori, warna] of Object.entries(kategoriWarna)) {
             if (kategori !== 'Lainnya') {
@@ -345,7 +345,6 @@
         }
 
         function getColor(subZona) {
-            // Trimming spasi opsional biar pencocokan datanya aman luar-dalam
             return kategoriWarna[subZona ? subZona.trim() : ''] || kategoriWarna['Lainnya'];
         }
 
@@ -359,17 +358,18 @@
             };
         }
 
-        // PANGGIL FILE GEOJSON TERBARU
         var geojsonLayer = L.geoJSON();
         
-        fetch('polaruangwunutbaru.geojson') 
+        // =========================================================================
+        // LINK SUDAH MENGGUNAKAN JALUR ABSOLUT (TEMBAK LANGSUNG)
+        // =========================================================================
+        fetch('https://mhrninntt.github.io/sipettulung/polaruangwunutbaru.geojson') 
             .then(res => res.json())
             .then(data => {
                 geojsonLayer = L.geoJSON(data, {
                     style: stylePeta,
                     onEachFeature: function(feature, layer) {
                         
-                        // Efek Hover pas mouse masuk
                         layer.on('mouseover', function(e) {
                             var layer = e.target;
                             layer.setStyle({ weight: 2.5, color: '#2C3E50', fillOpacity: 0.95 });
@@ -377,11 +377,10 @@
                         });
                         layer.on('mouseout', function(e) { geojsonLayer.resetStyle(e.target); });
 
-                        // Pop-up pas lahan diklik
                         layer.bindPopup(`
                             <div style="font-family:'Lato'; text-align:center; padding: 5px;">
                                 <h4 style="margin:0 0 8px 0; color:#2C3E50; font-size:14px; border-bottom:1px solid #eee; padding-bottom:5px;">Rencana Struktur Ruang</h4>
-                                <span style="background:${getColor(feature.properties.SUB_ZONA)}; color:${feature.properties.SUB_ZONA === 'Badan Jalan' ? '#2C3E50' : '#2C3E50'}; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:bold; border:1px solid rgba(0,0,0,0.1); display:inline-block;">
+                                <span style="background:${getColor(feature.properties.SUB_ZONA)}; color:#2C3E50; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:bold; border:1px solid rgba(0,0,0,0.1); display:inline-block;">
                                     ${feature.properties.SUB_ZONA}
                                 </span>
                             </div>
@@ -389,10 +388,9 @@
                     }
                 }).addTo(map);
 
-                // Mengunci zoom otomatis biar proporsional dan tidak kabur ke luar angkasa
                 map.fitBounds(geojsonLayer.getBounds(), { maxZoom: 16, padding: [20, 20] });
             })
-            .catch(err => console.log("Pastikan file polaruangwunutbaru.geojson sudah di-upload bersebelahan ya!", err));
+            .catch(err => console.log("Gagal memuat file GeoJSON:", err));
 
     </script>
 </body>
