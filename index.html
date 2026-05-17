@@ -298,15 +298,12 @@
         // ==========================================
         // PETA LEAFLET & GEOJSON
         // ==========================================
-        // 1. Siapin Peta Dasar (OSM & Satelit)
         var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' });
         var satelit = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri', maxZoom: 19 });
 
-        // 2. Buat Peta dengan OSM sebagai default
         var map = L.map('map', { center: [-7.5990, 110.6188], zoom: 15, zoomControl: false, layers: [osm] });
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-        // 3. Logika Ganti Basemap dari Radio Button
         document.querySelectorAll('input[name="basemap"]').forEach(function(radio) {
             radio.addEventListener('change', function() {
                 map.removeLayer(osm);
@@ -316,7 +313,7 @@
             });
         });
 
-        // DAFTAR WARNA & KATEGORI (Sesuaikan sama isi data file POLARUANG.geojson kamu)
+        // DAFTAR WARNA & KATEGORI (Sesuaikan sama isi data SUB_ZONA kamu)
         const kategoriWarna = {
             'Permukiman': '#D5C5B3',  // Beige
             'Pertanian': '#8DA399',   // Sage Green
@@ -343,7 +340,8 @@
 
         function stylePeta(feature) {
             return {
-                fillColor: getColor(feature.properties.Kategori), // Pastiin tulisan "Kategori" sama kayak di atribut tabel kamu!
+                // SEKARANG SUDAH MEMBACA FIELD SUB_ZONA
+                fillColor: getColor(feature.properties.SUB_ZONA), 
                 weight: 1.5,
                 opacity: 1,
                 color: '#ffffff',
@@ -354,9 +352,6 @@
         // PANGGIL FILE GEOJSON
         var geojsonLayer = L.geoJSON();
         
-        // =========================================================================
-        // NAMA FILE SUDAH DIGANTI MENJADI POLARUANG.geojson DI BAWAH INI
-        // =========================================================================
         fetch('POLARUANG.geojson') 
             .then(res => res.json())
             .then(data => {
@@ -364,7 +359,7 @@
                     style: stylePeta,
                     onEachFeature: function(feature, layer) {
                         
-                        // Efek Keren Pas di Hover
+                        // Efek Hover
                         layer.on('mouseover', function(e) {
                             var layer = e.target;
                             layer.setStyle({ weight: 3, color: '#2C3E50', fillOpacity: 1 });
@@ -372,19 +367,18 @@
                         });
                         layer.on('mouseout', function(e) { geojsonLayer.resetStyle(e.target); });
 
-                        // Pop-up pas di klik
+                        // Pop-up pas di klik membaca field SUB_ZONA
                         layer.bindPopup(`
                             <div style="font-family:'Lato'; text-align:center;">
                                 <h4 style="margin:0 0 5px 0; color:#2C3E50;">Info Lahan</h4>
-                                <span style="background:${getColor(feature.properties.Kategori)}; color:#fff; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:bold;">
-                                    ${feature.properties.Kategori}
+                                <span style="background:${getColor(feature.properties.SUB_ZONA)}; color:#fff; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:bold;">
+                                    ${feature.properties.SUB_ZONA}
                                 </span>
                             </div>
                         `);
                     }
                 }).addTo(map);
 
-                // Geser kamera otomatis ke tengah peta
                 map.fitBounds(geojsonLayer.getBounds());
             })
             .catch(err => console.log("Petanya baru bisa jalan kalau udah online di GitHub ya!", err));
