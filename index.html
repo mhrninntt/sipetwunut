@@ -340,7 +340,6 @@
 
         function stylePeta(feature) {
             return {
-                // SEKARANG SUDAH MEMBACA FIELD SUB_ZONA
                 fillColor: getColor(feature.properties.SUB_ZONA), 
                 weight: 1.5,
                 opacity: 1,
@@ -352,7 +351,10 @@
         // PANGGIL FILE GEOJSON
         var geojsonLayer = L.geoJSON();
         
-        fetch('POLARUANG.geojson') 
+        // =========================================================================
+        // SUDAH DISESUAIKAN MANGGIL polaruangwunut.geojson
+        // =========================================================================
+        fetch('polaruangwunut.geojson') 
             .then(res => res.json())
             .then(data => {
                 geojsonLayer = L.geoJSON(data, {
