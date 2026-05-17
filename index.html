@@ -313,7 +313,7 @@
             });
         });
 
-        // DAFTAR WARNA & KATEGORI (Sesuaikan sama isi data SUB_ZONA kamu)
+        // DAFTAR WARNA & KATEGORI (Sesuaikan dengan data isi SUB_ZONA kamu)
         const kategoriWarna = {
             'Permukiman': '#D5C5B3',  // Beige
             'Pertanian': '#8DA399',   // Sage Green
@@ -333,7 +333,6 @@
             `;
         }
 
-        // FUNGSI GAYA POLIGON (STYLE)
         function getColor(kategori) {
             return kategoriWarna[kategori] || kategoriWarna['Lainnya'];
         }
@@ -348,13 +347,10 @@
             };
         }
 
-        // PANGGIL FILE GEOJSON
+        // PANGGIL FILE GEOJSON TERBARU
         var geojsonLayer = L.geoJSON();
         
-        // =========================================================================
-        // SUDAH DISESUAIKAN MANGGIL polaruangwunut.geojson
-        // =========================================================================
-        fetch('polaruangwunut.geojson') 
+        fetch('polaruangwunutbaru.geojson') 
             .then(res => res.json())
             .then(data => {
                 geojsonLayer = L.geoJSON(data, {
@@ -381,7 +377,8 @@
                     }
                 }).addTo(map);
 
-                map.fitBounds(geojsonLayer.getBounds());
+                // Diberi batas maksimal zoom level 16 agar satelit tidak pecah / abu-abu
+                map.fitBounds(geojsonLayer.getBounds(), { maxZoom: 16, padding: [20, 20] });
             })
             .catch(err => console.log("Petanya baru bisa jalan kalau udah online di GitHub ya!", err));
 
