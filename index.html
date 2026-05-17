@@ -250,7 +250,6 @@
     <script>
         var geojsonLayer;
 
-        // --- SOLUSI NUKLIR UNTUK BUG LEAFLET ---
         function triggerMapResize() {
             if (typeof map !== 'undefined') map.invalidateSize();
             if (typeof miniMap !== 'undefined') miniMap.invalidateSize();
@@ -265,34 +264,52 @@
             window.scrollTo(0, 0);
             
             if(id === 'peta') { 
-                // Tembakan Beruntun: Memaksa peta menyesuaikan ukuran layarnya 4 KALI 
-                // pada detik ke 0.1, 0.3, 0.6, dan 1. Dijamin nggak bakal ada basemap yang kepotong lagi!
                 setTimeout(triggerMapResize, 100); 
                 setTimeout(triggerMapResize, 300); 
                 setTimeout(triggerMapResize, 600); 
                 setTimeout(triggerMapResize, 1000); 
 
-                // Arahkan ke tengah Wunut kalau data udah siap
                 if (geojsonLayer) {
                     setTimeout(() => { map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] }); }, 400);
                 }
             }
         }
 
-        var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' });
-        var satelit = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Satelit' });
+        // --- PERBAIKAN: Layer terpisah untuk Map Utama dan Mini Map ---
+        var osmMain = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' });
+        var osmMini = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' });
 
-        var map = L.map('map', { center: [-7.5990, 110.6188], zoom: 15, layers: [osm], zoomControl: false });
+        var satelitMain = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Satelit' });
+        var satelitMini = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Satelit' });
+
+        // Map Utama
+        var map = L.map('map', { center: [-7.5990, 110.6188], zoom: 15, layers: [osmMain], zoomControl: false });
         L.control.zoom({ position: 'topright' }).addTo(map);
 
-        var miniMap = L.map('mini-map', { center: [-7.5990, 110.6188], zoom: 10, layers: [osm], dragging: false, zoomControl: false, scrollWheelZoom: false });
+        // Mini Map
+        var miniMap = L.map('mini-map', { center: [-7.5990, 110.6188], zoom: 10, layers: [osmMini], dragging: false, zoomControl: false, scrollWheelZoom: false });
 
-        // JURUS TAMBAHAN: Observasi perubahan ukuran elemen HTML
+        // Tambahan: Bikin mini-map mengikuti pergerakan peta utama
+        map.on('move', function() {
+            miniMap.setView(map.getCenter(), map.getZoom() - 5);
+        });
+
         new ResizeObserver(triggerMapResize).observe(document.getElementById('peta'));
 
+        // Fungsi mengganti basemap (menerapkan perubahan di kedua map secara bersamaan)
         function changeBase(val) {
-            if(val === 'osm') { map.addLayer(osm); map.removeLayer(satelit); miniMap.addLayer(osm); miniMap.removeLayer(satelit); }
-            else { map.addLayer(satelit); map.removeLayer(osm); miniMap.addLayer(satelit); miniMap.removeLayer(osm); }
+            if(val === 'osm') { 
+                map.addLayer(osmMain); 
+                map.removeLayer(satelitMain); 
+                miniMap.addLayer(osmMini); 
+                miniMap.removeLayer(satelitMini); 
+            }
+            else { 
+                map.addLayer(satelitMain); 
+                map.removeLayer(osmMain); 
+                miniMap.addLayer(satelitMini); 
+                miniMap.removeLayer(osmMini); 
+            }
         }
 
         const subZonaColors = {
