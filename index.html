@@ -13,7 +13,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* PALETTE WARNA UI WEB (TETAP UNGU & HIJAU) */
         :root {
             --purple-light: #A497C4;
             --purple-deep: #594597;
@@ -34,11 +33,9 @@
             overflow-x: hidden;
         }
 
-        /* ANIMASI TRANSISI */
         .fade-in { animation: fadeIn 1s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* HEADER & NAV */
         header {
             background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
             padding: 15px 60px; display: flex; justify-content: space-between; align-items: center;
@@ -63,7 +60,6 @@
         }
         nav a:hover::after, nav a.active::after { width: 100%; }
 
-        /* HERO SECTION */
         .hero {
             height: 100vh; display: flex; align-items: center; justify-content: center;
             background: linear-gradient(135deg, var(--green-soft) 0%, #e0e7ff 100%);
@@ -77,7 +73,6 @@
         .hero h2 { font-family: 'Montserrat', sans-serif; font-size: 3.5rem; margin: 0; color: var(--purple-deep); }
         .hero p { font-size: 1.1rem; color: var(--green-deep); font-weight: 600; letter-spacing: 4px; text-transform: uppercase; }
 
-        /* STATS CARDS */
         .stats-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 25px; max-width: 1200px; margin: -60px auto 50px; padding: 0 30px;
@@ -93,7 +88,6 @@
         .stat-item h3 { font-size: 2rem; margin: 5px 0; color: var(--text-dark); }
         .stat-item p { margin: 0; font-size: 13px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
 
-        /* MAP BOX */
         .content-section { display: none; padding: 100px 0 60px; }
         .active-section { display: block; animation: fadeIn 0.8s ease; }
         
@@ -111,7 +105,6 @@
         }
         #map { height: 100%; width: 100%; }
 
-        /* MINI MAP / INDEX MAP */
         #mini-map {
             position: absolute; bottom: 20px; right: 20px;
             width: 180px; height: 130px; background: white;
@@ -119,13 +112,11 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2); pointer-events: none;
         }
 
-        /* LEGEND */
         .legend-title { font-weight: 700; color: var(--purple-deep); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
         .legend-list { list-style: none; padding: 0; }
         .legend-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 13px; font-weight: 600; }
         .color-box { width: 18px; height: 18px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.1); }
 
-        /* FOOTER ATR STYLE */
         footer { background: #333; color: white; padding: 60px 0 30px; }
         .footer-grid {
             max-width: 1200px; margin: 0 auto; display: grid;
@@ -143,7 +134,6 @@
         }
         .social-btn:hover { background: var(--purple-deep); transform: scale(1.1); }
 
-        /* CUSTOM SCROLLBAR */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 10px; }
@@ -233,7 +223,7 @@
             <div>
                 <div class="footer-title">Lokasi Desa</div>
                 <div class="footer-map-box">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15818.172608462711!2d110.608034!3d-7.6111162!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a4697c11f42d5%3A0x5027a76e3568c00!2sWunut%2C%20Tulung%2C%20Klaten%20Regency%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1716301234567" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    <iframe src="http://googleusercontent.com/maps.google.com/3" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
 
@@ -260,6 +250,12 @@
     <script>
         var geojsonLayer;
 
+        // --- SOLUSI NUKLIR UNTUK BUG LEAFLET ---
+        function triggerMapResize() {
+            if (typeof map !== 'undefined') map.invalidateSize();
+            if (typeof miniMap !== 'undefined') miniMap.invalidateSize();
+        }
+
         function switchTab(id) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
@@ -269,13 +265,17 @@
             window.scrollTo(0, 0);
             
             if(id === 'peta') { 
-                setTimeout(() => { 
-                    map.invalidateSize(); 
-                    miniMap.invalidateSize(); 
-                    if (geojsonLayer) {
-                        map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] });
-                    }
-                }, 300); 
+                // Tembakan Beruntun: Memaksa peta menyesuaikan ukuran layarnya 4 KALI 
+                // pada detik ke 0.1, 0.3, 0.6, dan 1. Dijamin nggak bakal ada basemap yang kepotong lagi!
+                setTimeout(triggerMapResize, 100); 
+                setTimeout(triggerMapResize, 300); 
+                setTimeout(triggerMapResize, 600); 
+                setTimeout(triggerMapResize, 1000); 
+
+                // Arahkan ke tengah Wunut kalau data udah siap
+                if (geojsonLayer) {
+                    setTimeout(() => { map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] }); }, 400);
+                }
             }
         }
 
@@ -287,14 +287,14 @@
 
         var miniMap = L.map('mini-map', { center: [-7.5990, 110.6188], zoom: 10, layers: [osm], dragging: false, zoomControl: false, scrollWheelZoom: false });
 
+        // JURUS TAMBAHAN: Observasi perubahan ukuran elemen HTML
+        new ResizeObserver(triggerMapResize).observe(document.getElementById('peta'));
+
         function changeBase(val) {
             if(val === 'osm') { map.addLayer(osm); map.removeLayer(satelit); miniMap.addLayer(osm); miniMap.removeLayer(satelit); }
             else { map.addLayer(satelit); map.removeLayer(osm); miniMap.addLayer(satelit); miniMap.removeLayer(osm); }
         }
 
-        // =======================================================
-        // PALETTE WARNA BARU SESUAI GAMBAR LEGENDA ATR/BPN
-        // =======================================================
         const subZonaColors = {
             'Badan Air': '#99D9EA',
             'Badan Jalan': '#ED1C24',
@@ -332,8 +332,6 @@
         };
 
         const legDiv = document.getElementById('legend-list');
-        // Hanya me-render legenda yang datanya sering muncul agar sidebar tidak terlalu panjang (opsional), 
-        // tapi di sini di-render semua biar lengkap.
         for (const [key, color] of Object.entries(subZonaColors)) {
             if(key !== 'Lainnya') {
                 legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`;
@@ -342,7 +340,6 @@
 
         function getZStyle(feature) {
             return {
-                // Leaflet akan mencocokkan field SUB_ZONA dengan daftar warna di atas
                 fillColor: subZonaColors[feature.properties.SUB_ZONA] || '#dddddd',
                 weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: 0.8
             };
@@ -366,7 +363,7 @@
                 }).addTo(map);
 
                 if(document.getElementById('peta').classList.contains('active-section')) {
-                    map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] });
+                    setTimeout(() => { map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] }); }, 500);
                 }
             })
             .catch(e => console.error("Gagal Muat Data:", e));
