@@ -1,396 +1,336 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <title>WEB SIPET WUNUT - PREMIUM PASTEL GIS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIPET WUNUT - Sistem Informasi Spasial Desa</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* TEMA PASTEL */
+        /* PALETTE WARNA SESUAI REQUEST */
         :root {
-            --bg-color: #F9FAFB;
-            --text-main: #2C3E50;
-            --text-muted: #7F8C8D;
-            --accent-primary: #8DA399; /* Sage Green */
-            --accent-secondary: #D5C5B3; /* Beige */
-            --card-bg: #FFFFFF;
-            --soft-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-            --hover-shadow: 0 15px 35px rgba(141, 163, 153, 0.15);
-            --border-color: rgba(44, 62, 80, 0.08);
+            --purple-light: #A497C4;
+            --purple-deep: #594597;
+            --green-soft: #C6E8BE;
+            --green-mid: #53B288;
+            --green-deep: #378D68;
+            --bg-body: #f8fafc;
+            --text-dark: #1e293b;
+            --white: #ffffff;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        * { box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         body {
-            margin: 0; font-family: 'Lato', sans-serif;
-            background-color: var(--bg-color); color: var(--text-main);
+            margin: 0; font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body); color: var(--text-dark);
             overflow-x: hidden;
         }
 
-        h1, h2, h3, h4 { font-family: 'Playfair Display', serif; margin-top: 0; }
+        /* ANIMASI TRANSISI */
+        .fade-in { animation: fadeIn 1s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* LOADING SCREEN */
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color); z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 0.6s ease;
-        }
-        .spinner {
-            width: 50px; height: 50px; border: 4px solid var(--accent-secondary);
-            border-top: 4px solid var(--accent-primary); border-radius: 50%;
-            animation: spin 1s linear infinite; margin-bottom: 20px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* HEADER */
+        /* HEADER & NAV */
         header {
-            padding: 15px 50px; display: flex; justify-content: space-between; align-items: center;
-            position: fixed; width: calc(100% - 100px); top: 0; z-index: 1000;
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            padding: 15px 60px; display: flex; justify-content: space-between; align-items: center;
+            position: fixed; width: 100%; top: 0; z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
-        header h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 1px;}
-        header h1 span { color: var(--accent-primary); }
+        .logo-box h1 {
+            font-family: 'Montserrat', sans-serif; font-size: 22px; margin: 0;
+            color: var(--purple-deep); letter-spacing: 1px;
+        }
+        .logo-box span { color: var(--green-deep); }
+        
         nav a {
-            margin-left: 30px; text-decoration: none; color: var(--text-muted);
-            font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
-            transition: 0.3s; padding-bottom: 5px; position: relative;
+            text-decoration: none; color: var(--text-dark); font-weight: 600;
+            font-size: 14px; margin-left: 35px; transition: var(--transition);
+            position: relative; padding-bottom: 5px;
         }
+        nav a:hover, nav a.active { color: var(--purple-deep); }
         nav a::after {
-            content: ''; position: absolute; width: 0; height: 2px;
-            bottom: 0; left: 0; background-color: var(--accent-primary); transition: width 0.3s;
+            content: ''; position: absolute; width: 0; height: 3px;
+            bottom: 0; left: 0; background: var(--green-mid); transition: var(--transition);
         }
         nav a:hover::after, nav a.active::after { width: 100%; }
-        nav a:hover, nav a.active { color: var(--accent-primary); }
 
         /* HERO SECTION */
         .hero {
-            height: 100vh; display: flex; justify-content: center; align-items: center;
-            text-align: center; background: linear-gradient(135deg, #f4eee1, #e3ebec);
-            position: relative;
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, var(--green-soft) 0%, #e0e7ff 100%);
+            text-align: center; padding: 0 20px;
         }
-        .hero-content {
-            background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(10px);
-            padding: 50px 80px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.8);
-            box-shadow: var(--soft-shadow); transform: translateY(20px); opacity: 0;
-            animation: fadeUp 1s ease forwards 0.5s;
+        .hero-card {
+            background: rgba(255,255,255,0.7); padding: 60px; border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05); backdrop-filter: blur(5px);
+            border: 1px solid var(--white);
         }
-        @keyframes fadeUp { to { transform: translateY(0); opacity: 1; } }
-        .hero h1 { font-size: 4rem; margin-bottom: 10px; }
-        .hero p { font-size: 1.2rem; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; margin:0;}
-        .scroll-down {
-            position: absolute; bottom: 40px; color: var(--accent-primary);
-            animation: bounce 2s infinite; display: flex; flex-direction: column; align-items: center;
-            font-size: 12px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;
-        }
-        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } }
+        .hero h2 { font-family: 'Montserrat', sans-serif; font-size: 3.5rem; margin: 0; color: var(--purple-deep); }
+        .hero p { font-size: 1.1rem; color: var(--green-deep); font-weight: 600; letter-spacing: 4px; text-transform: uppercase; }
 
         /* STATS CARDS */
-        .stats-container {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 25px; max-width: 1200px; margin: -50px auto 40px auto; position: relative; z-index: 10;
-            padding: 0 40px;
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px; max-width: 1200px; margin: -60px auto 50px; padding: 0 30px;
+            position: relative; z-index: 10;
         }
-        .stat-card {
-            background: var(--card-bg); padding: 30px 20px; border-radius: 16px;
-            text-align: center; box-shadow: var(--soft-shadow); border: 1px solid var(--border-color);
-            transition: 0.3s;
+        .stat-item {
+            background: var(--white); padding: 35px; border-radius: 20px;
+            text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+            border-bottom: 5px solid var(--green-mid); transition: var(--transition);
         }
-        .stat-card:hover { transform: translateY(-5px); box-shadow: var(--hover-shadow); }
-        .stat-card h3 { font-size: 2.5rem; color: var(--accent-primary); margin: 10px 0; font-family: 'Lato', sans-serif;}
-        .stat-card p { margin: 0; color: var(--text-muted); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
-        .stat-icon { background: rgba(141, 163, 153, 0.1); width: 60px; height: 60px; line-height: 70px; border-radius: 50%; margin: 0 auto; color: var(--accent-primary); }
+        .stat-item:hover { transform: translateY(-10px); border-bottom-color: var(--purple-deep); }
+        .stat-item i { font-size: 2rem; color: var(--purple-light); margin-bottom: 15px; }
+        .stat-item h3 { font-size: 2rem; margin: 5px 0; color: var(--text-dark); }
+        .stat-item p { margin: 0; font-size: 13px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
 
-        /* CONTENT WRAPPER */
-        .content-section { display: none; opacity: 0; padding-top: 80px; padding-bottom: 80px;}
-        .content-active { display: block; animation: fadeIn 0.8s ease forwards; }
-        @keyframes fadeIn { to { opacity: 1; } }
+        /* MAP BOX */
+        .content-section { display: none; padding: 100px 0 60px; }
+        .active-section { display: block; animation: fadeIn 0.8s ease; }
         
-        .main-container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
-
-        /* MAP SECTION */
-        .map-grid { display: grid; grid-template-columns: 320px 1fr; gap: 30px; align-items: stretch; }
-        .panel-glass {
-            background: var(--card-bg); border-radius: 16px; padding: 25px;
-            box-shadow: var(--soft-shadow); border: 1px solid var(--border-color);
-            max-height: 70vh; overflow-y: auto;
+        .map-layout {
+            display: grid; grid-template-columns: 350px 1fr; gap: 25px;
+            max-width: 1400px; margin: 0 auto; padding: 0 30px;
         }
-        #map-container { height: 65vh; border-radius: 16px; overflow: hidden; box-shadow: var(--soft-shadow); border: 1px solid var(--border-color); }
-        #map { height: 100%; width: 100%; z-index: 1;}
-        
-        .panel-title { font-size: 1.2rem; border-bottom: 2px solid var(--bg-color); padding-bottom: 10px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;}
-        .legend-item { display: flex; align-items: center; font-size: 12px; margin-bottom: 10px; color: var(--text-main); font-weight: 700; }
-        .legend-box { width: 16px; height: 16px; border-radius: 4px; margin-right: 12px; border: 1px solid rgba(0,0,0,0.15); flex-shrink: 0; }
+        .sidebar-card {
+            background: var(--white); padding: 25px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04); height: 75vh; overflow-y: auto;
+        }
+        #main-map-container {
+            height: 75vh; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04); position: relative;
+        }
+        #map { height: 100%; width: 100%; }
 
-        .leaflet-control-zoom a { background: #fff !important; color: var(--text-main) !important; border: 1px solid var(--border-color) !important; }
-        .leaflet-control-zoom a:hover { background: var(--bg-color) !important; color: var(--accent-primary) !important; }
+        /* MINI MAP / INDEX MAP */
+        #mini-map {
+            position: absolute; bottom: 20px; right: 20px;
+            width: 180px; height: 130px; background: white;
+            z-index: 999; border-radius: 12px; border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); pointer-events: none;
+        }
+
+        /* LEGEND */
+        .legend-title { font-weight: 700; color: var(--purple-deep); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .legend-list { list-style: none; padding: 0; }
+        .legend-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 13px; font-weight: 600; }
+        .color-box { width: 18px; height: 18px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.1); }
+
+        /* FOOTER ATR STYLE */
+        footer { background: #333; color: white; padding: 60px 0 30px; }
+        .footer-grid {
+            max-width: 1200px; margin: 0 auto; display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr; gap: 50px; padding: 0 30px;
+        }
+        .footer-title { font-size: 16px; font-weight: 700; margin-bottom: 25px; color: var(--green-soft); text-transform: uppercase; }
+        .footer-map-box { border-radius: 10px; overflow: hidden; height: 180px; border: 1px solid #555; }
+        .contact-info p { display: flex; align-items: start; gap: 15px; font-size: 14px; line-height: 1.6; color: #ccc; }
+        .contact-info i { color: var(--green-mid); font-size: 18px; margin-top: 3px; }
+        .social-links { display: flex; gap: 15px; }
+        .social-btn {
+            width: 45px; height: 45px; background: #444; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; text-decoration: none; transition: var(--transition);
+        }
+        .social-btn:hover { background: var(--purple-deep); transform: scale(1.1); }
+
+        /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="loader">
-        <div class="spinner"></div>
-        <h3 style="color: var(--text-main); letter-spacing: 2px;">Memuat Data...</h3>
-    </div>
-
     <header>
-        <div class="logo-title">
+        <div class="logo-box">
             <h1>SIPET <span>WUNUT</span></h1>
         </div>
         <nav>
-            <a href="#" onclick="showSection('beranda')" id="nav-beranda" class="active">Beranda</a>
-            <a href="#" onclick="showSection('peta')" id="nav-peta">Peta Spasial</a>
-            <a href="#" onclick="showSection('profil')" id="nav-profil">Profil</a>
+            <a href="#" onclick="switchTab('beranda')" id="btn-beranda" class="active">Beranda</a>
+            <a href="#" onclick="switchTab('peta')" id="btn-peta">Peta Spasial</a>
+            <a href="#" onclick="switchTab('profil')" id="btn-profil">Profil Desa</a>
         </nav>
     </header>
 
-    <div id="beranda" class="content-section content-active" style="padding-top: 0;">
-        <div class="hero">
-            <div class="hero-content">
-                <h1>SIPET <span>WUNUT</span></h1>
-                <p>Eksplorasi Potensi Tata Ruang & Kekayaan Air</p>
+    <main>
+        <div id="beranda" class="content-section active-section">
+            <div class="hero">
+                <div class="hero-card fade-in">
+                    <p>Sistem Informasi Peruntukan Tata Ruang</p>
+                    <h2>DESA WUNUT</h2>
+                </div>
             </div>
-            <div class="scroll-down">
-                Scroll<br>
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:5px;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+
+            <div class="stats-grid">
+                <div class="stat-item fade-in">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <h3 id="stat-luas">720</h3>
+                    <p>Luas Wilayah (Ha)</p>
+                </div>
+                <div class="stat-item fade-in" style="animation-delay: 0.2s;">
+                    <i class="fa-solid fa-people-group"></i>
+                    <h3 id="stat-penduduk">2,290</h3>
+                    <p>Total Penduduk</p>
+                </div>
+                <div class="stat-item fade-in" style="animation-delay: 0.4s;">
+                    <i class="fa-solid fa-droplet"></i>
+                    <h3 id="stat-air">15</h3>
+                    <p>Titik Mata Air</p>
+                </div>
             </div>
         </div>
 
-        <div class="stats-container">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
-                </div>
-                <h3 class="counter" data-target="720">0</h3>
-                <p>Luas Wilayah (Ha)</p>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                </div>
-                <h3 class="counter" data-target="2290">0</h3>
-                <p>Populasi Penduduk</p>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 22 22 22"></polygon></svg>
-                </div>
-                <h3 class="counter" data-target="15">0</h3>
-                <p>Mata Air</p>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10.08 10.08 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                </div>
-                <h3 class="counter" data-target="100">0</h3>
-                <p>Data Tervalidasi (%)</p>
-            </div>
-        </div>
-
-        <div class="main-container">
-            <div class="panel-glass" style="margin-top: 20px;">
-                <h3 class="panel-title">Tren Kependudukan</h3>
-                <div style="height: 350px;"><canvas id="pendudukChart"></canvas></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="peta" class="content-section">
-        <div class="main-container">
-            <div class="map-grid">
-                <div class="panel-glass">
-                    
-                    <h3 class="panel-title" style="margin-top: 0;">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
-                        Pilihan Peta
-                    </h3>
-                    <div style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);">
-                        <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; color: var(--text-muted); font-size: 14px;">
-                            <input type="radio" name="basemap" value="osm" checked style="margin-right: 10px; accent-color: var(--accent-primary);"> OpenStreetMap (Jalan)
+        <div id="peta" class="content-section">
+            <div class="map-layout">
+                <div class="sidebar-card">
+                    <div class="legend-title"><i class="fa-solid fa-layer-group"></i> Layer Controls</div>
+                    <div style="margin-bottom: 25px; background: var(--bg-body); padding: 15px; border-radius: 12px;">
+                        <label style="display: block; margin-bottom: 10px; font-size: 13px; font-weight: 700; cursor: pointer;">
+                            <input type="radio" name="basemap" value="osm" checked onchange="changeBase(this.value)"> OpenStreetMap
                         </label>
-                        <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; color: var(--text-muted); font-size: 14px;">
-                            <input type="radio" name="basemap" value="satelit" style="margin-right: 10px; accent-color: var(--accent-primary);"> Satelit (Esri)
+                        <label style="display: block; font-size: 13px; font-weight: 700; cursor: pointer;">
+                            <input type="radio" name="basemap" value="satelit" onchange="changeBase(this.value)"> Citra Satelit
                         </label>
                     </div>
 
-                    <h3 class="panel-title">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-                        Sub Zona Tata Ruang
-                    </h3>
-                    <div id="legenda-container">
+                    <div class="legend-title"><i class="fa-solid fa-list-check"></i> Sub Zona Ruang</div>
+                    <div id="legend-list" class="legend-list">
                         </div>
                 </div>
 
-                <div id="map-container">
+                <div id="main-map-container">
                     <div id="map"></div>
+                    <div id="mini-map"></div> </div>
+            </div>
+        </div>
+
+        <div id="profil" class="content-section">
+            <div style="max-width: 900px; margin: 0 auto; padding: 40px;">
+                <div style="background: white; padding: 50px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center;">
+                    <i class="fa-solid fa-circle-info" style="font-size: 3rem; color: var(--purple-deep); margin-bottom: 20px;"></i>
+                    <h2 style="color: var(--purple-deep);">Tentang Sipet Wunut</h2>
+                    <p style="line-height: 1.8; color: #64748b;">Sistem Informasi Peruntukan Tata Ruang (SIPET) Desa Wunut merupakan inovasi digital untuk keterbukaan informasi penataan ruang desa. Memudahkan masyarakat dan investor dalam memahami potensi lahan di wilayah Desa Wunut.</p>
+                    <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
+                    <p style="font-weight: 700; color: var(--green-deep);">Dikembangkan oleh: Kelompok C4 - KKN Tematik 2024</p>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <div id="profil" class="content-section">
-        <div class="main-container text-center">
-            <div class="panel-glass" style="max-width: 800px; margin: 0 auto; text-align: center; padding: 50px;">
-                <h2 style="color: var(--accent-primary);">Profil Desa Wunut</h2>
-                <p style="color: var(--text-muted); line-height: 1.8;">Desa Wunut yang terletak di Kecamatan Tulung merepresentasikan keseimbangan harmonis antara pemanfaatan ruang dan pelestarian alam.</p>
-                <p style="margin-top:30px; font-weight:700;">Tim Pengembang: Kelompok C4</p>
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <div class="footer-title">Lokasi Desa</div>
+                <div class="footer-map-box">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15818.106544976442!2d110.6120853!3d-7.6046777!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a41926671077b%3A0xe08f7607a760f33d!2sWunut%2C%20Kec.%20Tulung%2C%20Kabupaten%20Klaten%2C%20Jawa%20Tengah!5e0!3m2!1sid!2sid!4v1715933333333!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="contact-info">
+                <div class="footer-title">Informasi Kontak</div>
+                <p><i class="fa-solid fa-location-dot"></i> Jl. Raya Delanggu-Polanharjo, Desa Wunut, Kec. Tulung, Kab. Klaten, Jawa Tengah 57482</p>
+                <p><i class="fa-solid fa-phone"></i> 0812-XXXX-XXXX (Kantor Desa)</p>
+                <p><i class="fa-solid fa-envelope"></i> desawunut@klatenkab.go.id</p>
+            </div>
+
+            <div>
+                <div class="footer-title">Media Sosial</div>
+                <div class="social-links">
+                    <a href="#" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="social-btn"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#" class="social-btn"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+                <p style="font-size: 12px; color: #777; margin-top: 30px;">© 2024 Pemerintah Desa Wunut. All Rights Reserved.</p>
             </div>
         </div>
-    </div>
+    </footer>
 
     <script>
-        // HILANGIN LOADER PAS WEB UDAH SIAP
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                document.getElementById('loader').style.opacity = '0';
-                setTimeout(() => { document.getElementById('loader').style.display = 'none'; }, 600);
-            }, 800);
-        });
-
-        // ANIMASI ANGKA STATISTIK
-        const counters = document.querySelectorAll('.counter');
-        const speed = 100;
-        counters.forEach(counter => {
-            const updateCount = () => {
-                const target = +counter.getAttribute('data-target');
-                const count = +counter.innerText;
-                const inc = target / speed;
-                if (count < target) {
-                    counter.innerText = Math.ceil(count + inc);
-                    setTimeout(updateCount, 20);
-                } else {
-                    counter.innerText = target;
-                }
-            };
-            setTimeout(updateCount, 1500); 
-        });
-
-        // NAVIGASI MENU
-        function showSection(id) {
-            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('content-active'));
-            document.querySelectorAll('nav a').forEach(el => el.classList.remove('active'));
-            document.getElementById(id).classList.add('content-active');
-            document.getElementById('nav-' + id).classList.add('active');
+        // FUNGSI GANTI TAB SMOOTH
+        function switchTab(id) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            
+            document.getElementById(id).classList.add('active-section');
+            document.getElementById('btn-' + id).classList.add('active');
             window.scrollTo(0, 0);
-            if(id === 'peta') { setTimeout(() => { map.invalidateSize(); }, 300); }
+            
+            if(id === 'peta') { setTimeout(() => { map.invalidateSize(); miniMap.invalidateSize(); }, 400); }
         }
 
-        // GRAFIK
-        const ctx = document.getElementById('pendudukChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line', 
-            data: {
-                labels: ['2020', '2021', '2022', '2023', '2024'],
-                datasets: [{
-                    label: 'Populasi',
-                    data: [1980, 2886, 2197, 2240, 2290],
-                    borderColor: '#8DA399', backgroundColor: 'rgba(141, 163, 153, 0.2)',
-                    borderWidth: 3, fill: true, tension: 0.4,
-                    pointBackgroundColor: '#fff', pointBorderColor: '#8DA399', pointRadius: 5
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+        // --- PETA SETUP ---
+        var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' });
+        var satelit = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Satelit' });
 
-        // ==========================================
-        // PETA LEAFLET & GEOJSON
-        // ==========================================
-        var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' });
-        var satelit = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri', maxZoom: 19 });
+        var map = L.map('map', { center: [-7.5990, 110.6188], zoom: 15, layers: [osm], zoomControl: false });
+        L.control.zoom({ position: 'topright' }).addTo(map);
 
-        var map = L.map('map', { center: [-7.5990, 110.6188], zoom: 15, zoomControl: false, layers: [osm] });
-        L.control.zoom({ position: 'bottomright' }).addTo(map);
+        // MINI MAP SETUP (Peta Kecil di Pojok)
+        var miniMap = L.map('mini-map', { center: [-7.5990, 110.6188], zoom: 10, layers: [osm], dragging: false, zoomControl: false, scrollWheelZoom: false });
 
-        document.querySelectorAll('input[name="basemap"]').forEach(function(radio) {
-            radio.addEventListener('change', function() {
-                map.removeLayer(osm);
-                map.removeLayer(satelit);
-                if (this.value === 'osm') map.addLayer(osm);
-                if (this.value === 'satelit') map.addLayer(satelit);
-            });
-        });
+        function changeBase(val) {
+            if(val === 'osm') { map.addLayer(osm); map.removeLayer(satelit); miniMap.addLayer(osm); miniMap.removeLayer(satelit); }
+            else { map.addLayer(satelit); map.removeLayer(osm); miniMap.addLayer(satelit); miniMap.removeLayer(osm); }
+        }
 
-        // DAFTAR WARNA 12 SUB-ZONA RESMI
-        const kategoriWarna = {
-            'Badan Air': '#A5CAD2',
-            'Badan Jalan': '#D4D7DD',
-            'Kawasan Peruntukan Industri': '#D8B4A6',
-            'Pariwisata': '#F5C6AA',
-            'Pemakaman': '#C3C7A7',
-            'Perdagangan dan Jasa Skala SWP': '#FCE38A',
-            'Perikanan Budidaya': '#95E1D3',
-            'Rumah Kepadatan Sedang': '#E8D4BE',
-            'Rumah Kepadatan Tinggi': '#D5C5B3',
-            'SPU Skala Kelurahan': '#EAFFD0',
-            'SPU Skala RW': '#F38181',
-            'Tanaman Pangan': '#A8DF8E',
-            'Lainnya': '#E0E0E0'
+        // PALETTE WARNA DARI GAMBAR UNTUK SUB-ZONA
+        const subZonaColors = {
+            'Badan Air': '#A497C4',                         /* Purple Light */
+            'Badan Jalan': '#594597',                        /* Purple Deep */
+            'Kawasan Peruntukan Industri': '#378D68',        /* Green Deep */
+            'Pariwisata': '#53B288',                         /* Green Mid */
+            'Pemakaman': '#C6E8BE',                          /* Green Soft */
+            'Perdagangan dan Jasa Skala SWP': '#A497C4',
+            'Perikanan Budidaya': '#53B288',
+            'Rumah Kepadatan Sedang': '#C6E8BE',
+            'Rumah Kepadatan Tinggi': '#A497C4',
+            'SPU Skala Kelurahan': '#594597',
+            'SPU Skala RW': '#378D68',
+            'Tanaman Pangan': '#53B288',
+            'Lainnya': '#dddddd'
         };
 
-        // Bikin Legenda Otomatis
-        const legendaContainer = document.getElementById('legenda-container');
-        for (const [kategori, warna] of Object.entries(kategoriWarna)) {
-            if (kategori !== 'Lainnya') {
-                legendaContainer.innerHTML += `
-                    <div class="legend-item">
-                        <div class="legend-box" style="background-color: ${warna};"></div>
-                        ${kategori}
-                    </div>
-                `;
+        // Render Legend
+        const legDiv = document.getElementById('legend-list');
+        for (const [key, color] of Object.entries(subZonaColors)) {
+            if(key !== 'Lainnya') {
+                legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`;
             }
         }
 
-        function getColor(subZona) {
-            return kategoriWarna[subZona ? subZona.trim() : ''] || kategoriWarna['Lainnya'];
-        }
-
-        function stylePeta(feature) {
+        function getZStyle(feature) {
             return {
-                fillColor: getColor(feature.properties.SUB_ZONA), 
-                weight: 1.2,
-                opacity: 1,
-                color: '#ffffff',
-                fillOpacity: 0.8
+                fillColor: subZonaColors[feature.properties.SUB_ZONA] || '#ddd',
+                weight: 1.5, opacity: 1, color: 'white', fillOpacity: 0.7
             };
         }
 
-        var geojsonLayer = L.geoJSON();
-        
-        // =========================================================================
-        // LINK SUDAH MENGGUNAKAN JALUR ABSOLUT (TEMBAK LANGSUNG)
-        // =========================================================================
-        fetch('https://mhrninntt.github.io/sipettulung/polaruangwunutbaru.geojson') 
+        // PANGGIL DATA (LINK ABSOLUT GITHUB KAMU)
+        fetch('https://mhrninntt.github.io/sipettulung/polaruangwunutbaru.geojson')
             .then(res => res.json())
             .then(data => {
-                geojsonLayer = L.geoJSON(data, {
-                    style: stylePeta,
-                    onEachFeature: function(feature, layer) {
-                        
-                        layer.on('mouseover', function(e) {
-                            var layer = e.target;
-                            layer.setStyle({ weight: 2.5, color: '#2C3E50', fillOpacity: 0.95 });
-                            layer.bringToFront();
-                        });
-                        layer.on('mouseout', function(e) { geojsonLayer.resetStyle(e.target); });
-
-                        layer.bindPopup(`
-                            <div style="font-family:'Lato'; text-align:center; padding: 5px;">
-                                <h4 style="margin:0 0 8px 0; color:#2C3E50; font-size:14px; border-bottom:1px solid #eee; padding-bottom:5px;">Rencana Struktur Ruang</h4>
-                                <span style="background:${getColor(feature.properties.SUB_ZONA)}; color:#2C3E50; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:bold; border:1px solid rgba(0,0,0,0.1); display:inline-block;">
-                                    ${feature.properties.SUB_ZONA}
-                                </span>
-                            </div>
-                        `);
+                var lyr = L.geoJSON(data, {
+                    style: getZStyle,
+                    onEachFeature: function(f, l) {
+                        l.bindPopup(`<div style="text-align:center"><b>Informasi Lahan</b><br><span style="color:${subZonaColors[f.properties.SUB_ZONA]}">${f.properties.SUB_ZONA}</span></div>`);
+                        l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 0.9, weight: 3}); });
+                        l.on('mouseout', function(e) { lyr.resetStyle(e.target); });
                     }
                 }).addTo(map);
-
-                map.fitBounds(geojsonLayer.getBounds(), { maxZoom: 16, padding: [20, 20] });
+                map.fitBounds(lyr.getBounds(), { padding: [30, 30] });
             })
-            .catch(err => console.log("Gagal memuat file GeoJSON:", err));
+            .catch(e => console.error("Gagal Muat Data:", e));
 
     </script>
 </body>
