@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
@@ -183,7 +182,7 @@
         <div id="peta" class="content-section">
             <div class="map-layout">
                 <div class="sidebar-card">
-                    <div class="legend-title"><i class="fa-solid fa-layer-group"></i> Layer Controls</div>
+                    <div class="legend-title"><i class="fa-solid fa-layer-group"></i> Basemap</div>
                     <div style="margin-bottom: 25px; background: var(--bg-body); padding: 15px; border-radius: 12px;">
                         <label style="display: block; margin-bottom: 10px; font-size: 13px; font-weight: 700; cursor: pointer;">
                             <input type="radio" name="basemap" value="osm" checked onchange="changeBase(this.value)"> OpenStreetMap
@@ -193,7 +192,17 @@
                         </label>
                     </div>
 
-                    <div class="legend-title"><i class="fa-solid fa-list-check"></i> Sub Zona Ruang (ATR/BPN)</div>
+                    <div class="legend-title"><i class="fa-solid fa-map"></i> Layer Data</div>
+                    <div style="margin-bottom: 25px; background: var(--bg-body); padding: 15px; border-radius: 12px;">
+                        <label style="display: block; margin-bottom: 10px; font-size: 13px; font-weight: 700; cursor: pointer;">
+                            <input type="checkbox" id="check-polaruang" checked onchange="toggleLayers()"> Pola Ruang (Sub Zona)
+                        </label>
+                        <label style="display: block; font-size: 13px; font-weight: 700; cursor: pointer;">
+                            <input type="checkbox" id="check-bidangtanah" onchange="toggleLayers()"> Bidang Tanah (Status)
+                        </label>
+                    </div>
+
+                    <div class="legend-title"><i class="fa-solid fa-list-check"></i> Legenda</div>
                     <div id="legend-list" class="legend-list">
                         </div>
                 </div>
@@ -248,7 +257,9 @@
     </footer>
 
     <script>
-        var geojsonLayer;
+        // Deklarasi Variabel Global untuk Layer
+        var polaRuangLayer;
+        var bidangTanahLayer;
 
         function triggerMapResize() {
             if (typeof map !== 'undefined') map.invalidateSize();
@@ -269,121 +280,186 @@
                 setTimeout(triggerMapResize, 600); 
                 setTimeout(triggerMapResize, 1000); 
 
-                if (geojsonLayer) {
-                    setTimeout(() => { map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] }); }, 400);
+                // Fokus otomatis ke layer yang aktif
+                if (polaRuangLayer && document.getElementById('check-polaruang').checked) {
+                    setTimeout(() => { map.fitBounds(polaRuangLayer.getBounds(), { padding: [30, 30] }); }, 400);
+                } else if (bidangTanahLayer && document.getElementById('check-bidangtanah').checked) {
+                    setTimeout(() => { map.fitBounds(bidangTanahLayer.getBounds(), { padding: [30, 30] }); }, 400);
                 }
             }
         }
 
-        // --- PERBAIKAN: Layer terpisah untuk Map Utama dan Mini Map ---
         var osmMain = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' });
         var osmMini = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' });
-
         var satelitMain = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Satelit' });
         var satelitMini = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Satelit' });
 
-        // Map Utama
         var map = L.map('map', { center: [-7.5990, 110.6188], zoom: 15, layers: [osmMain], zoomControl: false });
         L.control.zoom({ position: 'topright' }).addTo(map);
 
-        // Mini Map
         var miniMap = L.map('mini-map', { center: [-7.5990, 110.6188], zoom: 10, layers: [osmMini], dragging: false, zoomControl: false, scrollWheelZoom: false });
 
-        // Tambahan: Bikin mini-map mengikuti pergerakan peta utama
-        map.on('move', function() {
-            miniMap.setView(map.getCenter(), map.getZoom() - 5);
-        });
-
+        map.on('move', function() { miniMap.setView(map.getCenter(), map.getZoom() - 5); });
         new ResizeObserver(triggerMapResize).observe(document.getElementById('peta'));
 
-        // Fungsi mengganti basemap (menerapkan perubahan di kedua map secara bersamaan)
         function changeBase(val) {
             if(val === 'osm') { 
-                map.addLayer(osmMain); 
-                map.removeLayer(satelitMain); 
-                miniMap.addLayer(osmMini); 
-                miniMap.removeLayer(satelitMini); 
-            }
-            else { 
-                map.addLayer(satelitMain); 
-                map.removeLayer(osmMain); 
-                miniMap.addLayer(satelitMini); 
-                miniMap.removeLayer(osmMini); 
+                map.addLayer(osmMain); map.removeLayer(satelitMain); 
+                miniMap.addLayer(osmMini); miniMap.removeLayer(satelitMini); 
+            } else { 
+                map.addLayer(satelitMain); map.removeLayer(osmMain); 
+                miniMap.addLayer(satelitMini); miniMap.removeLayer(osmMini); 
             }
         }
 
+        // 1. Kamus Warna Pola Ruang (Sub Zona)
         const subZonaColors = {
-            'Badan Air': '#99D9EA',
-            'Badan Jalan': '#ED1C24',
-            'Hortikultura': '#D4FF54',
-            'Instalasi Pengolahan Air Minum (IPAM)': '#F5B069',
-            'Kawasan Peruntukan Industri': '#6B0000',
-            'Pariwisata': '#FF9EED',
-            'Pemakaman': '#39FF14',
-            'Pengelolaan Persampahan': '#C48A3F',
-            'Perdagangan dan Jasa Skala SWP': '#FF9999',
-            'Perdagangan dan Jasa Skala WP': '#FF6666',
-            'Pergudangan': '#404040',
-            'Perikanan Budidaya': '#85C1E9',
-            'Perkantoran': '#999999',
-            'Perkebunan': '#A9B846',
-            'Perkebunan Rakyat': '#96E091',
-            'Pertahanan dan Keamanan': '#9400D3',
-            'Peternakan': '#C8F7C8',
-            'Ruang Terbuka Hijau': '#194D12',
-            'Ruang Terbuka Non Hijau': '#066B6B',
-            'Rumah Kepadatan Rendah': '#FEFA4E',
-            'Rumah Kepadatan Sangat Rendah': '#FCFCC0',
-            'Rumah Kepadatan Sedang': '#FFED00',
-            'Rumah Kepadatan Tinggi': '#FFC000',
-            'SPU Skala Kecamatan': '#9C43A8',
-            'SPU Skala Kelurahan': '#BA55D3',
-            'SPU Skala Kota': '#660066',
-            'SPU Skala RW': '#E475DF',
-            'Sempadan Sungai': '#E0FFFF', 
-            'Sentra Industri Kecil Menengah': '#5C0000',
-            'Taman Kecamatan': '#398C15',
-            'Taman Kelurahan': '#B84CB8',
-            'Tanaman Pangan': '#B9F74F',
+            'Badan Air': '#99D9EA', 'Badan Jalan': '#ED1C24', 'Hortikultura': '#D4FF54',
+            'Instalasi Pengolahan Air Minum (IPAM)': '#F5B069', 'Kawasan Peruntukan Industri': '#6B0000',
+            'Pariwisata': '#FF9EED', 'Pemakaman': '#39FF14', 'Pengelolaan Persampahan': '#C48A3F',
+            'Perdagangan dan Jasa Skala SWP': '#FF9999', 'Perdagangan dan Jasa Skala WP': '#FF6666',
+            'Pergudangan': '#404040', 'Perikanan Budidaya': '#85C1E9', 'Perkantoran': '#999999',
+            'Perkebunan': '#A9B846', 'Perkebunan Rakyat': '#96E091', 'Pertahanan dan Keamanan': '#9400D3',
+            'Peternakan': '#C8F7C8', 'Ruang Terbuka Hijau': '#194D12', 'Ruang Terbuka Non Hijau': '#066B6B',
+            'Rumah Kepadatan Rendah': '#FEFA4E', 'Rumah Kepadatan Sangat Rendah': '#FCFCC0',
+            'Rumah Kepadatan Sedang': '#FFED00', 'Rumah Kepadatan Tinggi': '#FFC000',
+            'SPU Skala Kecamatan': '#9C43A8', 'SPU Skala Kelurahan': '#BA55D3', 'SPU Skala Kota': '#660066',
+            'SPU Skala RW': '#E475DF', 'Sempadan Sungai': '#E0FFFF', 'Sentra Industri Kecil Menengah': '#5C0000',
+            'Taman Kecamatan': '#398C15', 'Taman Kelurahan': '#B84CB8', 'Tanaman Pangan': '#B9F74F',
             'Lainnya': '#dddddd'
         };
 
-        const legDiv = document.getElementById('legend-list');
-        for (const [key, color] of Object.entries(subZonaColors)) {
-            if(key !== 'Lainnya') {
-                legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`;
+        // 2. Kamus Warna Bidang Tanah (Status) - Diekstrak dari gambar referensi
+        const statusColors = {
+            'Hak Guna Bangunan': '#387cc3', // Biru
+            'Hak Guna Usaha': '#df8c54',    // Oranye/Coklat
+            'Hak Milik': '#f6d246',         // Kuning
+            'Hak Pakai': '#50c15d',         // Hijau
+            'Jaringan Jalan': '#cb1b1d',    // Merah
+            'Kosong': '#a07f6e',            // Coklat Pudar
+            'Sungai': '#355cf8'             // Biru Tua
+        };
+
+        // 3. Fungsi Render Legenda Dinamis
+        function renderLegend() {
+            const legDiv = document.getElementById('legend-list');
+            legDiv.innerHTML = ''; // Kosongkan legenda sebelumnya
+
+            const isPolaRuangActive = document.getElementById('check-polaruang').checked;
+            const isBidangTanahActive = document.getElementById('check-bidangtanah').checked;
+
+            if (isPolaRuangActive) {
+                legDiv.innerHTML += `<div style="font-size:11px; color:#888; margin-top:5px; margin-bottom:8px; text-transform:uppercase; font-weight:700;">• Pola Ruang (Sub Zona)</div>`;
+                for (const [key, color] of Object.entries(subZonaColors)) {
+                    if (key !== 'Lainnya') {
+                        legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`;
+                    }
+                }
+            }
+
+            if (isBidangTanahActive) {
+                legDiv.innerHTML += `<div style="font-size:11px; color:#888; margin-top:${isPolaRuangActive ? '20px' : '5px'}; margin-bottom:8px; text-transform:uppercase; font-weight:700;">• Bidang Tanah (Status)</div>`;
+                for (const [key, color] of Object.entries(statusColors)) {
+                    legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`;
+                }
+            }
+
+            if (!isPolaRuangActive && !isBidangTanahActive) {
+                legDiv.innerHTML = `<div style="font-size:13px; color:#999; font-style:italic;">Tidak ada layer aktif.</div>`;
             }
         }
 
-        function getZStyle(feature) {
+        // 4. Fungsi Toggle Checkbox Layer
+        function toggleLayers() {
+            const checkPolaRuang = document.getElementById('check-polaruang').checked;
+            const checkBidangTanah = document.getElementById('check-bidangtanah').checked;
+
+            // Handle Pola Ruang
+            if (checkPolaRuang && polaRuangLayer) {
+                if (!map.hasLayer(polaRuangLayer)) map.addLayer(polaRuangLayer);
+            } else if (polaRuangLayer) {
+                map.removeLayer(polaRuangLayer);
+            }
+
+            // Handle Bidang Tanah
+            if (checkBidangTanah && bidangTanahLayer) {
+                if (!map.hasLayer(bidangTanahLayer)) map.addLayer(bidangTanahLayer);
+            } else if (bidangTanahLayer) {
+                map.removeLayer(bidangTanahLayer);
+            }
+
+            renderLegend(); // Update isi legenda
+        }
+
+        // 5. Pengaturan Gaya Layer
+        function stylePolaRuang(feature) {
             return {
                 fillColor: subZonaColors[feature.properties.SUB_ZONA] || '#dddddd',
                 weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: 0.8
             };
         }
 
+        function styleBidangTanah(feature) {
+            return {
+                fillColor: statusColors[feature.properties.STATUS] || '#cccccc',
+                weight: 1.2, opacity: 1, color: '#444444', fillOpacity: 0.7
+            };
+        }
+
+        // 6. Muat Data GeoJSON
+        // Muat Data Pola Ruang
         fetch('https://mhrninntt.github.io/sipettulung/polaruangwunutbaru.geojson')
             .then(res => res.json())
             .then(data => {
-                geojsonLayer = L.geoJSON(data, {
-                    style: getZStyle,
+                polaRuangLayer = L.geoJSON(data, {
+                    style: stylePolaRuang,
                     onEachFeature: function(f, l) {
                         l.bindPopup(`<div style="text-align:center; font-family:'Inter', sans-serif;">
-                                        <b style="color:var(--text-dark); font-size:14px;">Informasi Lahan</b><br>
-                                        <span style="display:inline-block; margin-top:5px; background:${subZonaColors[f.properties.SUB_ZONA]}; color:${f.properties.SUB_ZONA === 'Badan Jalan' || f.properties.SUB_ZONA === 'Kawasan Peruntukan Industri' ? '#fff' : '#000'}; padding:3px 10px; border-radius:5px; font-size:12px; font-weight:700;">
+                                        <b style="color:var(--text-dark); font-size:14px;">Pola Ruang</b><br>
+                                        <span style="display:inline-block; margin-top:5px; background:${subZonaColors[f.properties.SUB_ZONA]}; color:${['Badan Jalan', 'Kawasan Peruntukan Industri', 'Sentra Industri Kecil Menengah', 'Pertahanan dan Keamanan', 'SPU Skala Kota'].includes(f.properties.SUB_ZONA) ? '#fff' : '#000'}; padding:3px 10px; border-radius:5px; font-size:12px; font-weight:700;">
                                             ${f.properties.SUB_ZONA}
                                         </span>
                                      </div>`);
                         l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); });
-                        l.on('mouseout', function(e) { geojsonLayer.resetStyle(e.target); });
+                        l.on('mouseout', function(e) { polaRuangLayer.resetStyle(e.target); });
                     }
-                }).addTo(map);
+                });
 
-                if(document.getElementById('peta').classList.contains('active-section')) {
-                    setTimeout(() => { map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] }); }, 500);
+                // Tampilkan jika checkbox menyala saat pertama kali load
+                if (document.getElementById('check-polaruang').checked) {
+                    map.addLayer(polaRuangLayer);
                 }
+                renderLegend();
             })
-            .catch(e => console.error("Gagal Muat Data:", e));
+            .catch(e => console.error("Gagal Muat Data Pola Ruang:", e));
+
+        // Muat Data Bidang Tanah
+        /* CATATAN: Pastikan URL bidangtanahwunut.geojson di bawah ini sudah benar. Jika file-nya 
+           berada di direktori yang sama (lokal), bisa diganti menjadi 'bidangtanahwunut.geojson' saja */
+        fetch('https://mhrninntt.github.io/sipettulung/bidangtanahwunut.geojson')
+            .then(res => res.json())
+            .then(data => {
+                bidangTanahLayer = L.geoJSON(data, {
+                    style: styleBidangTanah,
+                    onEachFeature: function(f, l) {
+                        l.bindPopup(`<div style="text-align:center; font-family:'Inter', sans-serif;">
+                                        <b style="color:var(--text-dark); font-size:14px;">Bidang Tanah</b><br>
+                                        <span style="display:inline-block; margin-top:5px; background:${statusColors[f.properties.STATUS]}; color:${['Jaringan Jalan', 'Sungai', 'Hak Guna Bangunan'].includes(f.properties.STATUS) ? '#fff' : '#000'}; padding:3px 10px; border-radius:5px; font-size:12px; font-weight:700;">
+                                            ${f.properties.STATUS}
+                                        </span>
+                                     </div>`);
+                        l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); });
+                        l.on('mouseout', function(e) { bidangTanahLayer.resetStyle(e.target); });
+                    }
+                });
+
+                // Tampilkan jika checkbox menyala saat pertama kali load
+                if (document.getElementById('check-bidangtanah').checked) {
+                    map.addLayer(bidangTanahLayer);
+                }
+                renderLegend();
+            })
+            .catch(e => console.error("Gagal Muat Data Bidang Tanah (Periksa URL GeoJSON Anda):", e));
 
     </script>
 </body>
