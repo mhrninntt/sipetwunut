@@ -105,7 +105,6 @@
         }
         #map { height: 100%; width: 100%; }
 
-        /* KONTROL PETA TAMBAHAN */
         .custom-map-controls {
             position: absolute; top: 15px; right: 15px; z-index: 1000;
             display: flex; flex-direction: column; gap: 8px;
@@ -118,20 +117,18 @@
         }
         .map-action-btn:hover { background: var(--purple-deep); color: white; border-color: var(--purple-deep); }
 
-        /* ARAH UTARA */
         .north-arrow {
             position: absolute; top: 85px; left: 10px; z-index: 1000;
             background: rgba(255, 255, 255, 0.9); padding: 5px 8px; border-radius: 6px;
             border: 2px solid rgba(0,0,0,0.1); text-align: center; pointer-events: none;
         }
 
-        /* LEGENDA DINAMIS DI DALAM PETA */
         .map-legend {
             position: absolute; bottom: 35px; left: 10px; z-index: 1000;
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px);
             padding: 15px; border-radius: 10px; border: 2px solid rgba(0,0,0,0.1);
             box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-height: 50vh; width: 220px;
-            overflow-y: auto; display: none; /* Awalnya disembunyikan */
+            overflow-y: auto; display: none; 
         }
 
         #mini-map {
@@ -153,8 +150,8 @@
         }
         .footer-title { font-size: 16px; font-weight: 700; margin-bottom: 25px; color: var(--green-soft); text-transform: uppercase; }
         .footer-map-box { border-radius: 10px; overflow: hidden; height: 180px; border: 1px solid #555; }
-        .contact-info p { display: flex; align-items: start; gap: 15px; font-size: 14px; line-height: 1.6; color: #ccc; }
-        .contact-info i { color: var(--green-mid); font-size: 18px; margin-top: 3px; }
+        .contact-info p { display: flex; align-items: start; gap: 15px; font-size: 14px; line-height: 1.6; color: #ccc; margin-bottom: 12px; }
+        .contact-info i { color: var(--green-mid); font-size: 18px; margin-top: 3px; width: 20px; text-align: center; }
         .social-links { display: flex; gap: 15px; }
         .social-btn {
             width: 45px; height: 45px; background: #444; border-radius: 50%;
@@ -167,10 +164,15 @@
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 10px; }
         
-        /* Slider Custom Style */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--purple-deep); cursor: pointer; margin-top: -6px; }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #cbd5e1; border-radius: 3px; }
+
+        /* Style untuk section tim penyusun */
+        .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 25px; }
+        .team-member { background: var(--bg-body); padding: 25px 20px; border-radius: 15px; border: 1px solid #e2e8f0; transition: var(--transition); }
+        .team-member:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--purple-light); }
+        .team-avatar { width: 65px; height: 65px; background: var(--purple-light); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; }
     </style>
 </head>
 <body>
@@ -278,13 +280,57 @@
         </div>
 
         <div id="profil" class="content-section">
-            <div style="max-width: 900px; margin: 0 auto; padding: 40px;">
-                <div style="background: white; padding: 50px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center;">
-                    <i class="fa-solid fa-circle-info" style="font-size: 3rem; color: var(--purple-deep); margin-bottom: 20px;"></i>
-                    <h2 style="color: var(--purple-deep);">Tentang Sipet Wunut</h2>
-                    <p style="line-height: 1.8; color: #64748b;">Sistem Informasi Peruntukan Tata Ruang (SIPET) Desa Wunut merupakan inovasi digital untuk keterbukaan informasi penataan ruang desa. Memudahkan masyarakat dan investor dalam memahami potensi lahan di wilayah Desa Wunut.</p>
-                    <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
-                    <p style="font-weight: 700; color: var(--green-deep);">Dikembangkan oleh: Kelompok C4 - KKN Tematik 2024</p>
+            <div style="max-width: 1000px; margin: 0 auto; padding: 20px 40px 60px;">
+                <div style="background: white; padding: 60px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center;">
+                    <i class="fa-solid fa-map-location-dot" style="font-size: 3.5rem; color: var(--purple-deep); margin-bottom: 25px;"></i>
+                    <h2 style="color: var(--purple-deep); font-size: 2rem; margin-top: 0;">Tentang SIPET Wunut</h2>
+                    
+                    <p style="line-height: 1.9; color: #475569; text-align: justify; font-size: 15px; margin-bottom: 20px;">
+                        <b>Sistem Informasi Peruntukan Tata Ruang (SIPET) Desa Wunut</b> merupakan inovasi pelayanan publik berbasis digital dan sistem informasi geografis (WebGIS). Sistem ini dirancang secara khusus untuk mewujudkan transparansi dan keterbukaan informasi mengenai penataan ruang di wilayah Desa Wunut, Kecamatan Tulung, Kabupaten Klaten. Melalui SIPET, data spasial yang sebelumnya bersifat teknis dan sulit diakses kini dapat dipahami dengan mudah melalui visualisasi peta interaktif.
+                    </p>
+                    <p style="line-height: 1.9; color: #475569; text-align: justify; font-size: 15px;">
+                        Platform ini memetakan klasifikasi sub-zona tata ruang dan informasi status kepemilikan bidang tanah secara detail. Kehadiran SIPET Wunut diharapkan dapat menjadi jembatan informasi yang efektif, tidak hanya bagi aparatur desa dalam mengambil kebijakan berbasis data (<i>data-driven policy</i>), tetapi juga memberikan kepastian informasi bagi masyarakat umum, akademisi, hingga calon investor dalam melihat potensi optimal dari pemanfaatan tata lahan di Desa Wunut.
+                    </p>
+
+                    <hr style="margin: 50px 0; border: 0; border-top: 2px dashed #e2e8f0;">
+                    
+                    <h3 style="color: var(--green-deep); font-size: 1.5rem; margin-bottom: 10px;">Tim Penyusun</h3>
+                    <p style="color: #64748b; font-size: 14px; margin-bottom: 30px;">Dikembangkan secara kolaboratif oleh <b>Kelompok C4</b></p>
+                    
+                    <div class="team-grid">
+                        <div class="team-member">
+                            <div class="team-avatar" style="background: var(--green-soft); color: var(--green-deep);">
+                                <i class="fa-solid fa-user-graduate"></i>
+                            </div>
+                            <h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">Maharani Quinn Qonita</h4>
+                            <p style="margin: 0; font-size: 13px; color: #64748b; font-weight: 600;">D4 - PTRP</p>
+                        </div>
+
+                        <div class="team-member">
+                            <div class="team-avatar">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">[Nama Anggota 2]</h4>
+                            <p style="margin: 0; font-size: 13px; color: #64748b;">[Program Studi]</p>
+                        </div>
+
+                        <div class="team-member">
+                            <div class="team-avatar">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">[Nama Anggota 3]</h4>
+                            <p style="margin: 0; font-size: 13px; color: #64748b;">[Program Studi]</p>
+                        </div>
+                        
+                        <div class="team-member">
+                            <div class="team-avatar">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">[Nama Anggota 4]</h4>
+                            <p style="margin: 0; font-size: 13px; color: #64748b;">[Program Studi]</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -293,17 +339,17 @@
     <footer>
         <div class="footer-grid">
             <div>
-                <div class="footer-title">Lokasi Desa</div>
+                <div class="footer-title">Lokasi Kampus</div>
                 <div class="footer-map-box">
-                    <iframe src="http://googleusercontent.com/maps.google.com/3" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    <iframe src="https://maps.google.com/maps?q=Sekolah%20Vokasi%20Universitas%20Diponegoro%20Semarang&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
 
             <div class="contact-info">
                 <div class="footer-title">Informasi Kontak</div>
-                <p><i class="fa-solid fa-location-dot"></i> Jl. Raya Delanggu-Polanharjo, Desa Wunut, Kec. Tulung, Kab. Klaten, Jawa Tengah 57482</p>
-                <p><i class="fa-solid fa-phone"></i> 0812-XXXX-XXXX (Kantor Desa)</p>
-                <p><i class="fa-solid fa-envelope"></i> desawunut@klatenkab.go.id</p>
+                <p><i class="fa-solid fa-location-dot"></i> <span>Gedung Sekolah Vokasi, Kampus UNDIP, Jl. Prof. Soedarto, Tembalang, Kota Semarang, Jawa Tengah 50275</span></p>
+                <p><i class="fa-solid fa-phone"></i> <span>0858-7765-3014</span></p>
+                <p><i class="fa-solid fa-envelope"></i> <span>kelompokc4wnt@gmail.com</span></p>
             </div>
 
             <div>
@@ -314,7 +360,7 @@
                     <a href="#" class="social-btn"><i class="fa-brands fa-youtube"></i></a>
                     <a href="#" class="social-btn"><i class="fa-brands fa-x-twitter"></i></a>
                 </div>
-                <p style="font-size: 12px; color: #777; margin-top: 30px;">© 2024 Pemerintah Desa Wunut. All Rights Reserved.</p>
+                <p style="font-size: 12px; color: #777; margin-top: 30px;">© 2024 Kelompok C4. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
@@ -324,7 +370,6 @@
         var bidangTanahLayer;
         var userMarker;
 
-        // Koordinat Default Wunut
         const WUNUT_CENTER = [-7.5990, 110.6188];
         const DEFAULT_ZOOM = 15;
 
@@ -361,7 +406,6 @@
         var map = L.map('map', { center: WUNUT_CENTER, zoom: DEFAULT_ZOOM, layers: [osmMain], zoomControl: false });
         L.control.zoom({ position: 'topleft' }).addTo(map);
         
-        // TAMBAHAN: Skala Peta
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
         var miniMap = L.map('mini-map', { center: WUNUT_CENTER, zoom: 10, layers: [osmMini], dragging: false, zoomControl: false, scrollWheelZoom: false });
@@ -379,7 +423,6 @@
             }
         }
 
-        // --- FUNGSI KONTROL TAMBAHAN ---
         function goHome() {
             if (polaRuangLayer && document.getElementById('check-polaruang').checked) {
                 map.fitBounds(polaRuangLayer.getBounds(), { padding: [30, 30] });
@@ -412,7 +455,6 @@
             if (polaRuangLayer) polaRuangLayer.setStyle({fillOpacity: val});
             if (bidangTanahLayer) bidangTanahLayer.setStyle({fillOpacity: val});
         }
-        // -------------------------------
 
         const subZonaColors = {
             'Badan Air': '#99D9EA', 'Badan Jalan': '#ED1C24', 'Hortikultura': '#D4FF54',
@@ -464,7 +506,6 @@
                 }
             }
 
-            // Atur Visibilitas Box Legenda
             if (!isPolaRuangActive && !isBidangTanahActive) {
                 legWrapper.style.display = 'none';
             } else {
