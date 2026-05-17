@@ -13,7 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* PALETTE WARNA SESUAI REQUEST */
+        /* PALETTE WARNA UI WEB (TETAP UNGU & HIJAU) */
         :root {
             --purple-light: #A497C4;
             --purple-deep: #594597;
@@ -203,14 +203,15 @@
                         </label>
                     </div>
 
-                    <div class="legend-title"><i class="fa-solid fa-list-check"></i> Sub Zona Ruang</div>
+                    <div class="legend-title"><i class="fa-solid fa-list-check"></i> Sub Zona Ruang (ATR/BPN)</div>
                     <div id="legend-list" class="legend-list">
                         </div>
                 </div>
 
                 <div id="main-map-container">
                     <div id="map"></div>
-                    <div id="mini-map"></div> </div>
+                    <div id="mini-map"></div> 
+                </div>
             </div>
         </div>
 
@@ -232,7 +233,7 @@
             <div>
                 <div class="footer-title">Lokasi Desa</div>
                 <div class="footer-map-box">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15818.106544976442!2d110.6120853!3d-7.6046777!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a41926671077b%3A0xe08f7607a760f33d!2sWunut%2C%20Kec.%20Tulung%2C%20Kabupaten%20Klaten%2C%20Jawa%20Tengah!5e0!3m2!1sid!2sid!4v1715933333333!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15818.172608462711!2d110.608034!3d-7.6111162!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a4697c11f42d5%3A0x5027a76e3568c00!2sWunut%2C%20Tulung%2C%20Klaten%20Regency%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1716301234567" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
 
@@ -257,7 +258,8 @@
     </footer>
 
     <script>
-        // FUNGSI GANTI TAB SMOOTH
+        var geojsonLayer;
+
         function switchTab(id) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
@@ -266,17 +268,23 @@
             document.getElementById('btn-' + id).classList.add('active');
             window.scrollTo(0, 0);
             
-            if(id === 'peta') { setTimeout(() => { map.invalidateSize(); miniMap.invalidateSize(); }, 400); }
+            if(id === 'peta') { 
+                setTimeout(() => { 
+                    map.invalidateSize(); 
+                    miniMap.invalidateSize(); 
+                    if (geojsonLayer) {
+                        map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] });
+                    }
+                }, 300); 
+            }
         }
 
-        // --- PETA SETUP ---
         var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' });
         var satelit = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Satelit' });
 
         var map = L.map('map', { center: [-7.5990, 110.6188], zoom: 15, layers: [osm], zoomControl: false });
         L.control.zoom({ position: 'topright' }).addTo(map);
 
-        // MINI MAP SETUP (Peta Kecil di Pojok)
         var miniMap = L.map('mini-map', { center: [-7.5990, 110.6188], zoom: 10, layers: [osm], dragging: false, zoomControl: false, scrollWheelZoom: false });
 
         function changeBase(val) {
@@ -284,25 +292,48 @@
             else { map.addLayer(satelit); map.removeLayer(osm); miniMap.addLayer(satelit); miniMap.removeLayer(osm); }
         }
 
-        // PALETTE WARNA DARI GAMBAR UNTUK SUB-ZONA
+        // =======================================================
+        // PALETTE WARNA BARU SESUAI GAMBAR LEGENDA ATR/BPN
+        // =======================================================
         const subZonaColors = {
-            'Badan Air': '#A497C4',                         /* Purple Light */
-            'Badan Jalan': '#594597',                        /* Purple Deep */
-            'Kawasan Peruntukan Industri': '#378D68',        /* Green Deep */
-            'Pariwisata': '#53B288',                         /* Green Mid */
-            'Pemakaman': '#C6E8BE',                          /* Green Soft */
-            'Perdagangan dan Jasa Skala SWP': '#A497C4',
-            'Perikanan Budidaya': '#53B288',
-            'Rumah Kepadatan Sedang': '#C6E8BE',
-            'Rumah Kepadatan Tinggi': '#A497C4',
-            'SPU Skala Kelurahan': '#594597',
-            'SPU Skala RW': '#378D68',
-            'Tanaman Pangan': '#53B288',
+            'Badan Air': '#99D9EA',
+            'Badan Jalan': '#ED1C24',
+            'Hortikultura': '#D4FF54',
+            'Instalasi Pengolahan Air Minum (IPAM)': '#F5B069',
+            'Kawasan Peruntukan Industri': '#6B0000',
+            'Pariwisata': '#FF9EED',
+            'Pemakaman': '#39FF14',
+            'Pengelolaan Persampahan': '#C48A3F',
+            'Perdagangan dan Jasa Skala SWP': '#FF9999',
+            'Perdagangan dan Jasa Skala WP': '#FF6666',
+            'Pergudangan': '#404040',
+            'Perikanan Budidaya': '#85C1E9',
+            'Perkantoran': '#999999',
+            'Perkebunan': '#A9B846',
+            'Perkebunan Rakyat': '#96E091',
+            'Pertahanan dan Keamanan': '#9400D3',
+            'Peternakan': '#C8F7C8',
+            'Ruang Terbuka Hijau': '#194D12',
+            'Ruang Terbuka Non Hijau': '#066B6B',
+            'Rumah Kepadatan Rendah': '#FEFA4E',
+            'Rumah Kepadatan Sangat Rendah': '#FCFCC0',
+            'Rumah Kepadatan Sedang': '#FFED00',
+            'Rumah Kepadatan Tinggi': '#FFC000',
+            'SPU Skala Kecamatan': '#9C43A8',
+            'SPU Skala Kelurahan': '#BA55D3',
+            'SPU Skala Kota': '#660066',
+            'SPU Skala RW': '#E475DF',
+            'Sempadan Sungai': '#E0FFFF', 
+            'Sentra Industri Kecil Menengah': '#5C0000',
+            'Taman Kecamatan': '#398C15',
+            'Taman Kelurahan': '#B84CB8',
+            'Tanaman Pangan': '#B9F74F',
             'Lainnya': '#dddddd'
         };
 
-        // Render Legend
         const legDiv = document.getElementById('legend-list');
+        // Hanya me-render legenda yang datanya sering muncul agar sidebar tidak terlalu panjang (opsional), 
+        // tapi di sini di-render semua biar lengkap.
         for (const [key, color] of Object.entries(subZonaColors)) {
             if(key !== 'Lainnya') {
                 legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`;
@@ -311,24 +342,32 @@
 
         function getZStyle(feature) {
             return {
-                fillColor: subZonaColors[feature.properties.SUB_ZONA] || '#ddd',
-                weight: 1.5, opacity: 1, color: 'white', fillOpacity: 0.7
+                // Leaflet akan mencocokkan field SUB_ZONA dengan daftar warna di atas
+                fillColor: subZonaColors[feature.properties.SUB_ZONA] || '#dddddd',
+                weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: 0.8
             };
         }
 
-        // PANGGIL DATA (LINK ABSOLUT GITHUB KAMU)
         fetch('https://mhrninntt.github.io/sipettulung/polaruangwunutbaru.geojson')
             .then(res => res.json())
             .then(data => {
-                var lyr = L.geoJSON(data, {
+                geojsonLayer = L.geoJSON(data, {
                     style: getZStyle,
                     onEachFeature: function(f, l) {
-                        l.bindPopup(`<div style="text-align:center"><b>Informasi Lahan</b><br><span style="color:${subZonaColors[f.properties.SUB_ZONA]}">${f.properties.SUB_ZONA}</span></div>`);
-                        l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 0.9, weight: 3}); });
-                        l.on('mouseout', function(e) { lyr.resetStyle(e.target); });
+                        l.bindPopup(`<div style="text-align:center; font-family:'Inter', sans-serif;">
+                                        <b style="color:var(--text-dark); font-size:14px;">Informasi Lahan</b><br>
+                                        <span style="display:inline-block; margin-top:5px; background:${subZonaColors[f.properties.SUB_ZONA]}; color:${f.properties.SUB_ZONA === 'Badan Jalan' || f.properties.SUB_ZONA === 'Kawasan Peruntukan Industri' ? '#fff' : '#000'}; padding:3px 10px; border-radius:5px; font-size:12px; font-weight:700;">
+                                            ${f.properties.SUB_ZONA}
+                                        </span>
+                                     </div>`);
+                        l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); });
+                        l.on('mouseout', function(e) { geojsonLayer.resetStyle(e.target); });
                     }
                 }).addTo(map);
-                map.fitBounds(lyr.getBounds(), { padding: [30, 30] });
+
+                if(document.getElementById('peta').classList.contains('active-section')) {
+                    map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] });
+                }
             })
             .catch(e => console.error("Gagal Muat Data:", e));
 
