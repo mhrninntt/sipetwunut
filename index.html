@@ -3,10 +3,8 @@
 <head>
     <title>WEB SIPET WUNUT - PREMIUM PASTEL GIS</title>
     
-    <!-- FONT ELEGANT & PROFESSIONAL -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     
-    <!-- LEAFLET & CHARTJS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -133,13 +131,11 @@
 </head>
 <body>
 
-    <!-- PRELOADER -->
     <div id="loader">
         <div class="spinner"></div>
         <h3 style="color: var(--text-main); letter-spacing: 2px;">Memuat Data...</h3>
     </div>
 
-    <!-- HEADER -->
     <header>
         <div class="logo-title">
             <h1>SIPET <span>WUNUT</span></h1>
@@ -151,7 +147,6 @@
         </nav>
     </header>
 
-    <!-- BERANDA -->
     <div id="beranda" class="content-section content-active" style="padding-top: 0;">
         <div class="hero">
             <div class="hero-content">
@@ -164,7 +159,6 @@
             </div>
         </div>
 
-        <!-- STATS CARDS -->
         <div class="stats-container">
             <div class="stat-card">
                 <div class="stat-icon">
@@ -196,7 +190,6 @@
             </div>
         </div>
 
-        <!-- CHART SECTION -->
         <div class="main-container">
             <div class="panel-glass" style="margin-top: 20px;">
                 <h3 class="panel-title">Tren Kependudukan</h3>
@@ -205,14 +198,11 @@
         </div>
     </div>
 
-    <!-- PETA SPASIAL -->
     <div id="peta" class="content-section">
         <div class="main-container">
             <div class="map-grid">
-                <!-- PANEL KIRI KONTROL -->
                 <div class="panel-glass">
                     
-                    <!-- KONTROL BASEMAP BARU -->
                     <h3 class="panel-title" style="margin-top: 0;">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
                         Pilihan Peta
@@ -231,11 +221,9 @@
                         Legenda Peta
                     </h3>
                     <div id="legenda-container">
-                        <!-- Legenda otomatis dibikin oleh script -->
-                    </div>
+                        </div>
                 </div>
 
-                <!-- KOTAK PETA -->
                 <div id="map-container">
                     <div id="map"></div>
                 </div>
@@ -243,7 +231,6 @@
         </div>
     </div>
 
-    <!-- PROFIL -->
     <div id="profil" class="content-section">
         <div class="main-container text-center">
             <div class="panel-glass" style="max-width: 800px; margin: 0 auto; text-align: center; padding: 50px;">
@@ -329,7 +316,7 @@
             });
         });
 
-        // DAFTAR WARNA & KATEGORI (Sesuaikan sama data SHP kamu)
+        // DAFTAR WARNA & KATEGORI (Sesuaikan sama isi data file POLARUANG.geojson kamu)
         const kategoriWarna = {
             'Permukiman': '#D5C5B3',  // Beige
             'Pertanian': '#8DA399',   // Sage Green
@@ -356,7 +343,7 @@
 
         function stylePeta(feature) {
             return {
-                fillColor: getColor(feature.properties.Kategori), // Pastiin tulisan "Kategori" sama kayak di atribut!
+                fillColor: getColor(feature.properties.Kategori), // Pastiin tulisan "Kategori" sama kayak di atribut tabel kamu!
                 weight: 1.5,
                 opacity: 1,
                 color: '#ffffff',
@@ -368,9 +355,9 @@
         var geojsonLayer = L.geoJSON();
         
         // =========================================================================
-        // JANGAN LUPA GANTI "nama_file_kamu.geojson" SAMA NAMA FILE KAMU SEBELUM DI UPLOAD!
+        // NAMA FILE SUDAH DIGANTI MENJADI POLARUANG.geojson DI BAWAH INI
         // =========================================================================
-        fetch('nama_file_kamu.geojson') 
+        fetch('POLARUANG.geojson') 
             .then(res => res.json())
             .then(data => {
                 geojsonLayer = L.geoJSON(data, {
