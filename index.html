@@ -101,8 +101,38 @@
         #main-map-container {
             height: 75vh; border-radius: 20px; overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.04); position: relative;
+            background: var(--white);
         }
         #map { height: 100%; width: 100%; }
+
+        /* KONTROL PETA TAMBAHAN */
+        .custom-map-controls {
+            position: absolute; top: 15px; right: 15px; z-index: 1000;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .map-action-btn {
+            background: white; border: 2px solid rgba(0,0,0,0.1); width: 36px; height: 36px;
+            border-radius: 6px; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; font-size: 15px; color: var(--text-dark);
+            transition: var(--transition);
+        }
+        .map-action-btn:hover { background: var(--purple-deep); color: white; border-color: var(--purple-deep); }
+
+        /* ARAH UTARA */
+        .north-arrow {
+            position: absolute; top: 85px; left: 10px; z-index: 1000;
+            background: rgba(255, 255, 255, 0.9); padding: 5px 8px; border-radius: 6px;
+            border: 2px solid rgba(0,0,0,0.1); text-align: center; pointer-events: none;
+        }
+
+        /* LEGENDA DINAMIS DI DALAM PETA */
+        .map-legend {
+            position: absolute; bottom: 35px; left: 10px; z-index: 1000;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px);
+            padding: 15px; border-radius: 10px; border: 2px solid rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-height: 50vh; width: 220px;
+            overflow-y: auto; display: none; /* Awalnya disembunyikan */
+        }
 
         #mini-map {
             position: absolute; bottom: 20px; right: 20px;
@@ -136,6 +166,11 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 10px; }
+        
+        /* Slider Custom Style */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--purple-deep); cursor: pointer; margin-top: -6px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #cbd5e1; border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -201,14 +236,42 @@
                             <input type="checkbox" id="check-bidangtanah" onchange="toggleLayers()"> Bidang Tanah (Status)
                         </label>
                     </div>
-
-                    <div class="legend-title"><i class="fa-solid fa-list-check"></i> Legenda</div>
-                    <div id="legend-list" class="legend-list">
+                    
+                    <div class="legend-title"><i class="fa-solid fa-droplet"></i> Transparansi</div>
+                    <div style="background: var(--bg-body); padding: 15px; border-radius: 12px;">
+                        <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:10px; color:#64748b; font-weight:600;">
+                            <span>Tembus Pandang</span>
+                            <span>Jelas</span>
+                        </div>
+                        <input type="range" id="opacity-slider" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacity(this.value)">
                     </div>
                 </div>
 
                 <div id="main-map-container">
                     <div id="map"></div>
+                    
+                    <div class="north-arrow">
+                        <i class="fa-solid fa-caret-up" style="color: #ef4444; font-size: 20px;"></i>
+                        <div style="font-weight: 800; font-size: 11px; margin-top: -5px; color:#333;">U</div>
+                    </div>
+
+                    <div class="custom-map-controls">
+                        <button class="map-action-btn" onclick="goHome()" title="Kembali ke Desa Wunut">
+                            <i class="fa-solid fa-house"></i>
+                        </button>
+                        <button class="map-action-btn" onclick="findLocation()" title="Cari Lokasi Saya">
+                            <i class="fa-solid fa-location-crosshairs"></i>
+                        </button>
+                        <button class="map-action-btn" onclick="toggleFullScreen()" title="Layar Penuh">
+                            <i class="fa-solid fa-expand"></i>
+                        </button>
+                    </div>
+
+                    <div id="map-legend" class="map-legend">
+                        <div class="legend-title" style="margin-bottom: 10px; font-size: 14px;"><i class="fa-solid fa-list-check"></i> Legenda</div>
+                        <div id="legend-list" class="legend-list"></div>
+                    </div>
+
                     <div id="mini-map"></div> 
                 </div>
             </div>
@@ -259,6 +322,11 @@
     <script>
         var polaRuangLayer;
         var bidangTanahLayer;
+        var userMarker;
+
+        // Koordinat Default Wunut
+        const WUNUT_CENTER = [-7.5990, 110.6188];
+        const DEFAULT_ZOOM = 15;
 
         function triggerMapResize() {
             if (typeof map !== 'undefined') map.invalidateSize();
@@ -274,10 +342,8 @@
             window.scrollTo(0, 0);
             
             if(id === 'peta') { 
-                setTimeout(triggerMapResize, 100); 
-                setTimeout(triggerMapResize, 300); 
-                setTimeout(triggerMapResize, 600); 
-                setTimeout(triggerMapResize, 1000); 
+                setTimeout(triggerMapResize, 100); setTimeout(triggerMapResize, 300); 
+                setTimeout(triggerMapResize, 600); setTimeout(triggerMapResize, 1000); 
 
                 if (polaRuangLayer && document.getElementById('check-polaruang').checked) {
                     setTimeout(() => { map.fitBounds(polaRuangLayer.getBounds(), { padding: [30, 30] }); }, 400);
@@ -292,10 +358,13 @@
         var satelitMain = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Satelit' });
         var satelitMini = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Satelit' });
 
-        var map = L.map('map', { center: [-7.5990, 110.6188], zoom: 15, layers: [osmMain], zoomControl: false });
-        L.control.zoom({ position: 'topright' }).addTo(map);
+        var map = L.map('map', { center: WUNUT_CENTER, zoom: DEFAULT_ZOOM, layers: [osmMain], zoomControl: false });
+        L.control.zoom({ position: 'topleft' }).addTo(map);
+        
+        // TAMBAHAN: Skala Peta
+        L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
-        var miniMap = L.map('mini-map', { center: [-7.5990, 110.6188], zoom: 10, layers: [osmMini], dragging: false, zoomControl: false, scrollWheelZoom: false });
+        var miniMap = L.map('mini-map', { center: WUNUT_CENTER, zoom: 10, layers: [osmMini], dragging: false, zoomControl: false, scrollWheelZoom: false });
 
         map.on('move', function() { miniMap.setView(map.getCenter(), map.getZoom() - 5); });
         new ResizeObserver(triggerMapResize).observe(document.getElementById('peta'));
@@ -309,6 +378,41 @@
                 miniMap.addLayer(satelitMini); miniMap.removeLayer(osmMini); 
             }
         }
+
+        // --- FUNGSI KONTROL TAMBAHAN ---
+        function goHome() {
+            if (polaRuangLayer && document.getElementById('check-polaruang').checked) {
+                map.fitBounds(polaRuangLayer.getBounds(), { padding: [30, 30] });
+            } else {
+                map.setView(WUNUT_CENTER, DEFAULT_ZOOM);
+            }
+        }
+
+        function findLocation() {
+            map.locate({setView: true, maxZoom: 16});
+        }
+        map.on('locationfound', function(e) {
+            if(userMarker) { map.removeLayer(userMarker); }
+            userMarker = L.marker(e.latlng).addTo(map).bindPopup("Lokasi Anda Saat Ini").openPopup();
+        });
+        map.on('locationerror', function(e) {
+            alert("Akses lokasi ditolak atau tidak ditemukan.");
+        });
+
+        function toggleFullScreen() {
+            var elem = document.getElementById("main-map-container");
+            if (!document.fullscreenElement) {
+                elem.requestFullscreen().catch(err => { alert(`Error: ${err.message}`); });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function changeOpacity(val) {
+            if (polaRuangLayer) polaRuangLayer.setStyle({fillOpacity: val});
+            if (bidangTanahLayer) bidangTanahLayer.setStyle({fillOpacity: val});
+        }
+        // -------------------------------
 
         const subZonaColors = {
             'Badan Air': '#99D9EA', 'Badan Jalan': '#ED1C24', 'Hortikultura': '#D4FF54',
@@ -337,6 +441,7 @@
         };
 
         function renderLegend() {
+            const legWrapper = document.getElementById('map-legend');
             const legDiv = document.getElementById('legend-list');
             legDiv.innerHTML = ''; 
 
@@ -353,14 +458,17 @@
             }
 
             if (isBidangTanahActive) {
-                legDiv.innerHTML += `<div style="font-size:11px; color:#888; margin-top:${isPolaRuangActive ? '20px' : '5px'}; margin-bottom:8px; text-transform:uppercase; font-weight:700;">• Bidang Tanah (Status)</div>`;
+                legDiv.innerHTML += `<div style="font-size:11px; color:#888; margin-top:${isPolaRuangActive ? '15px' : '5px'}; margin-bottom:8px; text-transform:uppercase; font-weight:700;">• Bidang Tanah (Status)</div>`;
                 for (const [key, color] of Object.entries(statusColors)) {
                     legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`;
                 }
             }
 
+            // Atur Visibilitas Box Legenda
             if (!isPolaRuangActive && !isBidangTanahActive) {
-                legDiv.innerHTML = `<div style="font-size:13px; color:#999; font-style:italic;">Tidak ada layer aktif.</div>`;
+                legWrapper.style.display = 'none';
+            } else {
+                legWrapper.style.display = 'block';
             }
         }
 
@@ -384,16 +492,18 @@
         }
 
         function stylePolaRuang(feature) {
+            let currentOp = document.getElementById('opacity-slider') ? parseFloat(document.getElementById('opacity-slider').value) : 0.8;
             return {
                 fillColor: subZonaColors[feature.properties.SUB_ZONA] || '#dddddd',
-                weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: 0.8
+                weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: currentOp
             };
         }
 
         function styleBidangTanah(feature) {
+            let currentOp = document.getElementById('opacity-slider') ? parseFloat(document.getElementById('opacity-slider').value) : 0.8;
             return {
                 fillColor: statusColors[feature.properties.STATUS] || '#cccccc',
-                weight: 1.2, opacity: 1, color: '#444444', fillOpacity: 0.7
+                weight: 1.2, opacity: 1, color: '#444444', fillOpacity: currentOp
             };
         }
 
