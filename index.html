@@ -11,14 +11,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Plugin Leaflet Geoman untuk Digitasi -->
     <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
     <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
 
-    <!-- Plugin Leaflet Omnivore untuk import KML -->
     <script src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
 
-    <!-- Plugin shp-write untuk Export SHP -->
     <script src="https://unpkg.com/shp-write@latest/shpwrite.js"></script>
 
     <style>
@@ -28,7 +25,7 @@
             --green-soft: #C6E8BE;
             --green-mid: #53B288;
             --green-deep: #378D68;
-            --water-blue: #38bdf8; /* Warna elemen air */
+            --water-blue: #38bdf8;
             --bg-body: #f8fafc;
             --text-dark: #1e293b;
             --white: #ffffff;
@@ -42,15 +39,14 @@
         .fade-in { animation: fadeIn 1s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- ANIMASI LOGO AIR (PURE CSS) --- */
         .logo-wrapper { display: flex; align-items: center; justify-content: center; }
         .animated-water-logo {
             width: 35px; height: 35px;
-            background: #e0f2fe; /* Warna dasar terang */
+            background: #e0f2fe; 
             border-radius: 50%; position: relative; overflow: hidden;
             border: 2px solid var(--purple-deep);
             margin-right: 12px;
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); /* Efek cahaya biru */
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); 
         }
         .water-wave {
             position: absolute; width: 200%; height: 200%;
@@ -59,14 +55,12 @@
             animation: spinWater 4s infinite linear;
         }
         .water-wave:nth-child(2) {
-            background: rgba(83, 178, 136, 0.6); /* Warna hijau tema dengan transparansi */
+            background: rgba(83, 178, 136, 0.6); 
             top: 55%; border-radius: 45%;
             animation: spinWater 5s infinite linear;
         }
         @keyframes spinWater { 100% { transform: rotate(360deg); } }
-        /* ----------------------------------- */
 
-        /* --- STYLE UNTUK LOGIN SCREEN --- */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
             background: linear-gradient(135deg, var(--green-soft) 0%, var(--purple-deep) 100%);
@@ -93,7 +87,6 @@
         }
         .login-btn:hover { background: var(--purple-deep); transform: translateY(-2px); }
         .login-error { color: #ef4444; font-size: 12px; margin-top: 10px; display: none; font-weight: 600; }
-        /* -------------------------------- */
 
         #main-content { display: none; }
 
@@ -267,12 +260,10 @@
                         <div class="legend-title" style="margin-top: 25px;"><i class="fa-solid fa-toolbox"></i> Alat Analisis Spasial</div>
                         <div style="background: var(--bg-body); padding: 15px; border-radius: 12px;">
                             
-                            <!-- Fitur 1: Download SHP -->
                             <button class="map-action-btn" style="width: 100%; height: auto; padding: 10px; margin-bottom: 15px; font-size: 13px; font-weight: 700; background: var(--purple-deep); color: white;" onclick="downloadSHP()">
                                 <i class="fa-solid fa-download"></i> Ekspor SHP Pola Ruang
                             </button>
 
-                            <!-- Fitur 3: Import KML -->
                             <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-dark);">
                                 <i class="fa-solid fa-upload"></i> Unggah File KML:
                             </label>
@@ -756,16 +747,46 @@
             });
 
         // ==========================================
-        // FITUR 1: FUNGSI DOWNLOAD SHP
+        // FITUR 1: FUNGSI DOWNLOAD SHP (DIUPGRADE)
         // ==========================================
         function downloadSHP() {
-            if (!rawPolaRuangData) {
-                alert("Data Pola Ruang belum selesai dimuat atau tidak ditemukan!");
+            if (!rawPolaRuangData || !rawPolaRuangData.features) {
+                alert("Data Pola Ruang belum selesai dimuat atau format tidak valid!");
                 return;
             }
 
             try {
-                // shpwrite mengkonversi feature collection menjadi file .zip berisi shp, dbf, prj, shx
+                // 1. Buat salinan data agar tidak mengubah data asli yang sedang tampil di peta
+                let cleanData = JSON.parse(JSON.stringify(rawPolaRuangData));
+
+                // 2. Bersihkan dan perbaiki format fitur satu per satu
+                cleanData.features = cleanData.features
+                    .filter(f => f.geometry && f.geometry.coordinates) // Buang data yang geometrinya kosong/null
+                    .map(f => {
+                        // A. Paksa ubah MultiPolygon menjadi Polygon (Workaround shp-write)
+                        if (f.geometry.type === 'MultiPolygon') {
+                            f.geometry.type = 'Polygon';
+                            // Mengambil cincin luar (outer ring) pertama saja untuk menghindari crash
+                            f.geometry.coordinates = f.geometry.coordinates[0]; 
+                        }
+
+                        // B. Bersihkan atribut (Properties) untuk DBF
+                        for (let key in f.properties) {
+                            // DBF tidak bisa membaca tipe object/array, jadi ubah ke teks/string
+                            if (typeof f.properties[key] === 'object' && f.properties[key] !== null) {
+                                f.properties[key] = JSON.stringify(f.properties[key]);
+                            }
+                            // Batasi nama kolom maksimal 10 karakter (Aturan format SHP/DBF standar)
+                            if (key.length > 10) {
+                                let shortKey = key.substring(0, 10);
+                                f.properties[shortKey] = f.properties[key];
+                                delete f.properties[key];
+                            }
+                        }
+                        return f;
+                    });
+
+                // 3. Proses Export
                 var options = {
                     folder: 'SHP_Pola_Ruang_Wunut',
                     types: {
@@ -774,10 +795,13 @@
                         line: 'Garis_Wunut'
                     }
                 };
-                shpwrite.download(rawPolaRuangData, options);
+                
+                shpwrite.download(cleanData, options);
+
             } catch (error) {
-                console.error("Gagal export SHP:", error);
-                alert("Terjadi kesalahan saat mengonversi data ke SHP. Pastikan format geometri file GeoJSON sudah valid.");
+                // Log ke console agar lebih mudah dilacak jika masih error
+                console.error("Detail Error Ekspor SHP:", error);
+                alert("Masih terjadi kesalahan saat konversi ke SHP. Tekan F12 lalu cek tab 'Console' untuk melihat detail error.");
             }
         }
 
