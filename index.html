@@ -16,6 +16,8 @@
 
     <script src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
     <style>
         :root {
             --purple-light: #A497C4;
@@ -64,7 +66,7 @@
         nav a::after { content: ''; position: absolute; width: 0; height: 3px; bottom: 0; left: 0; background: var(--green-mid); transition: var(--transition); }
         nav a:hover::after, nav a.active::after { width: 100%; }
 
-        .hero { height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--green-soft) 0%, #e0e7ff 100%); text-align: center; padding: 0 20px; }
+        .hero { height: 75vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--green-soft) 0%, #e0e7ff 100%); text-align: center; padding: 0 20px; }
         .hero-card { background: rgba(255,255,255,0.7); padding: 60px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); backdrop-filter: blur(5px); border: 1px solid var(--white); }
         .hero h2 { font-family: 'Montserrat', sans-serif; font-size: 3.5rem; margin: 0; color: var(--purple-deep); }
         .hero p { font-size: 1.1rem; color: var(--green-deep); font-weight: 600; letter-spacing: 4px; text-transform: uppercase; }
@@ -76,10 +78,15 @@
         .stat-item h3 { font-size: 2rem; margin: 5px 0; color: var(--text-dark); }
         .stat-item p { margin: 0; font-size: 13px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
 
+        /* --- TATA LETAK GRAFIK (CHART) --- */
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto 50px; padding: 0 30px; }
+        .chart-card { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); transition: var(--transition); }
+        .chart-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
+        .chart-card h3 { color: var(--purple-deep); font-size: 16px; margin-top: 0; margin-bottom: 20px; text-align: center; }
+
         .content-section { display: none; padding: 100px 0 60px; }
         .active-section { display: block; animation: fadeIn 0.8s ease; }
         
-        /* SIDEBAR LEBIH KECIL AGAR PETA LEBAR */
         .map-layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; max-width: 1400px; margin: 0 auto; padding: 0 30px; }
         .sidebar-card { background: var(--white); padding: 25px 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); height: 75vh; overflow-y: auto; }
         .sidebar-card::-webkit-scrollbar { width: 6px; }
@@ -95,30 +102,12 @@
         .north-arrow { position: absolute; top: 85px; left: 10px; z-index: 1000; background: rgba(255, 255, 255, 0.9); padding: 5px 8px; border-radius: 6px; border: 2px solid rgba(0,0,0,0.1); text-align: center; pointer-events: none; }
         #mini-map { position: absolute; bottom: 20px; right: 20px; width: 180px; height: 130px; background: white; z-index: 999; border-radius: 12px; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.2); pointer-events: none; }
 
-        /* --- DESAIN BARU LEGENDA SLIDE OUT (SEBELAH KANAN) --- */
-        .slide-legend-wrapper {
-            position: absolute; top: 50%; right: 0; z-index: 1000;
-            transform: translateY(-50%) translateX(280px); /* Tersembunyi di luar layar kanan */
-            display: flex; align-items: flex-start;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .slide-legend-wrapper.open {
-            transform: translateY(-50%) translateX(0); /* Tampil */
-        }
-        .legend-toggle-btn {
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(5px);
-            border: 2px solid rgba(0,0,0,0.1); border-right: none;
-            padding: 12px 15px; border-radius: 10px 0 0 10px;
-            cursor: pointer; font-weight: 700; color: var(--purple-deep);
-            box-shadow: -4px 4px 10px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 8px; white-space: nowrap; margin-top: 20px;
-        }
-        .slide-legend-content {
-            width: 280px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            border: 2px solid rgba(0,0,0,0.1); border-right: none; border-radius: 0 0 0 15px;
-            padding: 20px; box-shadow: -5px 5px 20px rgba(0,0,0,0.08); max-height: 70vh; overflow-y: auto;
-        }
-        /* --------------------------------------------------- */
-
+        /* --- DESAIN BARU LEGENDA SLIDE OUT --- */
+        .slide-legend-wrapper { position: absolute; top: 50%; right: 0; z-index: 1000; transform: translateY(-50%) translateX(280px); display: flex; align-items: flex-start; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .slide-legend-wrapper.open { transform: translateY(-50%) translateX(0); }
+        .legend-toggle-btn { background: rgba(255,255,255,0.95); backdrop-filter: blur(5px); border: 2px solid rgba(0,0,0,0.1); border-right: none; padding: 12px 15px; border-radius: 10px 0 0 10px; cursor: pointer; font-weight: 700; color: var(--purple-deep); box-shadow: -4px 4px 10px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 8px; white-space: nowrap; margin-top: 20px; }
+        .slide-legend-content { width: 280px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 2px solid rgba(0,0,0,0.1); border-right: none; border-radius: 0 0 0 15px; padding: 20px; box-shadow: -5px 5px 20px rgba(0,0,0,0.08); max-height: 70vh; overflow-y: auto; }
+        
         .legend-title { font-weight: 700; color: var(--purple-deep); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
         .legend-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 13px; font-weight: 600; }
         .color-box { width: 18px; height: 18px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; }
@@ -177,11 +166,24 @@
         <main>
             <div id="beranda" class="content-section active-section">
                 <div class="hero"><div class="hero-card fade-in"><p>Sistem Informasi Peruntukan Tata Ruang</p><h2>DESA WUNUT</h2></div></div>
+                
                 <div class="stats-grid">
                     <div class="stat-item fade-in"><i class="fa-solid fa-map-location-dot"></i><h3 id="stat-luas">720</h3><p>Luas Wilayah (Ha)</p></div>
                     <div class="stat-item fade-in" style="animation-delay: 0.2s;"><i class="fa-solid fa-people-group"></i><h3 id="stat-penduduk">2,290</h3><p>Total Penduduk</p></div>
                     <div class="stat-item fade-in" style="animation-delay: 0.4s;"><i class="fa-solid fa-droplet"></i><h3 id="stat-air">15</h3><p>Titik Mata Air</p></div>
                 </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card fade-in" style="animation-delay: 0.6s;">
+                        <h3>Dinamika Kelahiran & Kematian (2020-2025)</h3>
+                        <div id="chart-dinamika"></div>
+                    </div>
+                    <div class="chart-card fade-in" style="animation-delay: 0.8s;">
+                        <h3>Piramida Penduduk Desa Wunut</h3>
+                        <div id="chart-piramida"></div>
+                    </div>
+                </div>
+
             </div>
 
             <div id="peta" class="content-section">
@@ -210,7 +212,6 @@
                         
                         <div class="legend-title"><i class="fa-solid fa-droplet"></i> Transparansi</div>
                         <div style="background: var(--bg-body); padding: 15px; border-radius: 12px; margin-bottom: 25px;">
-                            
                             <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:5px; color:var(--text-dark); font-weight:700;">
                                 <span>Pola Ruang</span><span id="val-op-pola">80%</span>
                             </div>
@@ -267,7 +268,7 @@
                         <i class="fa-solid fa-map-location-dot" style="font-size: 3.5rem; color: var(--purple-deep); margin-bottom: 25px;"></i>
                         <h2 style="color: var(--purple-deep); font-size: 2rem; margin-top: 0;">Tentang SIPET Wunut</h2>
                         <p style="line-height: 1.9; color: #475569; text-align: justify; font-size: 15px; margin-bottom: 20px;">
-                            <b>Sistem Informasi Peruntukan Tata Ruang (SIPET) Desa Wunut</b> merupakan inovasi pelayanan publik berbasis digital dan sistem informasi geografis (WebGIS).
+                            <b>Sistem Informasi Peruntukan Tata Ruang (SIPET) Desa Wunut</b> merupakan inovasi pelayanan publik berbasis digital dan sistem informasi geografis (WebGIS). Sistem ini memetakan klasifikasi sub-zona tata ruang dan informasi status kepemilikan bidang tanah secara detail. 
                         </p>
                         <hr style="margin: 50px 0; border: 0; border-top: 2px dashed #e2e8f0;">
                         <h3 style="color: var(--green-deep); font-size: 1.5rem; margin-bottom: 10px;">Tim Penyusun</h3>
@@ -275,6 +276,8 @@
                         <div class="team-grid">
                             <div class="team-member"><div class="team-avatar" style="background: var(--green-soft); color: var(--green-deep);"><i class="fa-solid fa-user-graduate"></i></div><h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">Maharani Quinn Qonita</h4><p style="margin: 0; font-size: 13px; color: #64748b; font-weight: 600;">D4 - PTRP</p></div>
                             <div class="team-member"><div class="team-avatar"><i class="fa-solid fa-user"></i></div><h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">[Nama Anggota 2]</h4><p style="margin: 0; font-size: 13px; color: #64748b;">[Program Studi]</p></div>
+                            <div class="team-member"><div class="team-avatar"><i class="fa-solid fa-user"></i></div><h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">[Nama Anggota 3]</h4><p style="margin: 0; font-size: 13px; color: #64748b;">[Program Studi]</p></div>
+                            <div class="team-member"><div class="team-avatar"><i class="fa-solid fa-user"></i></div><h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">[Nama Anggota 4]</h4><p style="margin: 0; font-size: 13px; color: #64748b;">[Program Studi]</p></div>
                         </div>
                     </div>
                 </div>
@@ -328,7 +331,7 @@
 
 
     <script>
-        // Logika UI Login
+        // --- LOGIKA UI LOGIN ---
         function tampilkanPesan(text, color = '#ef4444') {
             const msgBox = document.getElementById('login-msg');
             msgBox.innerText = text; msgBox.style.color = color; msgBox.style.display = 'block';
@@ -370,8 +373,7 @@
         }
         document.getElementById("login-pass").addEventListener("keypress", function(event) { if (event.key === "Enter") { event.preventDefault(); prosesLoginAuth(); } });
 
-
-        // Logika Peta
+        // --- LOGIKA PETA & LEAFLET ---
         var polaRuangLayer; var bidangTanahLayer; var userMarker; var rawPolaRuangData = null; 
         const WUNUT_CENTER = [-7.5990, 110.6188]; const DEFAULT_ZOOM = 15;
 
@@ -401,24 +403,8 @@
         L.control.zoom({ position: 'topleft' }).addTo(map);
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
-        // ==========================================
-        // ALAT DIGITASI GEOMAN LEBIH RAPI (Diletakkan di Bawah Zoom Control)
-        // ==========================================
-        map.pm.addControls({
-            position: 'topleft', // Pindah ke kiri agar tidak nabrak alat kustom di kanan
-            drawMarker: true,
-            drawPolygon: true,
-            drawLine: true,
-            drawCircle: false,      // Disembunyikan agar muka peta bersih
-            drawCircleMarker: false,// Disembunyikan
-            drawText: false,        // Disembunyikan
-            editMode: true,
-            dragMode: false,        // Disembunyikan
-            cutPolygon: false,      // Disembunyikan
-            removalMode: true
-        });
+        map.pm.addControls({ position: 'topleft', drawMarker: true, drawPolygon: true, drawLine: true, drawCircle: false, drawCircleMarker: false, drawText: false, editMode: true, dragMode: false, cutPolygon: false, removalMode: true });
         map.pm.setPathOptions({ color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.4 });
-        // ==========================================
 
         var miniMap = L.map('mini-map', { center: WUNUT_CENTER, zoom: 10, layers: [osmMini], dragging: false, zoomControl: false, scrollWheelZoom: false });
         map.on('move', function() { miniMap.setView(map.getCenter(), map.getZoom() - 5); });
@@ -433,161 +419,72 @@
         map.on('locationfound', function(e) { if(userMarker) { map.removeLayer(userMarker); } userMarker = L.marker(e.latlng).addTo(map).bindPopup("Lokasi Anda Saat Ini").openPopup(); });
         function toggleFullScreen() { var elem = document.getElementById("main-map-container"); if (!document.fullscreenElement) { elem.requestFullscreen(); } else { document.exitFullscreen(); } }
 
-        // ==========================================
-        // SLIDER TRANSPARANSI MASING-MASING LAYER
-        // ==========================================
-        function changeOpacityPolaRuang(val) {
-            document.getElementById('val-op-pola').innerText = Math.round(val * 100) + '%';
-            if (polaRuangLayer) polaRuangLayer.setStyle({fillOpacity: val});
-        }
-        function changeOpacityBidangTanah(val) {
-            document.getElementById('val-op-bidang').innerText = Math.round(val * 100) + '%';
-            if (bidangTanahLayer) bidangTanahLayer.setStyle({fillOpacity: val});
-        }
+        function changeOpacityPolaRuang(val) { document.getElementById('val-op-pola').innerText = Math.round(val * 100) + '%'; if (polaRuangLayer) polaRuangLayer.setStyle({fillOpacity: val}); }
+        function changeOpacityBidangTanah(val) { document.getElementById('val-op-bidang').innerText = Math.round(val * 100) + '%'; if (bidangTanahLayer) bidangTanahLayer.setStyle({fillOpacity: val}); }
 
-        const subZonaColors = {
-            'Badan Air': '#99D9EA', 'Badan Jalan': '#ED1C24', 'Hortikultura': '#D4FF54', 'Instalasi Pengolahan Air Minum (IPAM)': '#F5B069', 'Kawasan Peruntukan Industri': '#6B0000', 'Pariwisata': '#FF9EED', 'Pemakaman': '#39FF14', 'Pengelolaan Persampahan': '#C48A3F', 'Perdagangan dan Jasa Skala SWP': '#FF9999', 'Perdagangan dan Jasa Skala WP': '#FF6666', 'Pergudangan': '#404040', 'Perikanan Budidaya': '#85C1E9', 'Perkantoran': '#999999', 'Perkebunan': '#A9B846', 'Perkebunan Rakyat': '#96E091', 'Pertahanan dan Keamanan': '#9400D3', 'Peternakan': '#C8F7C8', 'Ruang Terbuka Hijau': '#194D12', 'Ruang Terbuka Non Hijau': '#066B6B', 'Rumah Kepadatan Rendah': '#FEFA4E', 'Rumah Kepadatan Sangat Rendah': '#FCFCC0', 'Rumah Kepadatan Sedang': '#FFED00', 'Rumah Kepadatan Tinggi': '#FFC000', 'SPU Skala Kecamatan': '#9C43A8', 'SPU Skala Kelurahan': '#BA55D3', 'SPU Skala Kota': '#660066', 'SPU Skala RW': '#E475DF', 'Sempadan Sungai': '#E0FFFF', 'Sentra Industri Kecil Menengah': '#5C0000', 'Taman Kecamatan': '#398C15', 'Taman Kelurahan': '#B84CB8', 'Tanaman Pangan': '#B9F74F', 'Lainnya': '#dddddd'
-        };
+        const subZonaColors = { 'Badan Air': '#99D9EA', 'Badan Jalan': '#ED1C24', 'Hortikultura': '#D4FF54', 'Instalasi Pengolahan Air Minum (IPAM)': '#F5B069', 'Kawasan Peruntukan Industri': '#6B0000', 'Pariwisata': '#FF9EED', 'Pemakaman': '#39FF14', 'Pengelolaan Persampahan': '#C48A3F', 'Perdagangan dan Jasa Skala SWP': '#FF9999', 'Perdagangan dan Jasa Skala WP': '#FF6666', 'Pergudangan': '#404040', 'Perikanan Budidaya': '#85C1E9', 'Perkantoran': '#999999', 'Perkebunan': '#A9B846', 'Perkebunan Rakyat': '#96E091', 'Pertahanan dan Keamanan': '#9400D3', 'Peternakan': '#C8F7C8', 'Ruang Terbuka Hijau': '#194D12', 'Ruang Terbuka Non Hijau': '#066B6B', 'Rumah Kepadatan Rendah': '#FEFA4E', 'Rumah Kepadatan Sangat Rendah': '#FCFCC0', 'Rumah Kepadatan Sedang': '#FFED00', 'Rumah Kepadatan Tinggi': '#FFC000', 'SPU Skala Kecamatan': '#9C43A8', 'SPU Skala Kelurahan': '#BA55D3', 'SPU Skala Kota': '#660066', 'SPU Skala RW': '#E475DF', 'Sempadan Sungai': '#E0FFFF', 'Sentra Industri Kecil Menengah': '#5C0000', 'Taman Kecamatan': '#398C15', 'Taman Kelurahan': '#B84CB8', 'Tanaman Pangan': '#B9F74F', 'Lainnya': '#dddddd' };
         const statusColors = { 'Hak Guna Bangunan': '#387cc3', 'Hak Guna Usaha': '#df8c54', 'Hak Milik': '#f6d246', 'Hak Pakai': '#50c15d', 'Jaringan Jalan': '#cb1b1d', 'Kosong': '#a07f6e', 'Sungai': '#355cf8' };
 
-        // ==========================================
-        // LEGENDA SLIDE OUT LOGIC
-        // ==========================================
         function toggleLegendPanel() {
-            const wrapper = document.getElementById('slide-legend');
-            const icon = document.getElementById('legend-icon');
+            const wrapper = document.getElementById('slide-legend'); const icon = document.getElementById('legend-icon');
             wrapper.classList.toggle('open');
-            if (wrapper.classList.contains('open')) {
-                icon.classList.replace('fa-chevron-left', 'fa-chevron-right');
-            } else {
-                icon.classList.replace('fa-chevron-right', 'fa-chevron-left');
-            }
+            if (wrapper.classList.contains('open')) { icon.classList.replace('fa-chevron-left', 'fa-chevron-right'); } else { icon.classList.replace('fa-chevron-right', 'fa-chevron-left'); }
         }
 
         function renderLegend() {
-            const legWrapper = document.getElementById('slide-legend');
-            const legDiv = document.getElementById('legend-list-content');
-            legDiv.innerHTML = ''; 
-
-            const isPolaRuangActive = document.getElementById('check-polaruang').checked;
-            const isBidangTanahActive = document.getElementById('check-bidangtanah').checked;
-
-            if (isPolaRuangActive) {
-                legDiv.innerHTML += `<div style="font-size:11px; color:#888; margin-bottom:8px; text-transform:uppercase; font-weight:700;">• Pola Ruang (Sub Zona)</div>`;
-                for (const [key, color] of Object.entries(subZonaColors)) {
-                    if (key !== 'Lainnya') { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; }
-                }
-            }
-
-            if (isBidangTanahActive) {
-                legDiv.innerHTML += `<div style="font-size:11px; color:#888; margin-top:${isPolaRuangActive ? '15px' : '5px'}; margin-bottom:8px; text-transform:uppercase; font-weight:700;">• Bidang Tanah (Status)</div>`;
-                for (const [key, color] of Object.entries(statusColors)) {
-                    legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`;
-                }
-            }
-
-            // Jika tidak ada layer aktif, sembunyikan tombol legendanya
-            if (!isPolaRuangActive && !isBidangTanahActive) {
-                legWrapper.style.display = 'none';
-                legWrapper.classList.remove('open'); // tutup otomatis
-                document.getElementById('legend-icon').classList.replace('fa-chevron-right', 'fa-chevron-left');
-            } else {
-                legWrapper.style.display = 'flex';
-            }
+            const legWrapper = document.getElementById('slide-legend'); const legDiv = document.getElementById('legend-list-content'); legDiv.innerHTML = ''; 
+            const isPolaRuangActive = document.getElementById('check-polaruang').checked; const isBidangTanahActive = document.getElementById('check-bidangtanah').checked;
+            if (isPolaRuangActive) { legDiv.innerHTML += `<div style="font-size:11px; color:#888; margin-bottom:8px; text-transform:uppercase; font-weight:700;">• Pola Ruang (Sub Zona)</div>`; for (const [key, color] of Object.entries(subZonaColors)) { if (key !== 'Lainnya') { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } } }
+            if (isBidangTanahActive) { legDiv.innerHTML += `<div style="font-size:11px; color:#888; margin-top:${isPolaRuangActive ? '15px' : '5px'}; margin-bottom:8px; text-transform:uppercase; font-weight:700;">• Bidang Tanah (Status)</div>`; for (const [key, color] of Object.entries(statusColors)) { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } }
+            if (!isPolaRuangActive && !isBidangTanahActive) { legWrapper.style.display = 'none'; legWrapper.classList.remove('open'); document.getElementById('legend-icon').classList.replace('fa-chevron-right', 'fa-chevron-left'); } else { legWrapper.style.display = 'flex'; }
         }
 
         function toggleLayers() {
-            const checkPolaRuang = document.getElementById('check-polaruang').checked;
-            const checkBidangTanah = document.getElementById('check-bidangtanah').checked;
-
-            if (checkPolaRuang && polaRuangLayer) { if (!map.hasLayer(polaRuangLayer)) map.addLayer(polaRuangLayer); } 
-            else if (polaRuangLayer) { map.removeLayer(polaRuangLayer); }
-
-            if (checkBidangTanah && bidangTanahLayer) { if (!map.hasLayer(bidangTanahLayer)) map.addLayer(bidangTanahLayer); } 
-            else if (bidangTanahLayer) { map.removeLayer(bidangTanahLayer); }
-
+            const checkPolaRuang = document.getElementById('check-polaruang').checked; const checkBidangTanah = document.getElementById('check-bidangtanah').checked;
+            if (checkPolaRuang && polaRuangLayer) { if (!map.hasLayer(polaRuangLayer)) map.addLayer(polaRuangLayer); } else if (polaRuangLayer) { map.removeLayer(polaRuangLayer); }
+            if (checkBidangTanah && bidangTanahLayer) { if (!map.hasLayer(bidangTanahLayer)) map.addLayer(bidangTanahLayer); } else if (bidangTanahLayer) { map.removeLayer(bidangTanahLayer); }
             renderLegend(); 
         }
 
-        function stylePolaRuang(feature) {
-            let val = getPropValue(feature.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona');
-            let currentOp = document.getElementById('opacity-polaruang') ? parseFloat(document.getElementById('opacity-polaruang').value) : 0.8;
-            return { fillColor: subZonaColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: currentOp };
-        }
+        function stylePolaRuang(feature) { let val = getPropValue(feature.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona'); let currentOp = document.getElementById('opacity-polaruang') ? parseFloat(document.getElementById('opacity-polaruang').value) : 0.8; return { fillColor: subZonaColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: currentOp }; }
+        function styleBidangTanah(feature) { let val = getPropValue(feature.properties, 'STATUS', 'Status', 'status'); let currentOp = document.getElementById('opacity-bidangtanah') ? parseFloat(document.getElementById('opacity-bidangtanah').value) : 0.8; return { fillColor: statusColors[val] || '#cccccc', weight: 1.2, opacity: 1, color: '#444444', fillOpacity: currentOp }; }
 
-        function styleBidangTanah(feature) {
-            let val = getPropValue(feature.properties, 'STATUS', 'Status', 'status');
-            let currentOp = document.getElementById('opacity-bidangtanah') ? parseFloat(document.getElementById('opacity-bidangtanah').value) : 0.8;
-            return { fillColor: statusColors[val] || '#cccccc', weight: 1.2, opacity: 1, color: '#444444', fillOpacity: currentOp };
-        }
-
-        fetch('polaruangwunutbaru.geojson')
-            .then(res => res.json())
-            .then(data => {
-                rawPolaRuangData = data;
-                polaRuangLayer = L.geoJSON(data, {
-                    style: stylePolaRuang,
-                    onEachFeature: function(f, l) {
-                        let kode = getPropValue(f.properties, 'KODE', 'Kode', 'kode'); let zona = getPropValue(f.properties, 'ZONA', 'Zona', 'zona'); let subZona = getPropValue(f.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona');
-                        let popupContent = `
-                            <div style="font-family:'Inter', sans-serif; min-width: 200px;">
-                                <b style="color:var(--purple-deep); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--green-soft); padding-bottom:5px;">Informasi Pola Ruang</b>
-                                <table style="width:100%; font-size:12px; border-collapse: collapse;">
-                                    <tr><td style="padding:4px 0; font-weight:700; width:35%;">Kode</td><td style="padding:4px 0; color:#475569;">: ${kode}</td></tr>
-                                    <tr><td style="padding:4px 0; font-weight:700; vertical-align:top;">Zona</td><td style="padding:4px 0; color:#475569;">: ${zona}</td></tr>
-                                    <tr><td style="padding:6px 0 4px; font-weight:700; vertical-align:middle;">Sub Zona</td>
-                                        <td style="padding:6px 0 4px;">: <span style="display:inline-block; background:${subZonaColors[subZona] || '#ddd'}; color:${['Badan Jalan', 'Kawasan Peruntukan Industri', 'Sentra Industri Kecil Menengah', 'Pertahanan dan Keamanan', 'SPU Skala Kota'].includes(subZona) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">${subZona}</span></td></tr>
-                                </table>
-                            </div>
-                        `;
-                        l.bindPopup(popupContent);
-                        l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); });
-                        l.on('mouseout', function(e) { polaRuangLayer.resetStyle(e.target); });
-                    }
-                });
-                if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer);
-                renderLegend();
-            }).catch(e => console.error("Gagal Muat Data:", e));
-
-        fetch('bidangtanahwunut.geojson')
-            .then(res => res.json())
-            .then(data => {
-                bidangTanahLayer = L.geoJSON(data, {
-                    style: styleBidangTanah,
-                    onEachFeature: function(f, l) {
-                        let status = getPropValue(f.properties, 'STATUS', 'Status', 'status'); let luas = getPropValue(f.properties, 'Luas', 'LUAS', 'luas');
-                        let popupContent = `
-                            <div style="font-family:'Inter', sans-serif; min-width: 180px;">
-                                <b style="color:var(--purple-deep); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--green-soft); padding-bottom:5px;">Informasi Bidang Tanah</b>
-                                <table style="width:100%; font-size:12px; border-collapse: collapse;">
-                                    <tr><td style="padding:6px 0; font-weight:700; width:40%; vertical-align:middle;">Status</td>
-                                        <td style="padding:6px 0;">: <span style="display:inline-block; background:${statusColors[status] || '#ddd'}; color:${['Jaringan Jalan', 'Sungai', 'Hak Guna Bangunan'].includes(status) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">${status}</span></td></tr>
-                                    <tr><td style="padding:4px 0; font-weight:700;">Luas</td><td style="padding:4px 0; color:#475569;">: ${luas} m²</td></tr>
-                                </table>
-                            </div>
-                        `;
-                        l.bindPopup(popupContent);
-                        l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); });
-                        l.on('mouseout', function(e) { bidangTanahLayer.resetStyle(e.target); });
-                    }
-                });
-                if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer);
-                renderLegend();
+        fetch('polaruangwunutbaru.geojson').then(res => res.json()).then(data => {
+            rawPolaRuangData = data;
+            polaRuangLayer = L.geoJSON(data, {
+                style: stylePolaRuang,
+                onEachFeature: function(f, l) {
+                    let kode = getPropValue(f.properties, 'KODE', 'Kode', 'kode'); let zona = getPropValue(f.properties, 'ZONA', 'Zona', 'zona'); let subZona = getPropValue(f.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona');
+                    let popupContent = `<div style="font-family:'Inter', sans-serif; min-width: 200px;"><b style="color:var(--purple-deep); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--green-soft); padding-bottom:5px;">Informasi Pola Ruang</b><table style="width:100%; font-size:12px; border-collapse: collapse;"><tr><td style="padding:4px 0; font-weight:700; width:35%;">Kode</td><td style="padding:4px 0; color:#475569;">: ${kode}</td></tr><tr><td style="padding:4px 0; font-weight:700; vertical-align:top;">Zona</td><td style="padding:4px 0; color:#475569;">: ${zona}</td></tr><tr><td style="padding:6px 0 4px; font-weight:700; vertical-align:middle;">Sub Zona</td><td style="padding:6px 0 4px;">: <span style="display:inline-block; background:${subZonaColors[subZona] || '#ddd'}; color:${['Badan Jalan', 'Kawasan Peruntukan Industri', 'Sentra Industri Kecil Menengah', 'Pertahanan dan Keamanan', 'SPU Skala Kota'].includes(subZona) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">${subZona}</span></td></tr></table></div>`;
+                    l.bindPopup(popupContent); l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); }); l.on('mouseout', function(e) { polaRuangLayer.resetStyle(e.target); });
+                }
             });
+            if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer); renderLegend();
+        }).catch(e => console.error("Gagal Muat Data Pola Ruang:", e));
+
+        fetch('bidangtanahwunut.geojson').then(res => res.json()).then(data => {
+            bidangTanahLayer = L.geoJSON(data, {
+                style: styleBidangTanah,
+                onEachFeature: function(f, l) {
+                    let status = getPropValue(f.properties, 'STATUS', 'Status', 'status'); let luas = getPropValue(f.properties, 'Luas', 'LUAS', 'luas');
+                    let popupContent = `<div style="font-family:'Inter', sans-serif; min-width: 180px;"><b style="color:var(--purple-deep); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--green-soft); padding-bottom:5px;">Informasi Bidang Tanah</b><table style="width:100%; font-size:12px; border-collapse: collapse;"><tr><td style="padding:6px 0; font-weight:700; width:40%; vertical-align:middle;">Status</td><td style="padding:6px 0;">: <span style="display:inline-block; background:${statusColors[status] || '#ddd'}; color:${['Jaringan Jalan', 'Sungai', 'Hak Guna Bangunan'].includes(status) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">${status}</span></td></tr><tr><td style="padding:4px 0; font-weight:700;">Luas</td><td style="padding:4px 0; color:#475569;">: ${luas} m²</td></tr></table></div>`;
+                    l.bindPopup(popupContent); l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); }); l.on('mouseout', function(e) { bidangTanahLayer.resetStyle(e.target); });
+                }
+            });
+            if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer); renderLegend();
+        }).catch(e => console.error("Gagal Muat Data Bidang Tanah:", e));
 
         function downloadData() {
             if (!rawPolaRuangData || !rawPolaRuangData.features) { alert("Data Pola Ruang belum siap. Tunggu sebentar..."); return; }
             try {
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rawPolaRuangData));
-                const dlAnchorElem = document.createElement('a');
-                dlAnchorElem.setAttribute("href", dataStr); dlAnchorElem.setAttribute("download", "Pola_Ruang_Wunut.geojson");
+                const dlAnchorElem = document.createElement('a'); dlAnchorElem.setAttribute("href", dataStr); dlAnchorElem.setAttribute("download", "Pola_Ruang_Wunut.geojson");
                 document.body.appendChild(dlAnchorElem); dlAnchorElem.click(); dlAnchorElem.remove();
             } catch (error) { alert("Terjadi kesalahan saat mengunduh data."); }
         }
 
         function loadKML(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+            const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -599,6 +496,42 @@
             };
             reader.readAsText(file);
         }
+
+        // ==========================================
+        // VISUALISASI DATA (APEXCHARTS)
+        // ==========================================
+        
+        // 1. Grafik Dinamika Penduduk
+        var optionsDinamika = {
+            series: [{ name: 'Kelahiran', data: [20, 16, 7, 17, 24, 10] }, { name: 'Kematian', data: [8, 18, 9, 18, 21, 23] }],
+            chart: { type: 'area', height: 350, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
+            colors: ['#53B288', '#ef4444'],
+            dataLabels: { enabled: false }, stroke: { curve: 'smooth', width: 3 },
+            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
+            xaxis: { categories: ['2020', '2021', '2022', '2023', '2024', '2025'], tooltip: { enabled: false } },
+            markers: { size: 5, hover: { size: 7 } }, legend: { position: 'top', horizontalAlign: 'right' }
+        };
+        var chartDinamika = new ApexCharts(document.querySelector("#chart-dinamika"), optionsDinamika);
+        chartDinamika.render();
+
+        // 2. Grafik Piramida Penduduk
+        var optionsPiramida = {
+            series: [
+                { name: 'Laki-laki', data: [-97, -74, -99, -78, -65, -107, -77, -67, -104, -79, -81, -70, -56, -32, -21, -25] }, 
+                { name: 'Perempuan', data: [81, 86, 86, 91, 77, 82, 76, 84, 90, 78, 82, 66, 58, 48, 24, 49] }
+            ],
+            chart: { type: 'bar', stacked: true, height: 380, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
+            colors: ['#38bdf8', '#FF9EED'],
+            plotOptions: { bar: { horizontal: true, barHeight: '85%', borderRadius: 2 } },
+            dataLabels: { enabled: false }, stroke: { width: 1, colors: ["#fff"] },
+            grid: { xaxis: { lines: { show: true } }, yaxis: { lines: { show: false } } },
+            yaxis: { title: { text: 'Kelompok Umur (Tahun)', style: { fontWeight: 600 } } },
+            tooltip: { shared: false, x: { formatter: function (val) { return val; } }, y: { formatter: function (val) { return Math.abs(val) + " Jiwa"; } } },
+            xaxis: { categories: ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '>75'], labels: { formatter: function (val) { return Math.abs(Math.round(val)); } } },
+            legend: { position: 'top', horizontalAlign: 'right' }
+        };
+        var chartPiramida = new ApexCharts(document.querySelector("#chart-piramida"), optionsPiramida);
+        chartPiramida.render();
     </script>
 </body>
 </html>
