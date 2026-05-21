@@ -16,8 +16,6 @@
 
     <script src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
 
-    <script src="https://unpkg.com/shp-write@latest/shpwrite.js"></script>
-
     <style>
         :root {
             --purple-light: #A497C4;
@@ -116,6 +114,11 @@
         
         .map-layout { display: grid; grid-template-columns: 350px 1fr; gap: 25px; max-width: 1400px; margin: 0 auto; padding: 0 30px; }
         .sidebar-card { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); height: 75vh; overflow-y: auto; }
+        
+        /* Modifikasi z-index agar sidebar selalu di atas saat scroll */
+        .sidebar-card::-webkit-scrollbar { width: 6px; }
+        .sidebar-card::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 10px; }
+
         #main-map-container { height: 75vh; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.04); position: relative; background: var(--white); }
         #map { height: 100%; width: 100%; }
 
@@ -125,14 +128,11 @@
 
         .north-arrow { position: absolute; top: 85px; left: 10px; z-index: 1000; background: rgba(255, 255, 255, 0.9); padding: 5px 8px; border-radius: 6px; border: 2px solid rgba(0,0,0,0.1); text-align: center; pointer-events: none; }
 
-        .map-legend { position: absolute; bottom: 35px; left: 10px; z-index: 1000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px); padding: 15px; border-radius: 10px; border: 2px solid rgba(0,0,0,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-height: 50vh; width: 220px; overflow-y: auto; display: none; }
-
         #mini-map { position: absolute; bottom: 20px; right: 20px; width: 180px; height: 130px; background: white; z-index: 999; border-radius: 12px; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.2); pointer-events: none; }
 
         .legend-title { font-weight: 700; color: var(--purple-deep); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .legend-list { list-style: none; padding: 0; }
         .legend-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 13px; font-weight: 600; }
-        .color-box { width: 18px; height: 18px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.1); }
+        .color-box { width: 18px; height: 18px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; }
 
         footer { background: #333; color: white; padding: 60px 0 30px; }
         .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 50px; padding: 0 30px; }
@@ -143,10 +143,6 @@
         .social-links { display: flex; gap: 15px; }
         .social-btn { width: 45px; height: 45px; background: #444; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: var(--transition); }
         .social-btn:hover { background: var(--purple-deep); transform: scale(1.1); }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 10px; }
         
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--purple-deep); cursor: pointer; margin-top: -6px; }
@@ -164,11 +160,9 @@
         <div class="login-card fade-in">
             <div class="logo-wrapper">
                 <div class="animated-water-logo" style="width: 60px; height: 60px; margin-right: 0;">
-                    <div class="water-wave"></div>
-                    <div class="water-wave"></div>
+                    <div class="water-wave"></div><div class="water-wave"></div>
                 </div>
             </div>
-            
             <h2>SIPET WUNUT</h2>
             <p>Silakan masuk atau daftar untuk mengakses sistem</p>
             
@@ -177,7 +171,6 @@
             
             <button class="login-btn" onclick="prosesLoginAuth()" style="margin-bottom: 10px;">MASUK</button>
             <button class="login-btn" onclick="prosesDaftarAuth()" style="background: var(--purple-light);">DAFTAR AKUN BARU</button>
-            
             <div id="login-msg" class="login-error"></div>
         </div>
     </div>
@@ -186,8 +179,7 @@
         <header>
             <div class="logo-box logo-wrapper">
                 <div class="animated-water-logo">
-                    <div class="water-wave"></div>
-                    <div class="water-wave"></div>
+                    <div class="water-wave"></div><div class="water-wave"></div>
                 </div>
                 <h1>SIPET <span>WUNUT</span></h1>
             </div>
@@ -207,28 +199,16 @@
                         <h2>DESA WUNUT</h2>
                     </div>
                 </div>
-
                 <div class="stats-grid">
-                    <div class="stat-item fade-in">
-                        <i class="fa-solid fa-map-location-dot"></i>
-                        <h3 id="stat-luas">720</h3>
-                        <p>Luas Wilayah (Ha)</p>
-                    </div>
-                    <div class="stat-item fade-in" style="animation-delay: 0.2s;">
-                        <i class="fa-solid fa-people-group"></i>
-                        <h3 id="stat-penduduk">2,290</h3>
-                        <p>Total Penduduk</p>
-                    </div>
-                    <div class="stat-item fade-in" style="animation-delay: 0.4s;">
-                        <i class="fa-solid fa-droplet"></i>
-                        <h3 id="stat-air">15</h3>
-                        <p>Titik Mata Air</p>
-                    </div>
+                    <div class="stat-item fade-in"><i class="fa-solid fa-map-location-dot"></i><h3 id="stat-luas">720</h3><p>Luas Wilayah (Ha)</p></div>
+                    <div class="stat-item fade-in" style="animation-delay: 0.2s;"><i class="fa-solid fa-people-group"></i><h3 id="stat-penduduk">2,290</h3><p>Total Penduduk</p></div>
+                    <div class="stat-item fade-in" style="animation-delay: 0.4s;"><i class="fa-solid fa-droplet"></i><h3 id="stat-air">15</h3><p>Titik Mata Air</p></div>
                 </div>
             </div>
 
             <div id="peta" class="content-section">
                 <div class="map-layout">
+                    
                     <div class="sidebar-card">
                         <div class="legend-title"><i class="fa-solid fa-layer-group"></i> Basemap</div>
                         <div style="margin-bottom: 25px; background: var(--bg-body); padding: 15px; border-radius: 12px;">
@@ -251,25 +231,28 @@
                         </div>
                         
                         <div class="legend-title"><i class="fa-solid fa-droplet"></i> Transparansi</div>
-                        <div style="background: var(--bg-body); padding: 15px; border-radius: 12px;">
+                        <div style="background: var(--bg-body); padding: 15px; border-radius: 12px; margin-bottom: 25px;">
                             <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:10px; color:#64748b; font-weight:600;">
-                                <span>0%</span>
-                                <span>100%</span>
+                                <span>0%</span><span>100%</span>
                             </div>
                             <input type="range" id="opacity-slider" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacity(this.value)">
                         </div>
 
-                        <div class="legend-title" style="margin-top: 25px;"><i class="fa-solid fa-toolbox"></i> Alat Analisis Spasial</div>
+                        <div class="legend-title"><i class="fa-solid fa-toolbox"></i> Alat Analisis</div>
                         <div style="background: var(--bg-body); padding: 15px; border-radius: 12px;">
-                            
-                            <button class="map-action-btn" style="width: 100%; height: auto; padding: 10px; margin-bottom: 15px; font-size: 13px; font-weight: 700; background: var(--purple-deep); color: white;" onclick="downloadSHP()">
-                                <i class="fa-solid fa-download"></i> Ekspor SHP Pola Ruang
+                            <button class="map-action-btn" style="width: 100%; height: auto; padding: 10px; margin-bottom: 15px; font-size: 13px; font-weight: 700; background: var(--purple-deep); color: white;" onclick="downloadData()">
+                                <i class="fa-solid fa-download"></i> Unduh Data (GeoJSON)
                             </button>
 
                             <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-dark);">
                                 <i class="fa-solid fa-upload"></i> Unggah File KML:
                             </label>
                             <input type="file" id="kml-upload" accept=".kml" style="width: 100%; font-size: 12px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px;" onchange="loadKML(event)">
+                        </div>
+
+                        <div id="sidebar-legend-container" style="display: none; margin-top: 25px;">
+                            <div class="legend-title" style="color: var(--green-deep);"><i class="fa-solid fa-list-check"></i> Keterangan Legenda</div>
+                            <div id="legend-list" style="background: var(--bg-body); padding: 15px; border-radius: 12px; max-height: 250px; overflow-y: auto;"></div>
                         </div>
 
                     </div>
@@ -283,20 +266,9 @@
                         </div>
 
                         <div class="custom-map-controls">
-                            <button class="map-action-btn" onclick="goHome()" title="Kembali ke Desa Wunut">
-                                <i class="fa-solid fa-house"></i>
-                            </button>
-                            <button class="map-action-btn" onclick="findLocation()" title="Cari Lokasi Saya">
-                                <i class="fa-solid fa-location-crosshairs"></i>
-                            </button>
-                            <button class="map-action-btn" onclick="toggleFullScreen()" title="Layar Penuh">
-                                <i class="fa-solid fa-expand"></i>
-                            </button>
-                        </div>
-
-                        <div id="map-legend" class="map-legend">
-                            <div class="legend-title" style="margin-bottom: 10px; font-size: 14px;"><i class="fa-solid fa-list-check"></i> Legenda</div>
-                            <div id="legend-list" class="legend-list"></div>
+                            <button class="map-action-btn" onclick="goHome()" title="Kembali ke Desa Wunut"><i class="fa-solid fa-house"></i></button>
+                            <button class="map-action-btn" onclick="findLocation()" title="Cari Lokasi Saya"><i class="fa-solid fa-location-crosshairs"></i></button>
+                            <button class="map-action-btn" onclick="toggleFullScreen()" title="Layar Penuh"><i class="fa-solid fa-expand"></i></button>
                         </div>
 
                         <div id="mini-map"></div> 
@@ -309,50 +281,16 @@
                     <div style="background: white; padding: 60px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center;">
                         <i class="fa-solid fa-map-location-dot" style="font-size: 3.5rem; color: var(--purple-deep); margin-bottom: 25px;"></i>
                         <h2 style="color: var(--purple-deep); font-size: 2rem; margin-top: 0;">Tentang SIPET Wunut</h2>
-                        
                         <p style="line-height: 1.9; color: #475569; text-align: justify; font-size: 15px; margin-bottom: 20px;">
-                            <b>Sistem Informasi Peruntukan Tata Ruang (SIPET) Desa Wunut</b> merupakan inovasi pelayanan publik berbasis digital dan sistem informasi geografis (WebGIS). Sistem ini dirancang secara khusus untuk mewujudkan transparansi dan keterbukaan informasi mengenai penataan ruang di wilayah Desa Wunut, Kecamatan Tulung, Kabupaten Klaten. Melalui SIPET, data spasial yang sebelumnya bersifat teknis dan sulit diakses kini dapat dipahami dengan mudah melalui visualisasi peta interaktif.
+                            <b>Sistem Informasi Peruntukan Tata Ruang (SIPET) Desa Wunut</b> merupakan inovasi pelayanan publik berbasis digital dan sistem informasi geografis (WebGIS).
                         </p>
-                        <p style="line-height: 1.9; color: #475569; text-align: justify; font-size: 15px;">
-                            Platform ini memetakan klasifikasi sub-zona tata ruang dan informasi status kepemilikan bidang tanah secara detail. Kehadiran SIPET Wunut diharapkan dapat menjadi jembatan informasi yang efektif, tidak hanya bagi aparatur desa dalam mengambil kebijakan berbasis data (<i>data-driven policy</i>), tetapi juga memberikan kepastian informasi bagi masyarakat umum, akademisi, hingga calon investor dalam melihat potensi optimal dari pemanfaatan tata lahan di Desa Wunut.
-                        </p>
-
                         <hr style="margin: 50px 0; border: 0; border-top: 2px dashed #e2e8f0;">
-                        
                         <h3 style="color: var(--green-deep); font-size: 1.5rem; margin-bottom: 10px;">Tim Penyusun</h3>
                         <p style="color: #64748b; font-size: 14px; margin-bottom: 30px;">Dikembangkan secara kolaboratif oleh <b>Kelompok C4</b></p>
-                        
                         <div class="team-grid">
-                            <div class="team-member">
-                                <div class="team-avatar" style="background: var(--green-soft); color: var(--green-deep);">
-                                    <i class="fa-solid fa-user-graduate"></i>
-                                </div>
-                                <h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">Maharani Quinn Qonita</h4>
-                                <p style="margin: 0; font-size: 13px; color: #64748b; font-weight: 600;">D4 - PTRP</p>
-                            </div>
-                            <div class="team-member">
-                                <div class="team-avatar">
-                                    <i class="fa-solid fa-user"></i>
-                                </div>
-                                <h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">[Nama Anggota 2]</h4>
-                                <p style="margin: 0; font-size: 13px; color: #64748b;">[Program Studi]</p>
-                            </div>
-                            <div class="team-member">
-                                <div class="team-avatar">
-                                    <i class="fa-solid fa-user"></i>
-                                </div>
-                                <h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">[Nama Anggota 3]</h4>
-                                <p style="margin: 0; font-size: 13px; color: #64748b;">[Program Studi]</p>
-                            </div>
-                            <div class="team-member">
-                                <div class="team-avatar">
-                                    <i class="fa-solid fa-user"></i>
-                                </div>
-                                <h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">[Nama Anggota 4]</h4>
-                                <p style="margin: 0; font-size: 13px; color: #64748b;">[Program Studi]</p>
-                            </div>
+                            <div class="team-member"><div class="team-avatar" style="background: var(--green-soft); color: var(--green-deep);"><i class="fa-solid fa-user-graduate"></i></div><h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">Maharani Quinn Qonita</h4><p style="margin: 0; font-size: 13px; color: #64748b; font-weight: 600;">D4 - PTRP</p></div>
+                            <div class="team-member"><div class="team-avatar"><i class="fa-solid fa-user"></i></div><h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">[Nama Anggota 2]</h4><p style="margin: 0; font-size: 13px; color: #64748b;">[Program Studi]</p></div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -362,25 +300,19 @@
             <div class="footer-grid">
                 <div>
                     <div class="footer-title">Lokasi Kampus</div>
-                    <div class="footer-map-box">
-                        <iframe src="https://maps.google.com/maps?q=Sekolah%20Vokasi%20Universitas%20Diponegoro%20Semarang&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                    </div>
+                    <div class="footer-map-box"><iframe src="https://maps.google.com/maps?q=Sekolah%20Vokasi%20Universitas%20Diponegoro%20Semarang&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe></div>
                 </div>
-
                 <div class="contact-info">
                     <div class="footer-title">Informasi Kontak</div>
-                    <p><i class="fa-solid fa-location-dot"></i> <span>Gedung Sekolah Vokasi, Kampus UNDIP, Jl. Prof. Soedarto, Tembalang, Kota Semarang, Jawa Tengah 50275</span></p>
+                    <p><i class="fa-solid fa-location-dot"></i> <span>Gedung Sekolah Vokasi, Kampus UNDIP, Tembalang, Semarang</span></p>
                     <p><i class="fa-solid fa-phone"></i> <span>0858-7765-3014</span></p>
                     <p><i class="fa-solid fa-envelope"></i> <span>kelompokc4wnt@gmail.com</span></p>
                 </div>
-
                 <div>
                     <div class="footer-title">Media Sosial</div>
                     <div class="social-links">
                         <a href="#" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
                         <a href="#" class="social-btn"><i class="fa-brands fa-youtube"></i></a>
-                        <a href="#" class="social-btn"><i class="fa-brands fa-x-twitter"></i></a>
                     </div>
                     <p style="font-size: 12px; color: #777; margin-top: 30px;">© 2024 Kelompok C4. All Rights Reserved.</p>
                 </div>
@@ -393,7 +325,6 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } 
         from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 
-        // Kunci Rahasia Firebase milikmu
         const firebaseConfig = {
             apiKey: "AIzaSyA9Wu4aZNC5ai-UovFyF4al9Prl04xPrFk",
             authDomain: "sipewunut.firebaseapp.com",
@@ -404,11 +335,9 @@
             measurementId: "G-9MLXMTP7PN"
         };
 
-        // Menyalakan Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Menjadikan fungsi Firebase bisa dipakai oleh tombol di HTML
         window.firebaseAuth = auth;
         window.signIn = signInWithEmailAndPassword;
         window.signUp = createUserWithEmailAndPassword;
@@ -417,12 +346,10 @@
 
 
     <script>
-        // --- LOGIKA SISTEM AUTENTIKASI ---
+        // Logika Firebase UI
         function tampilkanPesan(text, color = '#ef4444') {
             const msgBox = document.getElementById('login-msg');
-            msgBox.innerText = text;
-            msgBox.style.color = color;
-            msgBox.style.display = 'block';
+            msgBox.innerText = text; msgBox.style.color = color; msgBox.style.display = 'block';
         }
 
         function tanganiPesanError(code) {
@@ -437,39 +364,24 @@
             }
         }
 
-        // Fungsi Tombol Daftar
         function prosesDaftarAuth() {
             const email = document.getElementById('login-user').value;
             const pass = document.getElementById('login-pass').value;
-            if (!email || !pass) {
-                tampilkanPesan("Isi email dan password terlebih dahulu!");
-                return;
-            }
+            if (!email || !pass) { tampilkanPesan("Isi email dan password terlebih dahulu!"); return; }
             if(window.signUp) {
                 window.signUp(window.firebaseAuth, email, pass)
-                    .then(() => {
-                        tampilkanPesan("Akun berhasil dibuat! Silakan klik tombol MASUK.", "#378D68");
-                    })
-                    .catch((error) => {
-                        tampilkanPesan(tanganiPesanError(error.code));
-                    });
-            } else {
-                tampilkanPesan("Sistem keamanan sedang dimuat, tunggu sebentar...");
+                    .then(() => { tampilkanPesan("Akun berhasil dibuat! Silakan klik tombol MASUK.", "#378D68"); })
+                    .catch((error) => { tampilkanPesan(tanganiPesanError(error.code)); });
             }
         }
 
-        // Fungsi Tombol Masuk
         function prosesLoginAuth() {
             const email = document.getElementById('login-user').value;
             const pass = document.getElementById('login-pass').value;
-            if (!email || !pass) {
-                tampilkanPesan("Isi email dan password terlebih dahulu!");
-                return;
-            }
+            if (!email || !pass) { tampilkanPesan("Isi email dan password terlebih dahulu!"); return; }
             if(window.signIn) {
                 window.signIn(window.firebaseAuth, email, pass)
                     .then(() => {
-                        // Jika berhasil masuk, hilangkan halaman login dan buka peta
                         document.getElementById('login-msg').style.display = 'none';
                         document.getElementById('login-overlay').style.opacity = '0';
                         setTimeout(() => {
@@ -478,13 +390,10 @@
                             triggerMapResize();
                         }, 500);
                     })
-                    .catch((error) => {
-                        tampilkanPesan(tanganiPesanError(error.code));
-                    });
+                    .catch((error) => { tampilkanPesan(tanganiPesanError(error.code)); });
             }
         }
 
-        // Fungsi Tombol Keluar (Logout)
         function logoutAuth() {
             if(window.logOut) {
                 window.logOut(window.firebaseAuth).then(() => {
@@ -498,20 +407,15 @@
             }
         }
 
-        // Otomatis menekan tombol Masuk saat tekan 'Enter' di keyboard
         document.getElementById("login-pass").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                prosesLoginAuth();
-            }
+            if (event.key === "Enter") { event.preventDefault(); prosesLoginAuth(); }
         });
-        // ---------------------------------------------
 
-
+        // Setup Leaflet
         var polaRuangLayer;
         var bidangTanahLayer;
         var userMarker;
-        var rawPolaRuangData = null; // Menampung raw GeoJSON untuk keperluan ekspor SHP
+        var rawPolaRuangData = null; 
 
         const WUNUT_CENTER = [-7.5990, 110.6188];
         const DEFAULT_ZOOM = 15;
@@ -534,7 +438,6 @@
         function switchTab(id) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-            
             document.getElementById(id).classList.add('active-section');
             document.getElementById('btn-' + id).classList.add('active');
             window.scrollTo(0, 0);
@@ -542,11 +445,8 @@
             if(id === 'peta') { 
                 setTimeout(triggerMapResize, 100); setTimeout(triggerMapResize, 300); 
                 setTimeout(triggerMapResize, 600); setTimeout(triggerMapResize, 1000); 
-
                 if (polaRuangLayer && document.getElementById('check-polaruang').checked) {
                     setTimeout(() => { map.fitBounds(polaRuangLayer.getBounds(), { padding: [30, 30] }); }, 400);
-                } else if (bidangTanahLayer && document.getElementById('check-bidangtanah').checked) {
-                    setTimeout(() => { map.fitBounds(bidangTanahLayer.getBounds(), { padding: [30, 30] }); }, 400);
                 }
             }
         }
@@ -558,22 +458,23 @@
 
         var map = L.map('map', { center: WUNUT_CENTER, zoom: DEFAULT_ZOOM, layers: [osmMain], zoomControl: false });
         L.control.zoom({ position: 'topleft' }).addTo(map);
-        
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
         // ==========================================
-        // DIGITASI DI ATAS PETA (GEOMAN)
+        // PERBAIKAN 2: UI DIGITASI DIRAPIKAN
+        // Dipindah ke Kanan, Tool yang tidak perlu dimatikan
         // ==========================================
         map.pm.addControls({
-            position: 'topleft',
+            position: 'topright',
             drawMarker: true,
             drawPolygon: true,
             drawLine: true,
             drawCircle: false,      
             drawCircleMarker: false,
+            drawText: false,
             editMode: true,
-            dragMode: true,
-            cutPolygon: true,
+            dragMode: false, // Dimatikan agar tidak ganggu
+            cutPolygon: false, // Dimatikan agar tidak ganggu
             removalMode: true
         });
 
@@ -581,7 +482,6 @@
         // ==========================================
 
         var miniMap = L.map('mini-map', { center: WUNUT_CENTER, zoom: 10, layers: [osmMini], dragging: false, zoomControl: false, scrollWheelZoom: false });
-
         map.on('move', function() { miniMap.setView(map.getCenter(), map.getZoom() - 5); });
         new ResizeObserver(triggerMapResize).observe(document.getElementById('peta'));
 
@@ -603,24 +503,15 @@
             }
         }
 
-        function findLocation() {
-            map.locate({setView: true, maxZoom: 16});
-        }
+        function findLocation() { map.locate({setView: true, maxZoom: 16}); }
         map.on('locationfound', function(e) {
             if(userMarker) { map.removeLayer(userMarker); }
             userMarker = L.marker(e.latlng).addTo(map).bindPopup("Lokasi Anda Saat Ini").openPopup();
         });
-        map.on('locationerror', function(e) {
-            alert("Akses lokasi ditolak atau perangkat tidak mendukung.");
-        });
-
+        
         function toggleFullScreen() {
             var elem = document.getElementById("main-map-container");
-            if (!document.fullscreenElement) {
-                elem.requestFullscreen().catch(err => { alert(`Error: ${err.message}`); });
-            } else {
-                document.exitFullscreen();
-            }
+            if (!document.fullscreenElement) { elem.requestFullscreen(); } else { document.exitFullscreen(); }
         }
 
         function changeOpacity(val) {
@@ -645,17 +536,15 @@
         };
 
         const statusColors = {
-            'Hak Guna Bangunan': '#387cc3', 
-            'Hak Guna Usaha': '#df8c54',    
-            'Hak Milik': '#f6d246',         
-            'Hak Pakai': '#50c15d',         
-            'Jaringan Jalan': '#cb1b1d',    
-            'Kosong': '#a07f6e',            
-            'Sungai': '#355cf8'             
+            'Hak Guna Bangunan': '#387cc3', 'Hak Guna Usaha': '#df8c54', 'Hak Milik': '#f6d246',         
+            'Hak Pakai': '#50c15d', 'Jaringan Jalan': '#cb1b1d', 'Kosong': '#a07f6e', 'Sungai': '#355cf8'             
         };
 
+        // ==========================================
+        // PERBAIKAN 3: LEGENDA PINDAH KE SIDEBAR
+        // ==========================================
         function renderLegend() {
-            const legWrapper = document.getElementById('map-legend');
+            const legWrapper = document.getElementById('sidebar-legend-container');
             const legDiv = document.getElementById('legend-list');
             legDiv.innerHTML = ''; 
 
@@ -663,7 +552,7 @@
             const isBidangTanahActive = document.getElementById('check-bidangtanah').checked;
 
             if (isPolaRuangActive) {
-                legDiv.innerHTML += `<div style="font-size:11px; color:#888; margin-top:5px; margin-bottom:8px; text-transform:uppercase; font-weight:700;">• Pola Ruang (Sub Zona)</div>`;
+                legDiv.innerHTML += `<div style="font-size:11px; color:#888; margin-bottom:8px; text-transform:uppercase; font-weight:700;">• Pola Ruang (Sub Zona)</div>`;
                 for (const [key, color] of Object.entries(subZonaColors)) {
                     if (key !== 'Lainnya') {
                         legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`;
@@ -684,6 +573,7 @@
                 legWrapper.style.display = 'block';
             }
         }
+        // ==========================================
 
         function toggleLayers() {
             const checkPolaRuang = document.getElementById('check-polaruang').checked;
@@ -691,15 +581,11 @@
 
             if (checkPolaRuang && polaRuangLayer) {
                 if (!map.hasLayer(polaRuangLayer)) map.addLayer(polaRuangLayer);
-            } else if (polaRuangLayer) {
-                map.removeLayer(polaRuangLayer);
-            }
+            } else if (polaRuangLayer) { map.removeLayer(polaRuangLayer); }
 
             if (checkBidangTanah && bidangTanahLayer) {
                 if (!map.hasLayer(bidangTanahLayer)) map.addLayer(bidangTanahLayer);
-            } else if (bidangTanahLayer) {
-                map.removeLayer(bidangTanahLayer);
-            }
+            } else if (bidangTanahLayer) { map.removeLayer(bidangTanahLayer); }
 
             renderLegend(); 
         }
@@ -707,26 +593,17 @@
         function stylePolaRuang(feature) {
             let val = getPropValue(feature.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona');
             let currentOp = document.getElementById('opacity-slider') ? parseFloat(document.getElementById('opacity-slider').value) : 0.8;
-            return {
-                fillColor: subZonaColors[val] || '#dddddd',
-                weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: currentOp
-            };
+            return { fillColor: subZonaColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: currentOp };
         }
 
         function styleBidangTanah(feature) {
             let val = getPropValue(feature.properties, 'STATUS', 'Status', 'status');
             let currentOp = document.getElementById('opacity-slider') ? parseFloat(document.getElementById('opacity-slider').value) : 0.8;
-            return {
-                fillColor: statusColors[val] || '#cccccc',
-                weight: 1.2, opacity: 1, color: '#444444', fillOpacity: currentOp
-            };
+            return { fillColor: statusColors[val] || '#cccccc', weight: 1.2, opacity: 1, color: '#444444', fillOpacity: currentOp };
         }
 
         fetch('polaruangwunutbaru.geojson')
-            .then(res => {
-                if(!res.ok) throw new Error("HTTP " + res.status);
-                return res.json();
-            })
+            .then(res => res.json())
             .then(data => {
                 rawPolaRuangData = data;
                 polaRuangLayer = L.geoJSON(data, {
@@ -735,27 +612,14 @@
                         let kode = getPropValue(f.properties, 'KODE', 'Kode', 'kode');
                         let zona = getPropValue(f.properties, 'ZONA', 'Zona', 'zona');
                         let subZona = getPropValue(f.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona');
-                        
                         let popupContent = `
                             <div style="font-family:'Inter', sans-serif; min-width: 200px;">
                                 <b style="color:var(--purple-deep); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--green-soft); padding-bottom:5px;">Informasi Pola Ruang</b>
                                 <table style="width:100%; font-size:12px; border-collapse: collapse;">
-                                    <tr>
-                                        <td style="padding:4px 0; font-weight:700; width:35%;">Kode</td>
-                                        <td style="padding:4px 0; color:#475569;">: ${kode}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:4px 0; font-weight:700; vertical-align:top;">Zona</td>
-                                        <td style="padding:4px 0; color:#475569;">: ${zona}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:6px 0 4px; font-weight:700; vertical-align:middle;">Sub Zona</td>
-                                        <td style="padding:6px 0 4px;">: 
-                                            <span style="display:inline-block; background:${subZonaColors[subZona] || '#ddd'}; color:${['Badan Jalan', 'Kawasan Peruntukan Industri', 'Sentra Industri Kecil Menengah', 'Pertahanan dan Keamanan', 'SPU Skala Kota'].includes(subZona) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">
-                                                ${subZona}
-                                            </span>
-                                        </td>
-                                    </tr>
+                                    <tr><td style="padding:4px 0; font-weight:700; width:35%;">Kode</td><td style="padding:4px 0; color:#475569;">: ${kode}</td></tr>
+                                    <tr><td style="padding:4px 0; font-weight:700; vertical-align:top;">Zona</td><td style="padding:4px 0; color:#475569;">: ${zona}</td></tr>
+                                    <tr><td style="padding:6px 0 4px; font-weight:700; vertical-align:middle;">Sub Zona</td>
+                                        <td style="padding:6px 0 4px;">: <span style="display:inline-block; background:${subZonaColors[subZona] || '#ddd'}; color:${['Badan Jalan', 'Kawasan Peruntukan Industri', 'Sentra Industri Kecil Menengah', 'Pertahanan dan Keamanan', 'SPU Skala Kota'].includes(subZona) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">${subZona}</span></td></tr>
                                 </table>
                             </div>
                         `;
@@ -764,45 +628,25 @@
                         l.on('mouseout', function(e) { polaRuangLayer.resetStyle(e.target); });
                     }
                 });
-
-                if (document.getElementById('check-polaruang').checked) {
-                    map.addLayer(polaRuangLayer);
-                }
+                if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer);
                 renderLegend();
-            })
-            .catch(e => {
-                console.error("Gagal Muat Data Pola Ruang:", e);
-                alert("File polaruangwunutbaru.geojson tidak ditemukan atau formatnya salah! Pastikan file sudah ter-upload di folder yang sama.");
-            });
+            }).catch(e => console.error("Gagal Muat Data:", e));
 
         fetch('bidangtanahwunut.geojson')
-            .then(res => {
-                if(!res.ok) throw new Error("HTTP " + res.status);
-                return res.json();
-            })
+            .then(res => res.json())
             .then(data => {
                 bidangTanahLayer = L.geoJSON(data, {
                     style: styleBidangTanah,
                     onEachFeature: function(f, l) {
                         let status = getPropValue(f.properties, 'STATUS', 'Status', 'status');
                         let luas = getPropValue(f.properties, 'Luas', 'LUAS', 'luas');
-
                         let popupContent = `
                             <div style="font-family:'Inter', sans-serif; min-width: 180px;">
                                 <b style="color:var(--purple-deep); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--green-soft); padding-bottom:5px;">Informasi Bidang Tanah</b>
                                 <table style="width:100%; font-size:12px; border-collapse: collapse;">
-                                    <tr>
-                                        <td style="padding:6px 0; font-weight:700; width:40%; vertical-align:middle;">Status</td>
-                                        <td style="padding:6px 0;">: 
-                                            <span style="display:inline-block; background:${statusColors[status] || '#ddd'}; color:${['Jaringan Jalan', 'Sungai', 'Hak Guna Bangunan'].includes(status) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">
-                                                ${status}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:4px 0; font-weight:700;">Luas</td>
-                                        <td style="padding:4px 0; color:#475569;">: ${luas} m²</td>
-                                    </tr>
+                                    <tr><td style="padding:6px 0; font-weight:700; width:40%; vertical-align:middle;">Status</td>
+                                        <td style="padding:6px 0;">: <span style="display:inline-block; background:${statusColors[status] || '#ddd'}; color:${['Jaringan Jalan', 'Sungai', 'Hak Guna Bangunan'].includes(status) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">${status}</span></td></tr>
+                                    <tr><td style="padding:4px 0; font-weight:700;">Luas</td><td style="padding:4px 0; color:#475569;">: ${luas} m²</td></tr>
                                 </table>
                             </div>
                         `;
@@ -811,87 +655,50 @@
                         l.on('mouseout', function(e) { bidangTanahLayer.resetStyle(e.target); });
                     }
                 });
-
-                if (document.getElementById('check-bidangtanah').checked) {
-                    map.addLayer(bidangTanahLayer);
-                }
+                if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer);
                 renderLegend();
-            })
-            .catch(e => {
-                console.error("Gagal Muat Data Bidang Tanah:", e);
-                alert("File bidangtanahwunut.geojson tidak ditemukan! Pastikan file sudah ter-upload di folder yang sama.");
             });
 
         // ==========================================
-        // FUNGSI DOWNLOAD SHP
+        // PERBAIKAN 1: DOWNLOAD DIUBAH KE GEOJSON (Anti Gagal)
         // ==========================================
-        function downloadSHP() {
+        function downloadData() {
             if (!rawPolaRuangData || !rawPolaRuangData.features) {
-                alert("Data Pola Ruang belum selesai dimuat atau format tidak valid!");
+                alert("Data Pola Ruang belum siap. Tunggu sebentar...");
                 return;
             }
 
             try {
-                let cleanData = JSON.parse(JSON.stringify(rawPolaRuangData));
-
-                cleanData.features = cleanData.features
-                    .filter(f => f.geometry && f.geometry.coordinates)
-                    .map(f => {
-                        if (f.geometry.type === 'MultiPolygon') {
-                            f.geometry.type = 'Polygon';
-                            f.geometry.coordinates = f.geometry.coordinates[0]; 
-                        }
-
-                        for (let key in f.properties) {
-                            if (typeof f.properties[key] === 'object' && f.properties[key] !== null) {
-                                f.properties[key] = JSON.stringify(f.properties[key]);
-                            }
-                            if (key.length > 10) {
-                                let shortKey = key.substring(0, 10);
-                                f.properties[shortKey] = f.properties[key];
-                                delete f.properties[key];
-                            }
-                        }
-                        return f;
-                    });
-
-                var options = {
-                    folder: 'SHP_Pola_Ruang_Wunut',
-                    types: {
-                        point: 'Titik_Wunut',
-                        polygon: 'PolaRuang_Wunut',
-                        line: 'Garis_Wunut'
-                    }
-                };
+                // Mengonversi data JSON ke format teks yang bisa didownload
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rawPolaRuangData));
                 
-                shpwrite.download(cleanData, options);
+                // Membuat elemen link tersembunyi untuk memicu download file .geojson
+                const dlAnchorElem = document.createElement('a');
+                dlAnchorElem.setAttribute("href", dataStr);
+                dlAnchorElem.setAttribute("download", "Pola_Ruang_Wunut.geojson");
+                document.body.appendChild(dlAnchorElem);
+                dlAnchorElem.click();
+                dlAnchorElem.remove();
 
             } catch (error) {
-                console.error("Detail Error Ekspor SHP:", error);
-                alert("Masih terjadi kesalahan saat konversi ke SHP. Tekan F12 lalu cek tab 'Console' untuk melihat detail error.");
+                console.error("Gagal Download Data:", error);
+                alert("Terjadi kesalahan saat mengunduh data.");
             }
         }
+        // ==========================================
 
-        // ==========================================
-        // FUNGSI IMPORT FILE KML 
-        // ==========================================
         function loadKML(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
-                const kmlText = e.target.result;
                 try {
-                    const customLayer = omnivore.kml.parse(kmlText);
+                    const customLayer = omnivore.kml.parse(e.target.result);
                     customLayer.setStyle({ color: '#38bdf8', weight: 3, fillOpacity: 0.5 });
                     customLayer.addTo(map);
                     map.fitBounds(customLayer.getBounds(), { padding: [30, 30] });
                     alert(`File KML '${file.name}' berhasil ditambahkan ke peta!`);
-                } catch (error) {
-                    console.error("Gagal membaca KML:", error);
-                    alert("Format KML tidak valid atau tidak didukung.");
-                }
+                } catch (error) { alert("Format KML tidak valid."); }
             };
             reader.readAsText(file);
         }
