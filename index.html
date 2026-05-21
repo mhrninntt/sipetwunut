@@ -3,177 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIPET WUNUT - Banyu Nusantara Edition</title>
+    <title>SIPET WUNUT - Sistem Informasi Spasial Desa</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"> <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
+
     <script src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script> <style>
+
+    <style>
         :root {
-            /* Tema Banyu-Nusantara */
-            --deep-navy: #0a192f;
-            --soft-sand: #fdf6e3;
-            --accent-gold: #c5a059;
-            --terracotta: #bc6c47;
+            /* Tema: Tirta Kamulyan */
+            --tirta-blue: #0284c7; 
+            --tirta-light: #e0f2fe; 
+            --agri-green: #10b981; 
+            --kamulyan-gold: #f59e0b; 
+            --bg-body: #f8fafc;
+            --text-dark: #0f172a;
             --white: #ffffff;
-            --text-body: #475569;
-            --glass-bg: rgba(253, 246, 227, 0.85); /* Sand transparan */
-            --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         * { box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--soft-sand); color: var(--deep-navy); overflow-x: hidden; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-dark); overflow-x: hidden; }
+        
+        .fade-in { animation: fadeIn 1s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .logo-wrapper { display: flex; align-items: center; justify-content: center; }
+        .animated-water-logo { width: 35px; height: 35px; background: var(--tirta-light); border-radius: 50%; position: relative; overflow: hidden; border: 2px solid var(--tirta-blue); margin-right: 12px; box-shadow: 0 0 10px rgba(2,132,199,0.4); }
+        .water-wave { position: absolute; width: 200%; height: 200%; background: var(--tirta-blue); top: 45%; left: -50%; border-radius: 40%; animation: spinWater 4s infinite linear; }
+        .water-wave:nth-child(2) { background: rgba(16, 185, 129, 0.6); top: 55%; border-radius: 45%; animation: spinWater 5s infinite linear; }
+        @keyframes spinWater { 100% { transform: rotate(360deg); } }
 
         /* Login Screen */
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: var(--deep-navy); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
-        .login-card { background: var(--white); padding: 50px 40px; border-radius: 15px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); width: 100%; max-width: 400px; text-align: center; border-bottom: 5px solid var(--accent-gold); }
-        .login-card h2 { font-family: 'Playfair Display', serif; color: var(--deep-navy); font-size: 2.5rem; margin-bottom: 5px; }
-        .login-card p { color: var(--terracotta); font-size: 13px; font-weight: 600; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase; }
-        .login-input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; transition: var(--transition); background: var(--soft-sand); }
-        .login-input:focus { border-color: var(--accent-gold); }
-        .login-btn { width: 100%; padding: 15px; background: var(--deep-navy); color: var(--accent-gold); border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: var(--transition); font-family: 'Inter', sans-serif; letter-spacing: 1px; }
-        .login-btn:hover { background: var(--terracotta); color: white; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(188, 108, 71, 0.3); }
-        .login-error { color: #ef4444; font-size: 12px; margin-top: 15px; display: none; font-weight: 600; }
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, var(--tirta-light) 0%, var(--tirta-blue) 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
+        .login-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); width: 100%; max-width: 350px; text-align: center; }
+        .login-card h2 { color: var(--tirta-blue); font-family: 'Montserrat', sans-serif; margin-bottom: 5px; margin-top: 10px; }
+        .login-card p { color: #64748b; font-size: 13px; margin-bottom: 25px; }
+        .login-input { width: 100%; padding: 12px 15px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; transition: var(--transition); }
+        .login-input:focus { border-color: var(--tirta-blue); }
+        .login-btn { width: 100%; padding: 12px; background: var(--tirta-blue); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: var(--transition); font-family: 'Inter', sans-serif; }
+        .login-btn:hover { background: var(--agri-green); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); }
+        .btn-secondary { background: var(--kamulyan-gold); }
+        .btn-secondary:hover { background: #d97706; box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3); }
+        .login-error { color: #ef4444; font-size: 12px; margin-top: 10px; display: none; font-weight: 600; }
+
+        #main-content { display: none; }
 
         /* Navigation */
-        #main-content { display: none; }
-        header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; top: 0; z-index: 2000; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        .logo-box h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0; color: var(--deep-navy); }
-        .logo-box span { color: var(--terracotta); }
-        nav a { text-decoration: none; color: var(--text-body); font-weight: 600; font-size: 14px; margin-left: 30px; transition: var(--transition); position: relative; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-        nav a:hover, nav a.active { color: var(--deep-navy); }
-        nav a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 0; background: var(--accent-gold); transition: var(--transition); }
+        header { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); padding: 15px 60px; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; top: 0; z-index: 2000; box-shadow: 0 2px 15px rgba(0,0,0,0.05); }
+        .logo-box h1 { font-family: 'Montserrat', sans-serif; font-size: 22px; margin: 0; color: var(--tirta-blue); letter-spacing: 1px; }
+        .logo-box span { color: var(--agri-green); }
+        nav a { text-decoration: none; color: var(--text-dark); font-weight: 600; font-size: 14px; margin-left: 35px; transition: var(--transition); position: relative; padding-bottom: 5px; }
+        nav a:hover, nav a.active { color: var(--tirta-blue); }
+        nav a::after { content: ''; position: absolute; width: 0; height: 3px; bottom: 0; left: 0; background: var(--kamulyan-gold); transition: var(--transition); }
         nav a:hover::after, nav a.active::after { width: 100%; }
 
-        .content-section { display: none; padding-top: 70px; }
-        .active-section { display: block; animation: fadeIn 0.5s ease; }
+        .content-section { display: none; padding: 80px 0 60px; }
+        .active-section { display: block; animation: fadeIn 0.8s ease; }
 
-        /* --- DASHBOARD BERANDA (ANIMATIF & ETNIK) --- */
-        .hero { height: 75vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .hero-img { position: absolute; width: 100%; height: 100%; background: url('header.jpg') center/cover; filter: brightness(0.4); z-index: 0; transform: scale(1.05); transition: transform 10s ease-out; }
-        .hero:hover .hero-img { transform: scale(1); }
-        .hero-content { position: relative; z-index: 1; text-align: center; color: white; }
-        .hero h2 { font-family: 'Playfair Display', serif; font-size: 5rem; margin: 0 0 10px; text-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .hero p { font-size: 1.2rem; color: var(--accent-gold); font-weight: 600; letter-spacing: 5px; text-transform: uppercase; margin: 0; }
+        /* --- TATA LETAK DASHBOARD BERANDA BARU --- */
+        .hero { height: 60vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(rgba(2, 132, 199, 0.1), rgba(16, 185, 129, 0.05)), url('header.jpg') center/cover; text-align: center; padding: 0 20px; position: relative; border-bottom: 5px solid var(--kamulyan-gold); }
+        .hero::before { content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px; background: url('header.jpg') center/cover no-repeat; filter: blur(6px) brightness(0.65); z-index: 0; }
+        .hero-card { background: rgba(255,255,255,0.85); padding: 50px 70px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); backdrop-filter: blur(8px); position: relative; z-index: 1; }
+        .hero h2 { font-family: 'Montserrat', sans-serif; font-size: 3.5rem; margin: 0; color: var(--tirta-blue); }
+        .hero p { font-size: 1.1rem; color: var(--text-dark); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 0; }
+
+        .dashboard-container { max-width: 1200px; margin: 0 auto; padding: 0 30px; }
         
-        .container { max-width: 1200px; margin: 0 auto; padding: 60px 30px; }
-        .section-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--deep-navy); text-align: center; margin-bottom: 40px; position: relative; }
-        .section-title::after { content: ''; display: block; width: 80px; height: 3px; background: var(--terracotta); margin: 15px auto 0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; margin: -50px auto 40px; position: relative; z-index: 10; }
+        .stat-item { background: var(--white); padding: 35px; border-radius: 20px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.06); border-bottom: 5px solid var(--agri-green); transition: var(--transition); }
+        .stat-item:hover { transform: translateY(-10px); border-bottom-color: var(--kamulyan-gold); box-shadow: 0 15px 35px rgba(245, 158, 11, 0.15); }
+        .stat-item i { font-size: 2.2rem; color: var(--tirta-blue); margin-bottom: 15px; }
+        .stat-item h3 { font-size: 2.2rem; margin: 5px 0; color: var(--text-dark); font-family: 'Montserrat', sans-serif; }
+        .stat-item p { margin: 0; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; }
 
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: -80px; position: relative; z-index: 10; margin-bottom: 60px; }
-        .stat-item { background: var(--white); padding: 40px 20px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.05); border-top: 4px solid var(--accent-gold); transition: var(--transition); cursor: default; }
-        .stat-item:hover { transform: translateY(-15px); box-shadow: 0 20px 40px rgba(10, 25, 47, 0.1); }
-        .stat-item i { font-size: 2.5rem; color: var(--terracotta); margin-bottom: 20px; }
-        .stat-item h3 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin: 0 0 5px; color: var(--deep-navy); }
-        .stat-item p { margin: 0; font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .section-header { text-align: center; margin-bottom: 40px; margin-top: 80px; }
+        .section-header h2 { color: var(--tirta-blue); font-size: 2.2rem; margin: 0 0 10px; font-family: 'Montserrat', sans-serif; }
+        .section-header p { color: var(--agri-green); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin: 0; font-size: 0.9rem; }
+
+        /* Gambaran Wilayah */
+        .about-text { background: var(--white); padding: 40px 50px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); font-size: 1.15rem; line-height: 2; color: #475569; border-left: 6px solid var(--kamulyan-gold); position: relative; }
+        .about-text::before { content: '\f10d'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; top: 20px; left: -25px; font-size: 2rem; color: var(--kamulyan-gold); background: var(--bg-body); padding: 5px; }
 
         /* Charts */
-        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 40px; margin-bottom: 60px; }
-        .chart-card { background: var(--white); padding: 30px; box-shadow: 0 15px 30px rgba(0,0,0,0.03); transition: var(--transition); border-radius: 10px; }
-        .chart-card:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
-        .chart-card h3 { font-family: 'Playfair Display', serif; color: var(--deep-navy); font-size: 1.5rem; margin-top: 0; margin-bottom: 20px; text-align: center; }
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 30px; }
+        .chart-card { background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
+        .chart-card h3 { color: var(--text-dark); font-size: 16px; margin-top: 0; margin-bottom: 25px; text-align: center; border-bottom: 2px dashed #e2e8f0; padding-bottom: 15px; }
 
         /* News */
-        .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 60px; }
-        .news-card { background: var(--white); box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: var(--transition); overflow: hidden; display: flex; flex-direction: column; }
-        .news-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .news-img { width: 100%; height: 220px; overflow: hidden; }
-        .news-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
-        .news-card:hover .news-img img { transform: scale(1.1); }
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .news-card { background: var(--white); border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03); transition: var(--transition); border: 1px solid #f1f5f9; display: flex; flex-direction: column; }
+        .news-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(2,132,199,0.1); }
+        .news-img { width: 100%; height: 200px; object-fit: cover; }
         .news-content { padding: 30px; display: flex; flex-direction: column; flex-grow: 1; }
-        .news-date { font-size: 0.8rem; color: var(--terracotta); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-        .news-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--deep-navy); margin: 0 0 15px; line-height: 1.3; }
-        .news-desc { font-size: 0.95rem; color: var(--text-body); line-height: 1.6; margin: 0 0 20px; flex-grow: 1; }
-        .news-link { color: var(--accent-gold); font-weight: 700; text-decoration: none; font-size: 0.9rem; transition: var(--transition); }
-        .news-link:hover { color: var(--deep-navy); }
+        .news-date { font-size: 0.85rem; color: var(--kamulyan-gold); font-weight: 700; margin-bottom: 12px; }
+        .news-title { font-size: 1.25rem; color: var(--tirta-blue); margin: 0 0 15px; font-weight: 700; line-height: 1.4; font-family: 'Montserrat', sans-serif; }
+        .news-desc { font-size: 0.95rem; color: #64748b; line-height: 1.7; margin: 0 0 20px; flex-grow: 1; }
+        .news-link { color: var(--agri-green); font-weight: 700; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
+        .news-link:hover { color: var(--tirta-blue); }
 
         /* Gallery */
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .gallery-item { height: 300px; position: relative; cursor: pointer; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+        .gallery-item { border-radius: 15px; overflow: hidden; height: 260px; position: relative; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
         .gallery-item:hover img { transform: scale(1.1); }
-        .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, var(--deep-navy)); padding: 40px 20px 20px; color: white; transform: translateY(20px); opacity: 0; transition: var(--transition); }
-        .gallery-item:hover .gallery-overlay { transform: translateY(0); opacity: 1; }
-        .gallery-overlay h4 { font-family: 'Playfair Display', serif; margin: 0 0 5px; font-size: 1.3rem; color: var(--accent-gold); }
-        .gallery-overlay p { margin: 0; font-size: 0.85rem; }
-
-        /* --- WEBGIS PETA (TERPISAH & BERSIH) --- */
-        #peta { padding-top: 70px; height: 100vh; overflow: hidden; }
-        .map-wrapper { position: relative; width: 100%; height: calc(100vh - 70px); }
-        #map { width: 100%; height: 100%; z-index: 1; }
+        .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 30px 20px 20px; color: white; opacity: 0; transition: opacity 0.3s ease; }
+        .gallery-item:hover .gallery-overlay { opacity: 1; }
+        .gallery-overlay h4 { margin: 0; font-size: 1.1rem; font-family: 'Montserrat', sans-serif; }
+        .gallery-overlay p { margin: 5px 0 0; font-size: 0.85rem; color: #cbd5e1; }
         
-        .floating-sidebar {
-            position: absolute; top: 20px; left: 20px; z-index: 1000; width: 320px; 
-            max-height: calc(100vh - 110px); background: var(--glass-bg); backdrop-filter: blur(15px); 
-            border: 1px solid rgba(255,255,255,0.5); padding: 25px 20px; border-radius: 12px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow-y: auto;
-        }
-        .floating-sidebar::-webkit-scrollbar { width: 5px; }
-        .floating-sidebar::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 10px; }
+        /* Map Layout */
+        .map-layout { display: block; position: relative; height: 85vh; width: 96%; max-width: 1500px; margin: 20px auto 50px; border-radius: 25px; overflow: hidden; box-shadow: 0 20px 50px rgba(2,132,199,0.15); }
+        #main-map-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+        #map { height: 100%; width: 100%; }
 
-        .control-group { margin-bottom: 25px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 15px; }
-        .control-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .control-title { font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; color: var(--terracotta); text-transform: uppercase; letter-spacing: 1px; }
-        .control-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--deep-navy); margin-bottom: 10px; cursor: pointer; }
+        .sidebar-card { position: absolute; top: 20px; left: 20px; z-index: 1000; width: 320px; max-height: calc(100% - 40px); background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.6); padding: 25px 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow-y: auto; }
+        .sidebar-card::-webkit-scrollbar { width: 6px; }
+        .sidebar-card::-webkit-scrollbar-thumb { background: var(--tirta-blue); border-radius: 10px; }
+
+        .custom-map-controls { position: absolute; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; }
+        .map-action-btn { background: white; border: 2px solid rgba(0,0,0,0.1); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--text-dark); transition: var(--transition); }
+        .map-action-btn:hover { background: var(--tirta-blue); color: white; border-color: var(--tirta-blue); transform: scale(1.05); }
+
+        .north-arrow { position: absolute; top: 85px; left: 360px; z-index: 1000; background: rgba(255, 255, 255, 0.9); padding: 5px 8px; border-radius: 8px; border: 2px solid rgba(0,0,0,0.1); text-align: center; pointer-events: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        #mini-map { position: absolute; bottom: 20px; right: 20px; width: 180px; height: 130px; background: white; z-index: 999; border-radius: 12px; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.2); pointer-events: none; overflow: hidden; }
+
+        /* Slide Out Legend */
+        .slide-legend-wrapper { position: absolute; top: 50%; right: 0; z-index: 1000; transform: translateY(-50%) translateX(280px); display: flex; align-items: flex-start; transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .slide-legend-wrapper.open { transform: translateY(-50%) translateX(0); }
+        .legend-toggle-btn { background: rgba(255,255,255,0.95); backdrop-filter: blur(5px); border: 2px solid rgba(0,0,0,0.1); border-right: none; padding: 12px 15px; border-radius: 10px 0 0 10px; cursor: pointer; font-weight: 700; color: var(--tirta-blue); box-shadow: -4px 4px 10px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 8px; white-space: nowrap; margin-top: 20px; transition: var(--transition); }
+        .legend-toggle-btn:hover { background: var(--tirta-light); }
+        .slide-legend-content { width: 280px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 2px solid rgba(0,0,0,0.1); border-right: none; border-radius: 0 0 0 15px; padding: 20px; box-shadow: -5px 5px 20px rgba(0,0,0,0.08); max-height: 70vh; overflow-y: auto; }
         
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; margin-bottom: 15px; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: var(--terracotta); cursor: pointer; margin-top: -5px; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #cbd5e1; border-radius: 2px; }
-
-        .btn-map-action { width: 100%; padding: 10px; background: var(--deep-navy); color: var(--accent-gold); border: none; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; transition: var(--transition); letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
-        .btn-map-action:hover { background: var(--terracotta); color: white; }
-
-        .legend-container { margin-top: 15px; display: none; }
-        .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 11px; font-weight: 600; color: var(--deep-navy); }
-        .color-box { width: 15px; height: 15px; border-radius: 3px; border: 1px solid rgba(0,0,0,0.2); flex-shrink: 0; }
-
-        /* Map Controls Kanan */
-        .right-controls { position: absolute; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
-        .btn-icon { width: 40px; height: 40px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; color: var(--deep-navy); font-size: 16px; transition: var(--transition); display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .btn-icon:hover { background: var(--accent-gold); color: white; border-color: var(--accent-gold); }
-        
-        .north-arrow { position: absolute; top: 80px; right: 20px; z-index: 1000; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 8px; border: 1px solid #ccc; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .legend-title { font-weight: 700; color: var(--tirta-blue); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .legend-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 13px; font-weight: 600; }
+        .color-box { width: 18px; height: 18px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; }
 
         /* Footer */
-        footer { background: var(--deep-navy); color: white; padding: 60px 5%; }
-        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto; }
-        .footer-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--accent-gold); margin-bottom: 20px; }
-        .footer-text { font-size: 0.9rem; color: #cbd5e1; line-height: 1.8; margin-bottom: 10px; }
-        .social-links { display: flex; gap: 15px; margin-top: 20px; }
-        .social-links a { color: white; background: rgba(255,255,255,0.1); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: var(--transition); text-decoration: none; }
-        .social-links a:hover { background: var(--terracotta); transform: translateY(-3px); }
+        footer { background: var(--text-dark); color: white; padding: 60px 0 30px; margin-top: 50px; }
+        .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 50px; padding: 0 30px; }
+        .footer-title { font-size: 16px; font-weight: 700; margin-bottom: 25px; color: var(--kamulyan-gold); text-transform: uppercase; letter-spacing: 1px; }
+        .footer-map-box { border-radius: 12px; overflow: hidden; height: 180px; border: 1px solid #334155; }
+        .contact-info p { display: flex; align-items: start; gap: 15px; font-size: 14px; line-height: 1.6; color: #cbd5e1; margin-bottom: 12px; }
+        .contact-info i { color: var(--agri-green); font-size: 18px; margin-top: 3px; width: 20px; text-align: center; }
+        .social-links { display: flex; gap: 15px; }
+        .social-btn { width: 45px; height: 45px; background: #334155; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: var(--transition); }
+        .social-btn:hover { background: var(--tirta-blue); transform: scale(1.1); }
+        
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--tirta-blue); cursor: pointer; margin-top: -6px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #cbd5e1; border-radius: 3px; }
+
+        .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 25px; }
+        .team-member { background: var(--bg-body); padding: 25px 20px; border-radius: 15px; border: 1px solid #e2e8f0; transition: var(--transition); }
+        .team-member:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(2,132,199,0.08); border-color: var(--tirta-light); }
+        .team-avatar { width: 65px; height: 65px; background: var(--tirta-light); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--tirta-blue); }
     </style>
 </head>
 <body>
 
     <div id="login-overlay">
         <div class="login-card fade-in">
+            <div class="logo-wrapper">
+                <div class="animated-water-logo" style="width: 60px; height: 60px; margin-right: 0;"><div class="water-wave"></div><div class="water-wave"></div></div>
+            </div>
             <h2>SIPET WUNUT</h2>
-            <p>Banyu Nusantara Edition</p>
-            <input type="email" id="login-user" class="login-input" placeholder="Alamat Email">
-            <input type="password" id="login-pass" class="login-input" placeholder="Kata Sandi">
-            <button class="login-btn" onclick="prosesLoginAuth()">MASUK SISTEM</button>
-            <button class="login-btn" style="background: transparent; border: 2px solid var(--deep-navy); color: var(--deep-navy); margin-top: 10px;" onclick="prosesDaftarAuth()">DAFTAR AKUN BARU</button>
+            <p>Silakan masuk atau daftar untuk mengakses sistem</p>
+            <input type="email" id="login-user" class="login-input" placeholder="Alamat Email" autocomplete="off">
+            <input type="password" id="login-pass" class="login-input" placeholder="Password (Min. 6 karakter)">
+            <button class="login-btn" onclick="prosesLoginAuth()" style="margin-bottom: 10px;">MASUK</button>
+            <button class="login-btn btn-secondary" onclick="prosesDaftarAuth()">DAFTAR AKUN BARU</button>
             <div id="login-msg" class="login-error"></div>
         </div>
     </div>
 
     <div id="main-content">
         <header>
-            <div class="logo-box"><h1>SIPET <span>WUNUT</span></h1></div>
+            <div class="logo-box logo-wrapper">
+                <div class="animated-water-logo"><div class="water-wave"></div><div class="water-wave"></div></div>
+                <h1>SIPET <span>WUNUT</span></h1>
+            </div>
             <nav>
                 <a href="#" onclick="switchTab('beranda')" id="btn-beranda" class="active">Beranda</a>
                 <a href="#" onclick="switchTab('peta')" id="btn-peta">Peta Spasial</a>
-                <a href="#" onclick="switchTab('profil')" id="btn-profil">Profil</a>
-                <a href="#" onclick="logoutAuth()" style="color: var(--terracotta);"><i class="fa-solid fa-power-off"></i></a>
+                <a href="#" onclick="switchTab('profil')" id="btn-profil">Profil Desa</a>
+                <a href="#" onclick="logoutAuth()" style="color: #ef4444;"><i class="fa-solid fa-power-off"></i> Keluar</a>
             </nav>
         </header>
 
@@ -181,183 +206,199 @@
             <div id="beranda" class="content-section active-section">
                 
                 <div class="hero">
-                    <div class="hero-img"></div>
-                    <div class="hero-content" data-aos="zoom-in" data-aos-duration="1500">
-                        <p>Tata Ruang & Potensi Wilayah</p>
-                        <h2>Desa Wunut</h2>
+                    <div class="hero-card fade-in">
+                        <p>Sistem Informasi Peruntukan Tata Ruang</p>
+                        <h2>DESA WUNUT</h2>
                     </div>
                 </div>
                 
-                <div class="container">
+                <div class="dashboard-container">
                     <div class="stats-grid">
-                        <div class="stat-item" data-aos="fade-up" data-aos-delay="100">
-                            <i class="fa-solid fa-map-location-dot"></i>
-                            <h3>720</h3>
-                            <p>Luas Wilayah (Ha)</p>
-                        </div>
-                        <div class="stat-item" data-aos="fade-up" data-aos-delay="200">
-                            <i class="fa-solid fa-people-group"></i>
-                            <h3>2.290</h3>
-                            <p>Total Penduduk</p>
-                        </div>
-                        <div class="stat-item" data-aos="fade-up" data-aos-delay="300">
-                            <i class="fa-solid fa-droplet"></i>
-                            <h3>15</h3>
-                            <p>Titik Mata Air</p>
-                        </div>
+                        <div class="stat-item fade-in"><i class="fa-solid fa-map-location-dot"></i><h3 id="stat-luas">720</h3><p>Luas Wilayah (Ha)</p></div>
+                        <div class="stat-item fade-in" style="animation-delay: 0.2s;"><i class="fa-solid fa-people-group"></i><h3 id="stat-penduduk">2,290</h3><p>Total Penduduk</p></div>
+                        <div class="stat-item fade-in" style="animation-delay: 0.4s;"><i class="fa-solid fa-droplet"></i><h3 id="stat-air">15</h3><p>Titik Mata Air</p></div>
                     </div>
 
-                    <h2 class="section-title" data-aos="fade-up">Demografi Wilayah</h2>
+                    <div class="section-header">
+                        <h2>Gambaran Wilayah</h2>
+                        <p>Kondisi Fasilitas Desa Wunut</p>
+                    </div>
+                    <div class="about-text fade-in">
+                        Pemerintah Desa Wunut mengelola fasilitas wisata air. Fasilitas Umbul Pelem memiliki kolam renang alami. Wisatawan mengunjungi fasilitas ekowisata setiap hari. BUMDes Sumber Kamulyan mendistribusikan pendapatan wisata kepada warga desa.
+                    </div>
+
+                    <div class="section-header">
+                        <h2>Data Statistik</h2>
+                        <p>Dinamika & Demografi Penduduk</p>
+                    </div>
                     <div class="charts-grid">
-                        <div class="chart-card" data-aos="fade-right">
+                        <div class="chart-card fade-in">
                             <h3>Kelahiran & Kematian</h3>
                             <div id="chart-dinamika"></div>
                         </div>
-                        <div class="chart-card" data-aos="fade-left">
+                        <div class="chart-card fade-in">
                             <h3>Piramida Penduduk</h3>
                             <div id="chart-piramida"></div>
                         </div>
                     </div>
 
-                    <h2 class="section-title" data-aos="fade-up">Warta Banyu Nusantara</h2>
+                    <div class="section-header">
+                        <h2>Berita Terbaru</h2>
+                        <p>Informasi Seputar Desa Wunut</p>
+                    </div>
                     <div class="news-grid">
-                        <div class="news-card" data-aos="fade-up" data-aos-delay="100">
-                            <div class="news-img"><img src="bpjs.jpg" alt="BPJS"></div>
+                        <div class="news-card fade-in">
+                            <img src="bpjs.jpg" alt="News 1" class="news-img">
                             <div class="news-content">
-                                <div class="news-date">Kesejahteraan Warga</div>
-                                <h4 class="news-title">Wunut Jadi Desa Percontohan BPJS</h4>
-                                <p class="news-desc">Berhasil menjadi desa percontohan dengan jumlah kepesertaan BPJS Ketenagakerjaan terbanyak.</p>
+                                <span class="news-date">Kabar Desa</span>
+                                <h4 class="news-title">Wunut Jadi Desa Percontohan</h4>
+                                <p class="news-desc">Desa Wunut berhasil menjadi desa percontohan dengan jumlah kepesertaan BPJS Ketenagakerjaan terbanyak.</p>
                                 <a href="https://www.solotrust.com/berita/wunut-sebagai-peserta-bpjs-ketenagakerjaan-terbanyak-kini-jadi-desa-percontohan" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
                             </div>
                         </div>
-                        <div class="news-card" data-aos="fade-up" data-aos-delay="200">
-                            <div class="news-img"><img src="thr.jpg" alt="THR"></div>
+                        <div class="news-card fade-in" style="animation-delay: 0.2s;">
+                            <img src="thr.jpg" alt="News 2" class="news-img">
                             <div class="news-content">
-                                <div class="news-date">BUMDes Kamulyan</div>
-                                <h4 class="news-title">Pemerintah Desa Bagikan THR Warga</h4>
-                                <p class="news-desc">Mengalokasikan dana ratusan juta rupiah dari BUMDes untuk Tunjangan Hari Raya secara merata.</p>
+                                <span class="news-date">Kesejahteraan Warga</span>
+                                <h4 class="news-title">Desa Wunut Bagikan THR Rp585 Juta</h4>
+                                <p class="news-desc">Pemerintah Desa Wunut mengalokasikan dana ratusan juta rupiah dari BUMDes untuk Tunjangan Hari Raya (THR) warga.</p>
                                 <a href="https://jateng.bpk.go.id/catatan-berita-desa-wunut-di-klaten-bagi-tunjangan-hari-raya-thr-untuk-warga-total-capai-rp585-juta/" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
                             </div>
                         </div>
-                        <div class="news-card" data-aos="fade-up" data-aos-delay="300">
-                            <div class="news-img"><img src="umbul.jpg" alt="Umbul"></div>
+                        <div class="news-card fade-in" style="animation-delay: 0.4s;">
+                            <img src="umbul.jpg" alt="News 3" class="news-img">
                             <div class="news-content">
-                                <div class="news-date">Pariwisata Desa</div>
-                                <h4 class="news-title">Umbul Pelem Raup Laba Miliaran</h4>
-                                <p class="news-desc">Pengelolaan kolam renang alami Umbul Pelem terbukti sukses memajukan ekonomi desa.</p>
+                                <span class="news-date">Pariwisata BUMDes</span>
+                                <h4 class="news-title">Umbul Pelem Untung Miliaran</h4>
+                                <p class="news-desc">Pengelolaan wisata Umbul Pelem oleh BUMDes terbukti sukses besar dengan raupan laba mencapai miliaran rupiah.</p>
                                 <a href="https://banyumasekspres.id/wisata-umbul-pelem-di-klaten-untung-besar-sampai-miliaran/" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
                             </div>
                         </div>
                     </div>
 
-                    <h2 class="section-title" data-aos="fade-up">Galeri Potensi</h2>
+                    <div class="section-header">
+                        <h2>Galeri Fasilitas</h2>
+                        <p>Dokumentasi Potensi Desa</p>
+                    </div>
                     <div class="gallery-grid">
-                        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100">
+                        <div class="gallery-item fade-in">
                             <img src="umbul pelem.webp" alt="Umbul Pelem">
                             <div class="gallery-overlay">
-                                <h4>Umbul Pelem</h4><p>Fasilitas kolam renang alami jernih</p>
+                                <h4>Umbul Pelem</h4>
+                                <p>Fasilitas kolam renang alami</p>
                             </div>
                         </div>
-                        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="200">
+                        <div class="gallery-item fade-in" style="animation-delay: 0.1s;">
                             <img src="makanan khas.jpg" alt="Makanan Khas">
                             <div class="gallery-overlay">
-                                <h4>Kuliner Khas</h4><p>Cita rasa lokal Desa Wunut</p>
+                                <h4>Makanan Khas</h4>
+                                <p>Cita rasa lokal Desa Wunut</p>
                             </div>
                         </div>
-                        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="300">
+                        <div class="gallery-item fade-in" style="animation-delay: 0.2s;">
                             <img src="perikanan budidaya.png" alt="Perikanan Budidaya">
                             <div class="gallery-overlay">
-                                <h4>Perikanan Budidaya</h4><p>Sektor penggerak ekonomi warga</p>
+                                <h4>Perikanan Budidaya</h4>
+                                <p>Sektor penggerak ekonomi desa</p>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
-            <div id="peta" class="content-section" style="padding-top: 70px;">
-                <div class="map-wrapper">
-                    <div id="map"></div>
-
-                    <div class="floating-sidebar">
+            <div id="peta" class="content-section">
+                <div class="map-layout">
+                    
+                    <div id="main-map-container">
+                        <div id="map"></div>
                         
-                        <div class="control-group">
-                            <div class="control-title"><i class="fa-solid fa-layer-group"></i> Peta Dasar (Basemap)</div>
-                            <label class="control-label">
+                        <div class="north-arrow">
+                            <i class="fa-solid fa-caret-up" style="color: var(--tirta-blue); font-size: 20px;"></i>
+                            <div style="font-weight: 800; font-size: 11px; margin-top: -5px; color:#333;">U</div>
+                        </div>
+
+                        <div class="custom-map-controls">
+                            <button class="map-action-btn" onclick="goHome()" title="Kembali ke Desa Wunut"><i class="fa-solid fa-house"></i></button>
+                            <button class="map-action-btn" onclick="findLocation()" title="Cari Lokasi Saya"><i class="fa-solid fa-location-crosshairs"></i></button>
+                            <button class="map-action-btn" onclick="toggleFullScreen()" title="Layar Penuh"><i class="fa-solid fa-expand"></i></button>
+                        </div>
+
+                        <div id="slide-legend" class="slide-legend-wrapper">
+                            <button class="legend-toggle-btn" onclick="toggleLegendPanel()"><i class="fa-solid fa-chevron-left" id="legend-icon"></i> Legenda</button>
+                            <div class="slide-legend-content">
+                                <div class="legend-title" style="color: var(--agri-green); margin-bottom: 10px;"><i class="fa-solid fa-list-check"></i> Keterangan</div>
+                                <div id="legend-list-content"></div>
+                            </div>
+                        </div>
+
+                        <div id="mini-map"></div> 
+                    </div>
+
+                    <div class="sidebar-card">
+                        <div class="legend-title"><i class="fa-solid fa-layer-group"></i> Basemap</div>
+                        <div style="margin-bottom: 25px; background: var(--white); padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                            <label style="display: block; margin-bottom: 10px; font-size: 12px; font-weight: 700; cursor: pointer;">
                                 <input type="radio" name="basemap" value="osm" checked onchange="changeBase(this.value)"> OpenStreetMap
                             </label>
-                            <label class="control-label">
-                                <input type="radio" name="basemap" value="satelit" onchange="changeBase(this.value)"> Citra Satelit Esri
+                            <label style="display: block; font-size: 12px; font-weight: 700; cursor: pointer;">
+                                <input type="radio" name="basemap" value="satelit" onchange="changeBase(this.value)"> Citra Satelit
                             </label>
                         </div>
 
-                        <div class="control-group">
-                            <div class="control-title"><i class="fa-solid fa-map"></i> Lapisan Data Spasial</div>
-                            
-                            <label class="control-label">
+                        <div class="legend-title"><i class="fa-solid fa-map"></i> Layer Data</div>
+                        <div style="margin-bottom: 25px; background: var(--white); padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                            <label style="display: block; margin-bottom: 10px; font-size: 12px; font-weight: 700; cursor: pointer;">
                                 <input type="checkbox" id="check-polaruang" checked onchange="toggleLayers()"> Pola Ruang (Sub Zona)
                             </label>
-                            <div style="padding-left: 25px; margin-bottom: 15px;">
-                                <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;">
-                                    <span>Transparansi</span><span id="val-op-pola">80%</span>
-                                </div>
-                                <input type="range" id="opacity-polaruang" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityPolaRuang(this.value)">
-                            </div>
-
-                            <label class="control-label">
+                            <label style="display: block; font-size: 12px; font-weight: 700; cursor: pointer;">
                                 <input type="checkbox" id="check-bidangtanah" onchange="toggleLayers()"> Bidang Tanah (Status)
                             </label>
-                            <div style="padding-left: 25px;">
-                                <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;">
-                                    <span>Transparansi</span><span id="val-op-bidang">80%</span>
-                                </div>
-                                <input type="range" id="opacity-bidangtanah" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityBidangTanah(this.value)">
+                        </div>
+                        
+                        <div class="legend-title"><i class="fa-solid fa-droplet"></i> Transparansi</div>
+                        <div style="background: var(--white); padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
+                            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:5px; color:var(--text-dark); font-weight:700;">
+                                <span>Pola Ruang</span><span id="val-op-pola">80%</span>
                             </div>
+                            <input type="range" id="opacity-polaruang" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityPolaRuang(this.value)" style="margin-bottom: 15px;">
+
+                            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:5px; color:var(--text-dark); font-weight:700;">
+                                <span>Bidang Tanah</span><span id="val-op-bidang">80%</span>
+                            </div>
+                            <input type="range" id="opacity-bidangtanah" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityBidangTanah(this.value)">
                         </div>
 
-                        <div class="control-group">
-                            <div class="control-title"><i class="fa-solid fa-toolbox"></i> Alat Analisis</div>
-                            <button class="btn-map-action" onclick="downloadData()"><i class="fa-solid fa-download"></i> Unduh GeoJSON</button>
-                            <label style="display: block; font-size: 11px; font-weight: 700; color: var(--terracotta); margin-top: 10px; margin-bottom: 5px;">UNGGAH FILE KML:</label>
-                            <input type="file" id="kml-upload" accept=".kml" style="width: 100%; font-size: 11px; padding: 5px; border: 1px solid #ccc; border-radius: 5px; background: white;" onchange="loadKML(event)">
+                        <div class="legend-title"><i class="fa-solid fa-toolbox"></i> Alat Analisis</div>
+                        <div style="background: var(--white); padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                            <button class="map-action-btn" style="width: 100%; height: auto; padding: 10px; margin-bottom: 15px; font-size: 12px; font-weight: 700; background: var(--tirta-blue); color: white;" onclick="downloadData()">
+                                <i class="fa-solid fa-download"></i> Unduh Data (GeoJSON)
+                            </button>
+                            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 8px; color: var(--text-dark);">
+                                <i class="fa-solid fa-upload"></i> Unggah File KML:
+                            </label>
+                            <input type="file" id="kml-upload" accept=".kml" style="width: 100%; font-size: 11px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px;" onchange="loadKML(event)">
                         </div>
-
-                        <div id="sidebar-legend" class="legend-container">
-                            <div class="control-title"><i class="fa-solid fa-list-check"></i> Keterangan Legenda</div>
-                            <div id="legend-list-content"></div>
-                        </div>
                     </div>
-
-                    <div class="right-controls">
-                        <button class="btn-icon" onclick="goHome()" title="Kembali ke Desa Wunut"><i class="fa-solid fa-house"></i></button>
-                        <button class="btn-icon" onclick="findLocation()" title="Lokasi Saya"><i class="fa-solid fa-location-crosshairs"></i></button>
-                        <button class="btn-icon" onclick="toggleFullScreen()" title="Layar Penuh"><i class="fa-solid fa-expand"></i></button>
-                    </div>
-
-                    <div class="north-arrow">
-                        <i class="fa-solid fa-caret-up" style="color: var(--terracotta); font-size: 20px;"></i>
-                        <div style="font-weight: 800; font-size: 12px; margin-top: -5px; color:var(--deep-navy);">U</div>
-                    </div>
-
                 </div>
             </div>
 
             <div id="profil" class="content-section">
-                <div class="container" style="text-align: center;">
-                    <h2 class="section-title">Profil Penyusun</h2>
-                    <p style="font-size: 1.2rem; color: var(--text-body); max-width: 800px; margin: 0 auto 40px; line-height: 1.8;">
-                        SIPET WUNUT dikembangkan sebagai dedikasi terhadap keterbukaan informasi tata ruang 
-                        yang modern, presisi, dan bermanfaat bagi masyarakat luas.
-                    </p>
-                    <div class="stats-grid" style="margin-top: 0;">
-                        <div class="stat-item" style="border-top-color: var(--terracotta);">
-                            <div style="width: 80px; height: 80px; background: var(--tirta-light); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items:center; justify-content:center; color: var(--deep-navy); font-size: 30px;"><i class="fa-solid fa-user-graduate"></i></div>
-                            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.3rem;">Maharani Quinn Qonita</h4>
-                            <p>D4 - Perencanaan Tata Ruang & Pertanahan</p>
-                        </div>
-                        <div class="stat-item">
-                            <div style="width: 80px; height: 80px; background: var(--tirta-light); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items:center; justify-content:center; color: var(--deep-navy); font-size: 30px;"><i class="fa-solid fa-users"></i></div>
-                            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.3rem;">Kelompok C4</h4>
-                            <p>Universitas Diponegoro</p>
+                <div style="max-width: 1000px; margin: 0 auto; padding: 20px 40px 60px;">
+                    <div style="background: white; padding: 60px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center;">
+                        <i class="fa-solid fa-map-location-dot" style="font-size: 3.5rem; color: var(--tirta-blue); margin-bottom: 25px;"></i>
+                        <h2 style="color: var(--tirta-blue); font-size: 2rem; margin-top: 0;">Tentang SIPET Wunut</h2>
+                        <p style="line-height: 1.9; color: #475569; text-align: justify; font-size: 15px; margin-bottom: 20px;">
+                            <b>Sistem Informasi Peruntukan Tata Ruang (SIPET) Desa Wunut</b> merupakan inovasi pelayanan publik berbasis digital dan sistem informasi geografis (WebGIS). Sistem ini memetakan klasifikasi sub-zona tata ruang dan informasi status kepemilikan bidang tanah secara detail. 
+                        </p>
+                        <hr style="margin: 50px 0; border: 0; border-top: 2px dashed #e2e8f0;">
+                        <h3 style="color: var(--agri-green); font-size: 1.5rem; margin-bottom: 10px;">Tim Penyusun</h3>
+                        <p style="color: #64748b; font-size: 14px; margin-bottom: 30px;">Dikembangkan secara kolaboratif oleh <b>Kelompok C4</b></p>
+                        <div class="team-grid">
+                            <div class="team-member"><div class="team-avatar"><i class="fa-solid fa-user-graduate"></i></div><h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">Maharani Quinn Qonita</h4><p style="margin: 0; font-size: 13px; color: #64748b; font-weight: 600;">D4 - PTRP</p></div>
+                            <div class="team-member"><div class="team-avatar"><i class="fa-solid fa-user"></i></div><h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">[Nama Anggota 2]</h4><p style="margin: 0; font-size: 13px; color: #64748b;">[Program Studi]</p></div>
+                            <div class="team-member"><div class="team-avatar"><i class="fa-solid fa-user"></i></div><h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">[Nama Anggota 3]</h4><p style="margin: 0; font-size: 13px; color: #64748b;">[Program Studi]</p></div>
+                            <div class="team-member"><div class="team-avatar"><i class="fa-solid fa-user"></i></div><h4 style="margin: 0 0 8px; color: var(--text-dark); font-size: 15px;">[Nama Anggota 4]</h4><p style="margin: 0; font-size: 13px; color: #64748b;">[Program Studi]</p></div>
                         </div>
                     </div>
                 </div>
@@ -367,21 +408,22 @@
         <footer>
             <div class="footer-grid">
                 <div>
-                    <h3 class="footer-title">SIPET WUNUT</h3>
-                    <p class="footer-text">Sistem Informasi Peruntukan Tata Ruang berbasis WebGIS dengan balutan desain Banyu Nusantara.</p>
+                    <div class="footer-title">Lokasi Kampus</div>
+                    <div class="footer-map-box"><iframe src="https://maps.google.com/maps?q=Sekolah%20Vokasi%20Universitas%20Diponegoro%20Semarang&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe></div>
+                </div>
+                <div class="contact-info">
+                    <div class="footer-title">Informasi Kontak</div>
+                    <p><i class="fa-solid fa-location-dot"></i> <span>Gedung Sekolah Vokasi, Kampus UNDIP, Tembalang, Semarang</span></p>
+                    <p><i class="fa-solid fa-phone"></i> <span>0858-7765-3014</span></p>
+                    <p><i class="fa-solid fa-envelope"></i> <span>kelompokc4wnt@gmail.com</span></p>
                 </div>
                 <div>
-                    <h3 class="footer-title">Hubungi Kami</h3>
-                    <p class="footer-text"><i class="fa-solid fa-location-dot"></i> Kampus UNDIP Tembalang, Semarang</p>
-                    <p class="footer-text"><i class="fa-solid fa-phone"></i> 0858-7765-3014</p>
-                    <p class="footer-text"><i class="fa-solid fa-envelope"></i> kelompokc4wnt@gmail.com</p>
-                </div>
-                <div>
-                    <h3 class="footer-title">Ikuti Kami</h3>
+                    <div class="footer-title">Media Sosial</div>
                     <div class="social-links">
-                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="social-btn"><i class="fa-brands fa-youtube"></i></a>
                     </div>
+                    <p style="font-size: 12px; color: #777; margin-top: 30px;">© 2024 Kelompok C4. All Rights Reserved.</p>
                 </div>
             </div>
         </footer>
@@ -409,121 +451,95 @@
     </script>
 
     <script>
-        // --- 1. INISIALISASI ANIMASI (AOS) ---
-        AOS.init({ duration: 1000, once: true });
-
-        // --- 2. FUNGSI LOGIN & TAB ---
         function tampilkanPesan(text, color = '#ef4444') {
             const msgBox = document.getElementById('login-msg'); msgBox.innerText = text; msgBox.style.color = color; msgBox.style.display = 'block';
         }
+        function tanganiPesanError(code) {
+            switch(code) {
+                case 'auth/invalid-email': return 'Format email tidak valid.';
+                case 'auth/user-not-found': return 'Akun belum terdaftar.';
+                case 'auth/wrong-password': return 'Password salah.';
+                case 'auth/invalid-credential': return 'Email atau Password salah.';
+                case 'auth/email-already-in-use': return 'Email ini sudah dipakai.';
+                case 'auth/weak-password': return 'Password minimal harus 6 karakter.';
+                default: return 'Terjadi kesalahan sistem.';
+            }
+        }
         function prosesDaftarAuth() {
             const email = document.getElementById('login-user').value; const pass = document.getElementById('login-pass').value;
-            if (!email || !pass) { tampilkanPesan("Isi email dan password!"); return; }
-            if(window.signUp) { window.signUp(window.firebaseAuth, email, pass).then(() => { tampilkanPesan("Akun berhasil dibuat! Silakan MASUK.", "#10b981"); }).catch((error) => { tampilkanPesan("Error: " + error.code); }); }
+            if (!email || !pass) { tampilkanPesan("Isi email dan password terlebih dahulu!"); return; }
+            if(window.signUp) { window.signUp(window.firebaseAuth, email, pass).then(() => { tampilkanPesan("Akun berhasil dibuat! Silakan klik tombol MASUK.", "#10b981"); }).catch((error) => { tampilkanPesan(tanganiPesanError(error.code)); }); }
         }
         function prosesLoginAuth() {
             const email = document.getElementById('login-user').value; const pass = document.getElementById('login-pass').value;
-            if (!email || !pass) { tampilkanPesan("Isi email dan password!"); return; }
+            if (!email || !pass) { tampilkanPesan("Isi email dan password terlebih dahulu!"); return; }
             if(window.signIn) {
                 window.signIn(window.firebaseAuth, email, pass).then(() => {
-                    document.getElementById('login-overlay').style.opacity = '0';
-                    setTimeout(() => { 
-                        document.getElementById('login-overlay').style.display = 'none'; 
-                        document.getElementById('main-content').style.display = 'block'; 
-                    }, 500);
-                }).catch((error) => { tampilkanPesan("Gagal Masuk. Cek kembali data Anda."); });
+                    document.getElementById('login-msg').style.display = 'none'; document.getElementById('login-overlay').style.opacity = '0';
+                    setTimeout(() => { document.getElementById('login-overlay').style.display = 'none'; document.getElementById('main-content').style.display = 'block'; triggerMapResize(); }, 500);
+                }).catch((error) => { tampilkanPesan(tanganiPesanError(error.code)); });
             }
         }
         function logoutAuth() {
-            if(window.logOut) { window.logOut(window.firebaseAuth).then(() => { location.reload(); }); }
-        }
-
-        // --- 3. FUNGSI SWITCH TAB (Mencegah Peta Rusak) ---
-        function switchTab(id) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
-            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-            document.getElementById(id).classList.add('active-section'); 
-            document.getElementById('btn-' + id).classList.add('active'); 
-            window.scrollTo(0, 0);
-            
-            // PENTING: Me-refresh ukuran peta saat tab "Peta" dibuka agar tidak abu-abu/rusak
-            if(id === 'peta') { 
-                setTimeout(() => { map.invalidateSize(); }, 200); 
-                setTimeout(() => { map.invalidateSize(); }, 600); 
+            if(window.logOut) {
+                window.logOut(window.firebaseAuth).then(() => {
+                    document.getElementById('login-user').value = ''; document.getElementById('login-pass').value = ''; document.getElementById('login-msg').style.display = 'none'; document.getElementById('main-content').style.display = 'none'; document.getElementById('login-overlay').style.display = 'flex'; setTimeout(() => { document.getElementById('login-overlay').style.opacity = '1'; }, 50);
+                });
             }
         }
+        document.getElementById("login-pass").addEventListener("keypress", function(event) { if (event.key === "Enter") { event.preventDefault(); prosesLoginAuth(); } });
 
-        // --- 4. GRAFIK (APEXCHARTS) ---
-        var optionsDinamika = {
-            series: [{ name: 'Kelahiran', data: [20, 16, 7, 17, 24, 10] }, { name: 'Kematian', data: [8, 18, 9, 18, 21, 23] }],
-            chart: { type: 'area', height: 350, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
-            colors: ['#c5a059', '#bc6c47'],
-            dataLabels: { enabled: false }, stroke: { curve: 'smooth', width: 3 },
-            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.05, stops: [0, 90, 100] } },
-            xaxis: { categories: ['2020', '2021', '2022', '2023', '2024', '2025'] },
-            legend: { position: 'top' }
-        };
-        new ApexCharts(document.querySelector("#chart-dinamika"), optionsDinamika).render();
-
-        var optionsPiramida = {
-            series: [
-                { name: 'Laki-laki', data: [-97, -74, -99, -78, -65, -107, -77, -67, -104, -79, -81, -70, -56, -32, -21, -25] }, 
-                { name: 'Perempuan', data: [81, 86, 86, 91, 77, 82, 76, 84, 90, 78, 82, 66, 58, 48, 24, 49] }
-            ],
-            chart: { type: 'bar', stacked: true, height: 350, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
-            colors: ['#0a192f', '#bc6c47'],
-            plotOptions: { bar: { horizontal: true, barHeight: '80%', borderRadius: 2 } },
-            dataLabels: { enabled: false },
-            yaxis: { title: { text: 'Kel. Umur' } },
-            tooltip: { shared: false, y: { formatter: function(val) { return Math.abs(val) + " Jiwa"; } } },
-            xaxis: { categories: ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '>75'], labels: { formatter: function(val) { return Math.abs(Math.round(val)); } } },
-            legend: { position: 'top' }
-        };
-        new ApexCharts(document.querySelector("#chart-piramida"), optionsPiramida).render();
-
-        // --- 5. LOGIKA FULL WEBGIS (PETA LEAFLET) ---
         var polaRuangLayer; var bidangTanahLayer; var userMarker; var rawPolaRuangData = null; 
         const WUNUT_CENTER = [-7.5990, 110.6188]; const DEFAULT_ZOOM = 15;
 
-        // Inisialisasi Peta
+        function getPropValue(properties, ...possibleKeys) { for (let key of possibleKeys) { if (properties[key] !== undefined) return properties[key]; for (let actualKey in properties) { if (actualKey.toLowerCase() === key.toLowerCase()) return properties[actualKey]; } } return '-'; }
+        function triggerMapResize() { if (typeof map !== 'undefined') map.invalidateSize(); if (typeof miniMap !== 'undefined') miniMap.invalidateSize(); }
+
+        function switchTab(id) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            document.getElementById(id).classList.add('active-section'); document.getElementById('btn-' + id).classList.add('active'); window.scrollTo(0, 0);
+            if(id === 'peta') { setTimeout(triggerMapResize, 100); setTimeout(triggerMapResize, 300); setTimeout(triggerMapResize, 600); if (polaRuangLayer && document.getElementById('check-polaruang').checked) { setTimeout(() => { map.fitBounds(polaRuangLayer.getBounds(), { padding: [30, 30] }); }, 400); } }
+        }
+
         var osmMain = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' });
+        var osmMini = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' });
         var satelitMain = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Satelit' });
+        var satelitMini = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Satelit' });
 
         var map = L.map('map', { center: WUNUT_CENTER, zoom: DEFAULT_ZOOM, layers: [osmMain], zoomControl: false });
-        L.control.zoom({ position: 'bottomright' }).addTo(map); // Zoom di kanan bawah
+        L.control.zoom({ position: 'bottomleft' }).addTo(map);
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
-        
-        // Plugin Geoman (Digitasi)
-        map.pm.addControls({ position: 'bottomright', drawMarker: true, drawPolygon: true, drawLine: true, drawCircle: false, drawCircleMarker: false, drawText: false, editMode: true, dragMode: false, cutPolygon: false, removalMode: true });
-        map.pm.setPathOptions({ color: '#c5a059', fillColor: '#c5a059', fillOpacity: 0.4 });
+        map.pm.addControls({ position: 'bottomleft', drawMarker: true, drawPolygon: true, drawLine: true, drawCircle: false, drawCircleMarker: false, drawText: false, editMode: true, dragMode: false, cutPolygon: false, removalMode: true });
+        map.pm.setPathOptions({ color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.4 });
 
-        // Fungsi Kontrol Kanan
-        function changeBase(val) { if(val === 'osm') { map.addLayer(osmMain); map.removeLayer(satelitMain); } else { map.addLayer(satelitMain); map.removeLayer(osmMain); } }
-        function goHome() { map.setView(WUNUT_CENTER, DEFAULT_ZOOM); }
+        var miniMap = L.map('mini-map', { center: WUNUT_CENTER, zoom: 10, layers: [osmMini], dragging: false, zoomControl: false, scrollWheelZoom: false });
+        map.on('move', function() { miniMap.setView(map.getCenter(), map.getZoom() - 5); });
+        new ResizeObserver(triggerMapResize).observe(document.getElementById('peta'));
+
+        function changeBase(val) { if(val === 'osm') { map.addLayer(osmMain); map.removeLayer(satelitMain); miniMap.addLayer(osmMini); miniMap.removeLayer(satelitMini); } else { map.addLayer(satelitMain); map.removeLayer(osmMain); miniMap.addLayer(satelitMini); miniMap.removeLayer(osmMini); } }
+        function goHome() { if (polaRuangLayer && document.getElementById('check-polaruang').checked) { map.fitBounds(polaRuangLayer.getBounds(), { padding: [30, 30] }); } else { map.setView(WUNUT_CENTER, DEFAULT_ZOOM); } }
         function findLocation() { map.locate({setView: true, maxZoom: 16}); }
         map.on('locationfound', function(e) { if(userMarker) { map.removeLayer(userMarker); } userMarker = L.marker(e.latlng).addTo(map).bindPopup("Lokasi Anda Saat Ini").openPopup(); });
-        function toggleFullScreen() { var elem = document.getElementById("peta"); if (!document.fullscreenElement) { elem.requestFullscreen(); } else { document.exitFullscreen(); } }
+        function toggleFullScreen() { var elem = document.getElementById("main-map-container"); if (!document.fullscreenElement) { elem.requestFullscreen(); } else { document.exitFullscreen(); } }
 
-        // Fungsi Transparansi Layer
         function changeOpacityPolaRuang(val) { document.getElementById('val-op-pola').innerText = Math.round(val * 100) + '%'; if (polaRuangLayer) polaRuangLayer.setStyle({fillOpacity: val}); }
         function changeOpacityBidangTanah(val) { document.getElementById('val-op-bidang').innerText = Math.round(val * 100) + '%'; if (bidangTanahLayer) bidangTanahLayer.setStyle({fillOpacity: val}); }
 
-        // Kamus Warna
         const subZonaColors = { 'Badan Air': '#99D9EA', 'Badan Jalan': '#ED1C24', 'Hortikultura': '#D4FF54', 'Instalasi Pengolahan Air Minum (IPAM)': '#F5B069', 'Kawasan Peruntukan Industri': '#6B0000', 'Pariwisata': '#FF9EED', 'Pemakaman': '#39FF14', 'Pengelolaan Persampahan': '#C48A3F', 'Perdagangan dan Jasa Skala SWP': '#FF9999', 'Perdagangan dan Jasa Skala WP': '#FF6666', 'Pergudangan': '#404040', 'Perikanan Budidaya': '#85C1E9', 'Perkantoran': '#999999', 'Perkebunan': '#A9B846', 'Perkebunan Rakyat': '#96E091', 'Pertahanan dan Keamanan': '#9400D3', 'Peternakan': '#C8F7C8', 'Ruang Terbuka Hijau': '#194D12', 'Ruang Terbuka Non Hijau': '#066B6B', 'Rumah Kepadatan Rendah': '#FEFA4E', 'Rumah Kepadatan Sangat Rendah': '#FCFCC0', 'Rumah Kepadatan Sedang': '#FFED00', 'Rumah Kepadatan Tinggi': '#FFC000', 'SPU Skala Kecamatan': '#9C43A8', 'SPU Skala Kelurahan': '#BA55D3', 'SPU Skala Kota': '#660066', 'SPU Skala RW': '#E475DF', 'Sempadan Sungai': '#E0FFFF', 'Sentra Industri Kecil Menengah': '#5C0000', 'Taman Kecamatan': '#398C15', 'Taman Kelurahan': '#B84CB8', 'Tanaman Pangan': '#B9F74F', 'Lainnya': '#dddddd' };
         const statusColors = { 'Hak Guna Bangunan': '#387cc3', 'Hak Guna Usaha': '#df8c54', 'Hak Milik': '#f6d246', 'Hak Pakai': '#50c15d', 'Jaringan Jalan': '#cb1b1d', 'Kosong': '#a07f6e', 'Sungai': '#355cf8' };
 
-        // Render Legenda
+        function toggleLegendPanel() {
+            const wrapper = document.getElementById('slide-legend'); const icon = document.getElementById('legend-icon'); wrapper.classList.toggle('open');
+            if (wrapper.classList.contains('open')) { icon.classList.replace('fa-chevron-left', 'fa-chevron-right'); } else { icon.classList.replace('fa-chevron-right', 'fa-chevron-left'); }
+        }
+
         function renderLegend() {
-            const legWrapper = document.getElementById('sidebar-legend'); 
-            const legDiv = document.getElementById('legend-list-content'); 
-            legDiv.innerHTML = ''; 
-            const isPolaRuangActive = document.getElementById('check-polaruang').checked; 
-            const isBidangTanahActive = document.getElementById('check-bidangtanah').checked;
-            
-            if (isPolaRuangActive) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-bottom:5px; font-weight:700;">POLA RUANG</div>`; for (const [key, color] of Object.entries(subZonaColors)) { if (key !== 'Lainnya') { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } } }
-            if (isBidangTanahActive) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:10px; margin-bottom:5px; font-weight:700;">BIDANG TANAH</div>`; for (const [key, color] of Object.entries(statusColors)) { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } }
-            
-            if (!isPolaRuangActive && !isBidangTanahActive) { legWrapper.style.display = 'none'; } else { legWrapper.style.display = 'block'; }
+            const legWrapper = document.getElementById('slide-legend'); const legDiv = document.getElementById('legend-list-content'); legDiv.innerHTML = ''; 
+            const isPolaRuangActive = document.getElementById('check-polaruang').checked; const isBidangTanahActive = document.getElementById('check-bidangtanah').checked;
+            if (isPolaRuangActive) { legDiv.innerHTML += `<div style="font-size:11px; color:#888; margin-bottom:8px; text-transform:uppercase; font-weight:700;">• Pola Ruang (Sub Zona)</div>`; for (const [key, color] of Object.entries(subZonaColors)) { if (key !== 'Lainnya') { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } } }
+            if (isBidangTanahActive) { legDiv.innerHTML += `<div style="font-size:11px; color:#888; margin-top:${isPolaRuangActive ? '15px' : '5px'}; margin-bottom:8px; text-transform:uppercase; font-weight:700;">• Bidang Tanah (Status)</div>`; for (const [key, color] of Object.entries(statusColors)) { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } }
+            if (!isPolaRuangActive && !isBidangTanahActive) { legWrapper.style.display = 'none'; legWrapper.classList.remove('open'); document.getElementById('legend-icon').classList.replace('fa-chevron-right', 'fa-chevron-left'); } else { legWrapper.style.display = 'flex'; }
         }
 
         function toggleLayers() {
@@ -533,41 +549,36 @@
             renderLegend(); 
         }
 
-        // Helper fungsi property (menyamakan huruf kapital/kecil atribut GeoJSON)
-        function getPropValue(properties, ...possibleKeys) { for (let key of possibleKeys) { if (properties[key] !== undefined) return properties[key]; for (let actualKey in properties) { if (actualKey.toLowerCase() === key.toLowerCase()) return properties[actualKey]; } } return '-'; }
-        
         function stylePolaRuang(feature) { let val = getPropValue(feature.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona'); let currentOp = document.getElementById('opacity-polaruang') ? parseFloat(document.getElementById('opacity-polaruang').value) : 0.8; return { fillColor: subZonaColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: currentOp }; }
         function styleBidangTanah(feature) { let val = getPropValue(feature.properties, 'STATUS', 'Status', 'status'); let currentOp = document.getElementById('opacity-bidangtanah') ? parseFloat(document.getElementById('opacity-bidangtanah').value) : 0.8; return { fillColor: statusColors[val] || '#cccccc', weight: 1.2, opacity: 1, color: '#444444', fillOpacity: currentOp }; }
 
-        // Fetch Data GeoJSON
         fetch('polaruangwunutbaru.geojson').then(res => res.json()).then(data => {
             rawPolaRuangData = data;
             polaRuangLayer = L.geoJSON(data, {
                 style: stylePolaRuang,
                 onEachFeature: function(f, l) {
                     let kode = getPropValue(f.properties, 'KODE', 'Kode', 'kode'); let zona = getPropValue(f.properties, 'ZONA', 'Zona', 'zona'); let subZona = getPropValue(f.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona');
-                    let popupContent = `<div style="font-family:'Inter', sans-serif; min-width: 200px;"><b style="color:var(--deep-navy); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--accent-gold); padding-bottom:5px;">Pola Ruang</b><table style="width:100%; font-size:12px; border-collapse: collapse;"><tr><td style="padding:4px 0; font-weight:700; width:35%;">Kode</td><td style="padding:4px 0; color:#475569;">: ${kode}</td></tr><tr><td style="padding:4px 0; font-weight:700; vertical-align:top;">Zona</td><td style="padding:4px 0; color:#475569;">: ${zona}</td></tr><tr><td style="padding:6px 0 4px; font-weight:700; vertical-align:middle;">Sub Zona</td><td style="padding:6px 0 4px;">: <span style="display:inline-block; background:${subZonaColors[subZona] || '#ddd'}; color:${['Badan Jalan', 'Kawasan Peruntukan Industri', 'Sentra Industri Kecil Menengah', 'Pertahanan dan Keamanan', 'SPU Skala Kota'].includes(subZona) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">${subZona}</span></td></tr></table></div>`;
+                    let popupContent = `<div style="font-family:'Inter', sans-serif; min-width: 200px;"><b style="color:var(--tirta-blue); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--tirta-light); padding-bottom:5px;">Informasi Pola Ruang</b><table style="width:100%; font-size:12px; border-collapse: collapse;"><tr><td style="padding:4px 0; font-weight:700; width:35%;">Kode</td><td style="padding:4px 0; color:#475569;">: ${kode}</td></tr><tr><td style="padding:4px 0; font-weight:700; vertical-align:top;">Zona</td><td style="padding:4px 0; color:#475569;">: ${zona}</td></tr><tr><td style="padding:6px 0 4px; font-weight:700; vertical-align:middle;">Sub Zona</td><td style="padding:6px 0 4px;">: <span style="display:inline-block; background:${subZonaColors[subZona] || '#ddd'}; color:${['Badan Jalan', 'Kawasan Peruntukan Industri', 'Sentra Industri Kecil Menengah', 'Pertahanan dan Keamanan', 'SPU Skala Kota'].includes(subZona) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">${subZona}</span></td></tr></table></div>`;
                     l.bindPopup(popupContent); l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); }); l.on('mouseout', function(e) { polaRuangLayer.resetStyle(e.target); });
                 }
             });
             if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer); renderLegend();
-        }).catch(e => console.error("Data Pola Ruang belum tersedia di folder."));
+        }).catch(e => console.error("Gagal Muat Data Pola Ruang:", e));
 
         fetch('bidangtanahwunut.geojson').then(res => res.json()).then(data => {
             bidangTanahLayer = L.geoJSON(data, {
                 style: styleBidangTanah,
                 onEachFeature: function(f, l) {
                     let status = getPropValue(f.properties, 'STATUS', 'Status', 'status'); let luas = getPropValue(f.properties, 'Luas', 'LUAS', 'luas');
-                    let popupContent = `<div style="font-family:'Inter', sans-serif; min-width: 180px;"><b style="color:var(--deep-navy); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--accent-gold); padding-bottom:5px;">Bidang Tanah</b><table style="width:100%; font-size:12px; border-collapse: collapse;"><tr><td style="padding:6px 0; font-weight:700; width:40%; vertical-align:middle;">Status</td><td style="padding:6px 0;">: <span style="display:inline-block; background:${statusColors[status] || '#ddd'}; color:${['Jaringan Jalan', 'Sungai', 'Hak Guna Bangunan'].includes(status) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">${status}</span></td></tr><tr><td style="padding:4px 0; font-weight:700;">Luas</td><td style="padding:4px 0; color:#475569;">: ${luas} m²</td></tr></table></div>`;
+                    let popupContent = `<div style="font-family:'Inter', sans-serif; min-width: 180px;"><b style="color:var(--tirta-blue); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--tirta-light); padding-bottom:5px;">Informasi Bidang Tanah</b><table style="width:100%; font-size:12px; border-collapse: collapse;"><tr><td style="padding:6px 0; font-weight:700; width:40%; vertical-align:middle;">Status</td><td style="padding:6px 0;">: <span style="display:inline-block; background:${statusColors[status] || '#ddd'}; color:${['Jaringan Jalan', 'Sungai', 'Hak Guna Bangunan'].includes(status) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">${status}</span></td></tr><tr><td style="padding:4px 0; font-weight:700;">Luas</td><td style="padding:4px 0; color:#475569;">: ${luas} m²</td></tr></table></div>`;
                     l.bindPopup(popupContent); l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); }); l.on('mouseout', function(e) { bidangTanahLayer.resetStyle(e.target); });
                 }
             });
             if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer); renderLegend();
-        }).catch(e => console.error("Data Bidang Tanah belum tersedia di folder."));
+        }).catch(e => console.error("Gagal Muat Data Bidang Tanah:", e));
 
-        // Download GeoJSON
         function downloadData() {
-            if (!rawPolaRuangData || !rawPolaRuangData.features) { alert("Data Pola Ruang belum siap."); return; }
+            if (!rawPolaRuangData || !rawPolaRuangData.features) { alert("Data Pola Ruang belum siap. Tunggu sebentar..."); return; }
             try {
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rawPolaRuangData));
                 const dlAnchorElem = document.createElement('a'); dlAnchorElem.setAttribute("href", dataStr); dlAnchorElem.setAttribute("download", "Pola_Ruang_Wunut.geojson");
@@ -575,20 +586,50 @@
             } catch (error) { alert("Terjadi kesalahan saat mengunduh data."); }
         }
 
-        // Upload KML
         function loadKML(event) {
             const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const customLayer = omnivore.kml.parse(e.target.result);
-                    customLayer.setStyle({ color: '#c5a059', weight: 3, fillOpacity: 0.5 });
+                    customLayer.setStyle({ color: '#f59e0b', weight: 3, fillOpacity: 0.5 });
                     customLayer.addTo(map); map.fitBounds(customLayer.getBounds(), { padding: [30, 30] });
                     alert(`File KML '${file.name}' berhasil ditambahkan ke peta!`);
                 } catch (error) { alert("Format KML tidak valid."); }
             };
             reader.readAsText(file);
         }
+
+        // ApexCharts
+        var optionsDinamika = {
+            series: [{ name: 'Kelahiran', data: [20, 16, 7, 17, 24, 10] }, { name: 'Kematian', data: [8, 18, 9, 18, 21, 23] }],
+            chart: { type: 'area', height: 350, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
+            colors: ['#10b981', '#ef4444'],
+            dataLabels: { enabled: false }, stroke: { curve: 'smooth', width: 3 },
+            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
+            xaxis: { categories: ['2020', '2021', '2022', '2023', '2024', '2025'], tooltip: { enabled: false } },
+            markers: { size: 5, hover: { size: 7 } }, legend: { position: 'top', horizontalAlign: 'right' }
+        };
+        var chartDinamika = new ApexCharts(document.querySelector("#chart-dinamika"), optionsDinamika);
+        chartDinamika.render();
+
+        var optionsPiramida = {
+            series: [
+                { name: 'Laki-laki', data: [-97, -74, -99, -78, -65, -107, -77, -67, -104, -79, -81, -70, -56, -32, -21, -25] }, 
+                { name: 'Perempuan', data: [81, 86, 86, 91, 77, 82, 76, 84, 90, 78, 82, 66, 58, 48, 24, 49] }
+            ],
+            chart: { type: 'bar', stacked: true, height: 380, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
+            colors: ['#0284c7', '#f59e0b'],
+            plotOptions: { bar: { horizontal: true, barHeight: '85%', borderRadius: 2 } },
+            dataLabels: { enabled: false }, stroke: { width: 1, colors: ["#fff"] },
+            grid: { xaxis: { lines: { show: true } }, yaxis: { lines: { show: false } } },
+            yaxis: { title: { text: 'Kelompok Umur (Tahun)', style: { fontWeight: 600 } } },
+            tooltip: { shared: false, x: { formatter: function (val) { return val; } }, y: { formatter: function (val) { return Math.abs(val) + " Jiwa"; } } },
+            xaxis: { categories: ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '>75'], labels: { formatter: function (val) { return Math.abs(Math.round(val)); } } },
+            legend: { position: 'top', horizontalAlign: 'right' }
+        };
+        var chartPiramida = new ApexCharts(document.querySelector("#chart-piramida"), optionsPiramida);
+        chartPiramida.render();
     </script>
 </body>
 </html>
