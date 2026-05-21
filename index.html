@@ -88,7 +88,7 @@
         .shortcut-btn { background: var(--white); color: var(--deep-navy); padding: 12px 25px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid var(--accent-gold); transition: var(--transition); display: flex; align-items: center; gap: 8px; cursor: pointer; }
         .shortcut-btn:hover { background: var(--deep-navy); color: var(--accent-gold); transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0,0,0,0.1); }
 
-        /* --- INTERACTIVE PROFIL DESA WUNUT (NEW) --- */
+        /* --- INTERACTIVE PROFIL DESA WUNUT --- */
         .profil-container { display: flex; flex-wrap: wrap; background: var(--white); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 60px; border-left: 6px solid var(--accent-gold); }
         .profil-tabs { flex: 0 0 260px; background: var(--deep-navy); display: flex; flex-direction: column; padding: 20px 0; }
         .profil-tab { background: transparent; color: rgba(255,255,255,0.6); border: none; text-align: left; padding: 18px 25px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition); border-left: 4px solid transparent; display: flex; align-items: center; gap: 12px; }
@@ -100,7 +100,6 @@
         .profil-content.active-fade { opacity: 1; }
         .profil-content h3 { font-family: 'Playfair Display', serif; color: var(--deep-navy); font-size: 2rem; margin-top: 0; margin-bottom: 20px; }
         .profil-content p { font-family: 'Lora', serif; font-size: 1.15rem; line-height: 1.9; color: var(--text-body); margin-bottom: 15px; text-align: justify; }
-        @media (max-width: 768px) { .profil-container { flex-direction: column; } .profil-tabs { flex: 1; flex-direction: row; overflow-x: auto; } .profil-tab { white-space: nowrap; border-left: none; border-bottom: 4px solid transparent; padding: 15px; } .profil-tab.active { border-left-color: transparent; border-bottom-color: var(--accent-gold); } .profil-content-wrapper { padding: 30px 20px; } }
 
         /* Charts */
         .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 40px; margin-bottom: 60px; }
@@ -132,7 +131,7 @@
         .gallery-overlay h4 { font-family: 'Playfair Display', serif; margin: 0 0 5px; font-size: 1.3rem; color: var(--accent-gold); }
         .gallery-overlay p { margin: 0; font-size: 0.85rem; }
 
-        /* Target Scroll Margin (Mencegah tertutup Header) */
+        /* Target Scroll Margin */
         .scroll-target { scroll-margin-top: 100px; padding-top: 20px; }
 
         /* --- WEBGIS PETA --- */
@@ -141,7 +140,7 @@
         #map { width: 100%; height: 100%; z-index: 1; }
         
         .floating-sidebar {
-            position: absolute; top: 20px; left: 20px; z-index: 1000; width: 320px; 
+            position: absolute; top: 20px; left: 20px; z-index: 1000; width: 340px; 
             max-height: calc(100vh - 110px); background: var(--glass-bg); backdrop-filter: blur(15px); 
             border: 1px solid rgba(255,255,255,0.5); padding: 25px 20px; border-radius: 12px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow-y: auto;
@@ -149,13 +148,14 @@
         .floating-sidebar::-webkit-scrollbar { width: 5px; }
         .floating-sidebar::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 10px; }
 
-        .control-group { margin-bottom: 25px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 15px; }
+        .control-group { margin-bottom: 20px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 15px; }
         .control-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .control-title { font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; color: var(--terracotta); text-transform: uppercase; letter-spacing: 1px; }
-        .control-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--deep-navy); margin-bottom: 10px; cursor: pointer; }
+        .control-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--deep-navy); margin-bottom: 5px; cursor: pointer; }
         
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; margin-bottom: 15px; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: var(--terracotta); cursor: pointer; margin-top: -5px; }
+        /* Slider Minimalis */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; margin-bottom: 10px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: var(--terracotta); cursor: pointer; margin-top: -4px; }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #cbd5e1; border-radius: 2px; }
 
         .btn-map-action { width: 100%; padding: 10px; background: var(--deep-navy); color: var(--accent-gold); border: none; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; transition: var(--transition); letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
@@ -166,14 +166,14 @@
         .btn-icon { width: 40px; height: 40px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; color: var(--deep-navy); font-size: 16px; transition: var(--transition); display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .btn-icon:hover { background: var(--accent-gold); color: white; border-color: var(--accent-gold); }
         
-        /* Arah Utara Aman di Kiri Atas Peta */
-        .north-arrow { position: absolute; top: 20px; left: 360px; z-index: 1000; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); pointer-events: none; }
+        /* Arah Utara */
+        .north-arrow { position: absolute; top: 20px; left: 380px; z-index: 1000; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); pointer-events: none; }
 
         /* --- LEGENDA SLIDER KANAN --- */
         .legend-slider-wrapper { position: absolute; top: 120px; right: 0; z-index: 1000; transform: translateX(100%); transition: transform 0.4s ease-in-out; display: flex; align-items: flex-start; }
         .legend-slider-wrapper.open { transform: translateX(0); }
         .legend-toggle-btn { background: rgba(255,255,255,0.95); border: 1px solid rgba(0,0,0,0.1); border-right: none; padding: 12px 15px; border-radius: 10px 0 0 10px; cursor: pointer; box-shadow: -4px 4px 10px rgba(0,0,0,0.05); color: var(--deep-navy); font-weight: 700; display: flex; align-items: center; gap: 8px; font-size: 12px; }
-        .legend-content { background: var(--glass-bg); backdrop-filter: blur(10px); padding: 20px; border-radius: 0 0 0 15px; border: 1px solid rgba(255,255,255,0.5); border-right: none; width: 250px; max-height: 60vh; overflow-y: auto; box-shadow: -5px 5px 20px rgba(0,0,0,0.08); }
+        .legend-content { background: var(--glass-bg); backdrop-filter: blur(10px); padding: 20px; border-radius: 0 0 0 15px; border: 1px solid rgba(255,255,255,0.5); border-right: none; width: 280px; max-height: 60vh; overflow-y: auto; box-shadow: -5px 5px 20px rgba(0,0,0,0.08); }
         .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 11px; font-weight: 600; color: var(--deep-navy); }
         .color-box { width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.2); flex-shrink: 0; }
 
@@ -376,7 +376,7 @@
 
                     <div class="floating-sidebar">
                         <div class="control-group">
-                            <div class="control-title"><i class="fa-solid fa-layer-group"></i> Peta Dasar (Basemap)</div>
+                            <div class="control-title"><i class="fa-solid fa-layer-group"></i> Peta Dasar</div>
                             <label class="control-label">
                                 <input type="radio" name="basemap" value="osm" checked onchange="changeBase(this.value)"> OpenStreetMap
                             </label>
@@ -391,7 +391,7 @@
                             <label class="control-label">
                                 <input type="checkbox" id="check-polaruang" checked onchange="toggleLayers()"> Pola Ruang (Sub Zona)
                             </label>
-                            <div style="padding-left: 25px; margin-bottom: 15px;">
+                            <div style="padding-left: 25px; margin-bottom: 10px;">
                                 <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;">
                                     <span>Transparansi</span><span id="val-op-pola">80%</span>
                                 </div>
@@ -401,11 +401,51 @@
                             <label class="control-label">
                                 <input type="checkbox" id="check-bidangtanah" onchange="toggleLayers()"> Bidang Tanah (Status)
                             </label>
-                            <div style="padding-left: 25px;">
+                            <div style="padding-left: 25px; margin-bottom: 10px;">
                                 <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;">
                                     <span>Transparansi</span><span id="val-op-bidang">80%</span>
                                 </div>
                                 <input type="range" id="opacity-bidangtanah" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityBidangTanah(this.value)">
+                            </div>
+
+                            <label class="control-label">
+                                <input type="checkbox" id="check-znt" onchange="toggleLayers()"> Zona Nilai Tanah (ZNT)
+                            </label>
+                            <div style="padding-left: 25px; margin-bottom: 10px;">
+                                <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;">
+                                    <span>Transparansi</span><span id="val-op-znt">80%</span>
+                                </div>
+                                <input type="range" id="opacity-znt" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityZnt(this.value)">
+                            </div>
+
+                            <label class="control-label">
+                                <input type="checkbox" id="check-penggunaan" onchange="toggleLayers()"> Penggunaan Lahan
+                            </label>
+                            <div style="padding-left: 25px; margin-bottom: 10px;">
+                                <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;">
+                                    <span>Transparansi</span><span id="val-op-penggunaan">80%</span>
+                                </div>
+                                <input type="range" id="opacity-penggunaan" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityPenggunaan(this.value)">
+                            </div>
+
+                            <label class="control-label">
+                                <input type="checkbox" id="check-kp2b" onchange="toggleLayers()"> KP2B
+                            </label>
+                            <div style="padding-left: 25px; margin-bottom: 10px;">
+                                <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;">
+                                    <span>Transparansi</span><span id="val-op-kp2b">80%</span>
+                                </div>
+                                <input type="range" id="opacity-kp2b" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityKp2b(this.value)">
+                            </div>
+
+                            <label class="control-label">
+                                <input type="checkbox" id="check-lsd" onchange="toggleLayers()"> LSD
+                            </label>
+                            <div style="padding-left: 25px;">
+                                <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;">
+                                    <span>Transparansi</span><span id="val-op-lsd">80%</span>
+                                </div>
+                                <input type="range" id="opacity-lsd" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityLsd(this.value)">
                             </div>
                         </div>
 
@@ -442,7 +482,7 @@
                 <div class="container" style="text-align: center;">
                     <h2 class="section-title" data-aos="fade-up">Tentang SIPET Wunut</h2>
                     <p style="font-size: 1.15rem; color: var(--text-body); max-width: 800px; margin: 0 auto 40px; line-height: 1.8;" data-aos="fade-up" data-aos-delay="100">
-                        <b>Sistem Informasi Peruntukan Tata Ruang (SIPET) Desa Wunut</b> merupakan inovasi pelayanan publik berbasis digital dan sistem informasi geografis (WebGIS). Sistem ini memetakan klasifikasi sub-zona tata ruang dan informasi status kepemilikan bidang tanah secara detail. 
+                        <b>Sistem Informasi Peruntukan Tata Ruang (SIPET) Desa Wunut</b> merupakan inovasi pelayanan publik berbasis digital dan sistem informasi geografis (WebGIS). Sistem ini memetakan klasifikasi tata ruang dan informasi geospasial lainnya secara detail. 
                     </p>
                     <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--deep-navy); margin-bottom: 30px;" data-aos="fade-up" data-aos-delay="200">Tim Penyusun</h3>
                     <div class="stats-grid" style="margin-top: 0;">
@@ -515,7 +555,7 @@
             e.preventDefault();
             const target = document.getElementById(sectionId);
             if (target) {
-                const headerOffset = 80; // Offset tinggi header agar teks tidak tertutup
+                const headerOffset = 80;
                 const elementPosition = target.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                 window.scrollTo({ top: offsetPosition, behavior: "smooth" });
@@ -525,23 +565,17 @@
         // 3. Fungsi Logika Profil Interaktif
         function openProfilTab(evt, tabName) {
             var i, tabcontent, tablinks;
-            // Sembunyikan semua konten profil
             tabcontent = document.getElementsByClassName("profil-content");
             for (i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].style.display = "none";
                 tabcontent[i].classList.remove("active-fade");
             }
-            // Hilangkan class active dari semua tombol
             tablinks = document.getElementsByClassName("profil-tab");
             for (i = 0; i < tablinks.length; i++) {
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
-            // Tampilkan konten yang dipilih
             document.getElementById(tabName).style.display = "block";
-            // Beri sedikit jeda untuk trigger animasi CSS
-            setTimeout(() => {
-                document.getElementById(tabName).classList.add("active-fade");
-            }, 10);
+            setTimeout(() => { document.getElementById(tabName).classList.add("active-fade"); }, 10);
             evt.currentTarget.className += " active";
         }
 
@@ -569,15 +603,13 @@
         }
         function logoutAuth() { if(window.logOut) { window.logOut(window.firebaseAuth).then(() => { location.reload(); }); } }
 
-        // 5. Fungsi Switch Tab (Mencegah Peta Rusak)
+        // 5. Fungsi Switch Tab 
         function switchTab(id) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
             document.getElementById(id).classList.add('active-section'); 
             document.getElementById('btn-' + id).classList.add('active'); 
             window.scrollTo(0, 0);
-            
-            // Me-refresh ukuran peta saat tab "Peta" dibuka agar tidak abu-abu/rusak
             if(id === 'peta') { 
                 setTimeout(() => { map.invalidateSize(); }, 100); 
                 setTimeout(() => { map.invalidateSize(); }, 400); 
@@ -615,8 +647,10 @@
         new ApexCharts(document.querySelector("#chart-piramida"), optionsPiramida).render();
 
         // 7. LOGIKA FULL WEBGIS (PETA LEAFLET)
-        var polaRuangLayer; var bidangTanahLayer; var userMarker; 
-        var rawPolaRuangData = null; var rawBidangTanahData = null; 
+        var polaRuangLayer; var bidangTanahLayer; var zntLayer; var penggunaanLayer; var kp2bLayer; var lsdLayer;
+        var userMarker; 
+        var rawPolaRuangData = null; var rawBidangTanahData = null; var rawZntData = null; var rawPenggunaanData = null; var rawKp2bData = null; var rawLsdData = null;
+        
         const WUNUT_CENTER = [-7.5990, 110.6188]; const DEFAULT_ZOOM = 15;
 
         var osmMain = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' });
@@ -626,26 +660,31 @@
         L.control.zoom({ position: 'bottomright' }).addTo(map); 
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
         
-        // Plugin Geoman (Digitasi)
         map.pm.addControls({ position: 'bottomright', drawCircle: false, drawCircleMarker: false, drawText: false, dragMode: false, cutPolygon: false });
         map.pm.setPathOptions({ color: '#c5a059', fillColor: '#c5a059', fillOpacity: 0.4 });
 
-        // Fungsi Kontrol Kanan
         function changeBase(val) { if(val === 'osm') { map.addLayer(osmMain); map.removeLayer(satelitMain); } else { map.addLayer(satelitMain); map.removeLayer(osmMain); } }
         function goHome() { if (polaRuangLayer && document.getElementById('check-polaruang').checked) { map.fitBounds(polaRuangLayer.getBounds(), { padding: [30, 30] }); } else { map.setView(WUNUT_CENTER, DEFAULT_ZOOM); } }
         function findLocation() { map.locate({setView: true, maxZoom: 16}); }
         map.on('locationfound', function(e) { if(userMarker) { map.removeLayer(userMarker); } userMarker = L.marker(e.latlng).addTo(map).bindPopup("Lokasi Anda Saat Ini").openPopup(); });
         function toggleFullScreen() { var elem = document.getElementById("peta"); if (!document.fullscreenElement) { elem.requestFullscreen(); } else { document.exitFullscreen(); } }
 
-        // Fungsi Transparansi Layer
         function changeOpacityPolaRuang(val) { document.getElementById('val-op-pola').innerText = Math.round(val * 100) + '%'; if (polaRuangLayer) polaRuangLayer.setStyle({fillOpacity: val}); }
         function changeOpacityBidangTanah(val) { document.getElementById('val-op-bidang').innerText = Math.round(val * 100) + '%'; if (bidangTanahLayer) bidangTanahLayer.setStyle({fillOpacity: val}); }
+        function changeOpacityZnt(val) { document.getElementById('val-op-znt').innerText = Math.round(val * 100) + '%'; if (zntLayer) zntLayer.setStyle({fillOpacity: val}); }
+        function changeOpacityPenggunaan(val) { document.getElementById('val-op-penggunaan').innerText = Math.round(val * 100) + '%'; if (penggunaanLayer) penggunaanLayer.setStyle({fillOpacity: val}); }
+        function changeOpacityKp2b(val) { document.getElementById('val-op-kp2b').innerText = Math.round(val * 100) + '%'; if (kp2bLayer) kp2bLayer.setStyle({fillOpacity: val}); }
+        function changeOpacityLsd(val) { document.getElementById('val-op-lsd').innerText = Math.round(val * 100) + '%'; if (lsdLayer) lsdLayer.setStyle({fillOpacity: val}); }
 
-        // Kamus Warna
+        // KAMUS WARNA
         const subZonaColors = { 'Badan Air': '#99D9EA', 'Badan Jalan': '#ED1C24', 'Hortikultura': '#D4FF54', 'Instalasi Pengolahan Air Minum (IPAM)': '#F5B069', 'Kawasan Peruntukan Industri': '#6B0000', 'Pariwisata': '#FF9EED', 'Pemakaman': '#39FF14', 'Pengelolaan Persampahan': '#C48A3F', 'Perdagangan dan Jasa Skala SWP': '#FF9999', 'Perdagangan dan Jasa Skala WP': '#FF6666', 'Pergudangan': '#404040', 'Perikanan Budidaya': '#85C1E9', 'Perkantoran': '#999999', 'Perkebunan': '#A9B846', 'Perkebunan Rakyat': '#96E091', 'Pertahanan dan Keamanan': '#9400D3', 'Peternakan': '#C8F7C8', 'Ruang Terbuka Hijau': '#194D12', 'Ruang Terbuka Non Hijau': '#066B6B', 'Rumah Kepadatan Rendah': '#FEFA4E', 'Rumah Kepadatan Sangat Rendah': '#FCFCC0', 'Rumah Kepadatan Sedang': '#FFED00', 'Rumah Kepadatan Tinggi': '#FFC000', 'SPU Skala Kecamatan': '#9C43A8', 'SPU Skala Kelurahan': '#BA55D3', 'SPU Skala Kota': '#660066', 'SPU Skala RW': '#E475DF', 'Sempadan Sungai': '#E0FFFF', 'Sentra Industri Kecil Menengah': '#5C0000', 'Taman Kecamatan': '#398C15', 'Taman Kelurahan': '#B84CB8', 'Tanaman Pangan': '#B9F74F', 'Lainnya': '#dddddd' };
         const statusColors = { 'Hak Guna Bangunan': '#387cc3', 'Hak Guna Usaha': '#df8c54', 'Hak Milik': '#f6d246', 'Hak Pakai': '#50c15d', 'Jaringan Jalan': '#cb1b1d', 'Kosong': '#a07f6e', 'Sungai': '#355cf8' };
+        const zntColors = { '100000-200000': '#ffe6cc', '500000-1000000': '#c00000' };
+        const penggunaanColors = { 'Gedung Olahraga': '#a3d39c', 'Industri Aneka Pangan': '#d1d1d1', 'Industri Aneka Sandang': '#800080', 'Industri Lainnya': '#800000', 'Instalasi Air Bersih': '#8fbc8f', 'Instalasi Telekomunikasi': '#ff8c00', 'Jalan': '#ff0000', 'Kampung': '#fa8072', 'Kantor/Instansi Pemerintahan': '#ffff00', 'Kebun': '#bdb76b', 'Kolam/Empang/Tebat': '#add8e6', 'Lapangan Olahraga': '#90ee90', 'Makam Umum': '#ffb6c1', 'Masjid/Langgar/Surau': '#20b2aa', 'Pasar Tradisional': '#cd5c5c', 'Pekarangan': '#f08080', 'Pendidikan Dasar': '#ffd700', 'Pendidikan Terpadu': '#ffcc00', 'Penggunaan Campuran': '#32cd32', 'Pergudangan Tertutup': '#708090', 'Puskesmas/Balai Kesehatan': '#4682b4', 'Puskesmas/Balai Pengobatan': '#5f9ea0', 'Rumah Makan/Resto/Cafe': '#b22222', 'Sawah': '#9acd32', 'Sawah Irigasi': '#b3ee3a', 'Semak Belukar': '#98fb98', 'Sungai': '#87cefa', 'Tanah Terbuka Belum Diperuntukkan': '#d2b48c', 'Tegalan/Ladang': '#deb887', 'Tempat Parkir': '#f5deb3', 'Tempat Pengobatan Khusus': '#6495ed', 'Tempat Rekreasi': '#cd5c5c', 'Toko/Warung/Kios/Mart': '#c71585' };
+        const colorKp2b = '#4b5320'; // Hijau Army
+        const colorLsd = '#90ee90'; // Hijau Muda
 
-        // --- Legenda Slider Pintar (Slide Out Kanan) ---
+        // --- Legenda Slider Pintar ---
         function toggleLegendPanel() {
             const wrapper = document.getElementById('slide-legend'); const icon = document.getElementById('legend-icon'); wrapper.classList.toggle('open');
             if (wrapper.classList.contains('open')) { icon.classList.replace('fa-chevron-left', 'fa-chevron-right'); } else { icon.classList.replace('fa-chevron-right', 'fa-chevron-left'); }
@@ -655,89 +694,118 @@
             const legWrapper = document.getElementById('slide-legend'); 
             const legDiv = document.getElementById('legend-list-content'); 
             legDiv.innerHTML = ''; 
-            const isPolaRuangActive = document.getElementById('check-polaruang').checked; 
-            const isBidangTanahActive = document.getElementById('check-bidangtanah').checked;
             
-            if (isPolaRuangActive) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-bottom:5px; font-weight:700;">POLA RUANG</div>`; for (const [key, color] of Object.entries(subZonaColors)) { if (key !== 'Lainnya') { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } } }
-            if (isBidangTanahActive) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:10px; margin-bottom:5px; font-weight:700;">BIDANG TANAH</div>`; for (const [key, color] of Object.entries(statusColors)) { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } }
+            const checks = {
+                pola: document.getElementById('check-polaruang').checked,
+                bidang: document.getElementById('check-bidangtanah').checked,
+                znt: document.getElementById('check-znt').checked,
+                penggunaan: document.getElementById('check-penggunaan').checked,
+                kp2b: document.getElementById('check-kp2b').checked,
+                lsd: document.getElementById('check-lsd').checked
+            };
             
-            // Menyembunyikan Slider jika tidak ada layer yang dicentang
-            if (!isPolaRuangActive && !isBidangTanahActive) { 
-                legWrapper.style.display = 'none'; legWrapper.classList.remove('open'); document.getElementById('legend-icon').classList.replace('fa-chevron-right', 'fa-chevron-left'); 
-            } else { 
-                legWrapper.style.display = 'flex'; 
-            }
+            if (checks.pola) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:10px; margin-bottom:5px; font-weight:700;">POLA RUANG</div>`; for (const [key, color] of Object.entries(subZonaColors)) { if (key !== 'Lainnya') { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } } }
+            if (checks.bidang) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:15px; margin-bottom:5px; font-weight:700;">BIDANG TANAH</div>`; for (const [key, color] of Object.entries(statusColors)) { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } }
+            if (checks.znt) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:15px; margin-bottom:5px; font-weight:700;">ZONA NILAI TANAH</div>`; for (const [key, color] of Object.entries(zntColors)) { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } }
+            if (checks.penggunaan) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:15px; margin-bottom:5px; font-weight:700;">PENGGUNAAN LAHAN</div>`; for (const [key, color] of Object.entries(penggunaanColors)) { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } }
+            if (checks.kp2b) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:15px; margin-bottom:5px; font-weight:700;">KP2B</div><div class="legend-item"><div class="color-box" style="background:${colorKp2b}"></div>Kawasan Pertanian Pangan Berkelanjutan</div>`; }
+            if (checks.lsd) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:15px; margin-bottom:5px; font-weight:700;">LSD</div><div class="legend-item"><div class="color-box" style="background:${colorLsd}"></div>Lahan Sawah Dilindungi</div>`; }
+            
+            if (!Object.values(checks).includes(true)) { legWrapper.style.display = 'none'; legWrapper.classList.remove('open'); document.getElementById('legend-icon').classList.replace('fa-chevron-right', 'fa-chevron-left'); } 
+            else { legWrapper.style.display = 'flex'; }
         }
 
         function toggleLayers() {
-            const checkPolaRuang = document.getElementById('check-polaruang').checked; const checkBidangTanah = document.getElementById('check-bidangtanah').checked;
-            if (checkPolaRuang && polaRuangLayer) { if (!map.hasLayer(polaRuangLayer)) map.addLayer(polaRuangLayer); } else if (polaRuangLayer) { map.removeLayer(polaRuangLayer); }
-            if (checkBidangTanah && bidangTanahLayer) { if (!map.hasLayer(bidangTanahLayer)) map.addLayer(bidangTanahLayer); } else if (bidangTanahLayer) { map.removeLayer(bidangTanahLayer); }
+            const checks = {
+                pola: document.getElementById('check-polaruang').checked,
+                bidang: document.getElementById('check-bidangtanah').checked,
+                znt: document.getElementById('check-znt').checked,
+                penggunaan: document.getElementById('check-penggunaan').checked,
+                kp2b: document.getElementById('check-kp2b').checked,
+                lsd: document.getElementById('check-lsd').checked
+            };
+
+            if (checks.pola && polaRuangLayer) { if (!map.hasLayer(polaRuangLayer)) map.addLayer(polaRuangLayer); } else if (polaRuangLayer) { map.removeLayer(polaRuangLayer); }
+            if (checks.bidang && bidangTanahLayer) { if (!map.hasLayer(bidangTanahLayer)) map.addLayer(bidangTanahLayer); } else if (bidangTanahLayer) { map.removeLayer(bidangTanahLayer); }
+            if (checks.znt && zntLayer) { if (!map.hasLayer(zntLayer)) map.addLayer(zntLayer); } else if (zntLayer) { map.removeLayer(zntLayer); }
+            if (checks.penggunaan && penggunaanLayer) { if (!map.hasLayer(penggunaanLayer)) map.addLayer(penggunaanLayer); } else if (penggunaanLayer) { map.removeLayer(penggunaanLayer); }
+            if (checks.kp2b && kp2bLayer) { if (!map.hasLayer(kp2bLayer)) map.addLayer(kp2bLayer); } else if (kp2bLayer) { map.removeLayer(kp2bLayer); }
+            if (checks.lsd && lsdLayer) { if (!map.hasLayer(lsdLayer)) map.addLayer(lsdLayer); } else if (lsdLayer) { map.removeLayer(lsdLayer); }
+
             renderLegend(); 
         }
 
-        // Helper fungsi atribut GeoJSON
         function getPropValue(properties, ...possibleKeys) { for (let key of possibleKeys) { if (properties[key] !== undefined) return properties[key]; for (let actualKey in properties) { if (actualKey.toLowerCase() === key.toLowerCase()) return properties[actualKey]; } } return '-'; }
         
         function stylePolaRuang(feature) { let val = getPropValue(feature.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona'); let currentOp = document.getElementById('opacity-polaruang') ? parseFloat(document.getElementById('opacity-polaruang').value) : 0.8; return { fillColor: subZonaColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: currentOp }; }
         function styleBidangTanah(feature) { let val = getPropValue(feature.properties, 'STATUS', 'Status', 'status'); let currentOp = document.getElementById('opacity-bidangtanah') ? parseFloat(document.getElementById('opacity-bidangtanah').value) : 0.8; return { fillColor: statusColors[val] || '#cccccc', weight: 1.2, opacity: 1, color: '#444444', fillOpacity: currentOp }; }
+        function styleZnt(feature) { let val = getPropValue(feature.properties, 'harga', 'HARGA'); let currentOp = document.getElementById('opacity-znt') ? parseFloat(document.getElementById('opacity-znt').value) : 0.8; return { fillColor: zntColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#444444', fillOpacity: currentOp }; }
+        function stylePenggunaan(feature) { let val = getPropValue(feature.properties, 'penggunaan', 'PENGGUNAAN'); let currentOp = document.getElementById('opacity-penggunaan') ? parseFloat(document.getElementById('opacity-penggunaan').value) : 0.8; return { fillColor: penggunaanColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#444444', fillOpacity: currentOp }; }
+        function styleKp2b(feature) { let currentOp = document.getElementById('opacity-kp2b') ? parseFloat(document.getElementById('opacity-kp2b').value) : 0.8; return { fillColor: colorKp2b, weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: currentOp }; }
+        function styleLsd(feature) { let currentOp = document.getElementById('opacity-lsd') ? parseFloat(document.getElementById('opacity-lsd').value) : 0.8; return { fillColor: colorLsd, weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: currentOp }; }
 
-        // Fetch Data GeoJSON
+        // Fetch Data GeoJSON (Total 6 Layers)
         fetch('polaruangwunutbaru.geojson').then(res => res.json()).then(data => {
             rawPolaRuangData = data;
-            polaRuangLayer = L.geoJSON(data, {
-                style: stylePolaRuang,
-                onEachFeature: function(f, l) {
-                    let kode = getPropValue(f.properties, 'KODE', 'Kode', 'kode'); let zona = getPropValue(f.properties, 'ZONA', 'Zona', 'zona'); let subZona = getPropValue(f.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona');
-                    let popupContent = `<div style="font-family:'Inter', sans-serif; min-width: 200px;"><b style="color:var(--deep-navy); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--accent-gold); padding-bottom:5px;">Pola Ruang</b><table style="width:100%; font-size:12px; border-collapse: collapse;"><tr><td style="padding:4px 0; font-weight:700; width:35%;">Kode</td><td style="padding:4px 0; color:#475569;">: ${kode}</td></tr><tr><td style="padding:4px 0; font-weight:700; vertical-align:top;">Zona</td><td style="padding:4px 0; color:#475569;">: ${zona}</td></tr><tr><td style="padding:6px 0 4px; font-weight:700; vertical-align:middle;">Sub Zona</td><td style="padding:6px 0 4px;">: <span style="display:inline-block; background:${subZonaColors[subZona] || '#ddd'}; color:${['Badan Jalan', 'Kawasan Peruntukan Industri', 'Sentra Industri Kecil Menengah', 'Pertahanan dan Keamanan', 'SPU Skala Kota'].includes(subZona) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">${subZona}</span></td></tr></table></div>`;
-                    l.bindPopup(popupContent); l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); }); l.on('mouseout', function(e) { polaRuangLayer.resetStyle(e.target); });
-                }
-            });
+            polaRuangLayer = L.geoJSON(data, { style: stylePolaRuang, onEachFeature: function(f, l) { let kode = getPropValue(f.properties, 'KODE', 'Kode', 'kode'); let zona = getPropValue(f.properties, 'ZONA', 'Zona', 'zona'); let subZona = getPropValue(f.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona'); let popupContent = `<div style="font-family:'Inter', sans-serif; min-width: 200px;"><b style="color:var(--deep-navy); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--accent-gold); padding-bottom:5px;">Pola Ruang</b><table style="width:100%; font-size:12px; border-collapse: collapse;"><tr><td style="padding:4px 0; font-weight:700; width:35%;">Kode</td><td style="padding:4px 0;">: ${kode}</td></tr><tr><td style="padding:4px 0; font-weight:700; vertical-align:top;">Zona</td><td style="padding:4px 0;">: ${zona}</td></tr><tr><td style="padding:6px 0 4px; font-weight:700; vertical-align:middle;">Sub Zona</td><td style="padding:6px 0 4px;">: <span style="display:inline-block; background:${subZonaColors[subZona] || '#ddd'}; color:${['Badan Jalan', 'Kawasan Peruntukan Industri', 'Sentra Industri Kecil Menengah', 'Pertahanan dan Keamanan', 'SPU Skala Kota'].includes(subZona) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">${subZona}</span></td></tr></table></div>`; l.bindPopup(popupContent); l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); }); l.on('mouseout', function(e) { polaRuangLayer.resetStyle(e.target); }); } });
             if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer); renderLegend();
-        }).catch(e => console.error("Data Pola Ruang belum tersedia."));
+        }).catch(e => console.log("Data Pola Ruang belum tersedia."));
 
         fetch('bidangtanahwunut.geojson').then(res => res.json()).then(data => {
             rawBidangTanahData = data;
-            bidangTanahLayer = L.geoJSON(data, {
-                style: styleBidangTanah,
-                onEachFeature: function(f, l) {
-                    let status = getPropValue(f.properties, 'STATUS', 'Status', 'status'); let luas = getPropValue(f.properties, 'Luas', 'LUAS', 'luas');
-                    let popupContent = `<div style="font-family:'Inter', sans-serif; min-width: 180px;"><b style="color:var(--deep-navy); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--accent-gold); padding-bottom:5px;">Bidang Tanah</b><table style="width:100%; font-size:12px; border-collapse: collapse;"><tr><td style="padding:6px 0; font-weight:700; width:40%; vertical-align:middle;">Status</td><td style="padding:6px 0;">: <span style="display:inline-block; background:${statusColors[status] || '#ddd'}; color:${['Jaringan Jalan', 'Sungai', 'Hak Guna Bangunan'].includes(status) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">${status}</span></td></tr><tr><td style="padding:4px 0; font-weight:700;">Luas</td><td style="padding:4px 0; color:#475569;">: ${luas} m²</td></tr></table></div>`;
-                    l.bindPopup(popupContent); l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); }); l.on('mouseout', function(e) { bidangTanahLayer.resetStyle(e.target); });
-                }
-            });
+            bidangTanahLayer = L.geoJSON(data, { style: styleBidangTanah, onEachFeature: function(f, l) { let status = getPropValue(f.properties, 'STATUS', 'Status', 'status'); let luas = getPropValue(f.properties, 'Luas', 'LUAS', 'luas'); let popupContent = `<div style="font-family:'Inter', sans-serif; min-width: 180px;"><b style="color:var(--deep-navy); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--accent-gold); padding-bottom:5px;">Bidang Tanah</b><table style="width:100%; font-size:12px; border-collapse: collapse;"><tr><td style="padding:6px 0; font-weight:700; width:40%; vertical-align:middle;">Status</td><td style="padding:6px 0;">: <span style="display:inline-block; background:${statusColors[status] || '#ddd'}; color:${['Jaringan Jalan', 'Sungai', 'Hak Guna Bangunan'].includes(status) ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-weight:700; font-size:11px; margin-left:2px;">${status}</span></td></tr><tr><td style="padding:4px 0; font-weight:700;">Luas</td><td style="padding:4px 0;">: ${luas} m²</td></tr></table></div>`; l.bindPopup(popupContent); l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); }); l.on('mouseout', function(e) { bidangTanahLayer.resetStyle(e.target); }); } });
             if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer); renderLegend();
-        }).catch(e => console.error("Data Bidang Tanah belum tersedia."));
+        }).catch(e => console.log("Data Bidang Tanah belum tersedia."));
 
-        // --- Fitur Download GeoJSON / ZIP Cerdas ---
+        fetch('zntwunut.geojson').then(res => res.json()).then(data => {
+            rawZntData = data;
+            zntLayer = L.geoJSON(data, { style: styleZnt, onEachFeature: function(f, l) { let harga = getPropValue(f.properties, 'harga', 'HARGA'); let popupContent = `<div style="font-family:'Inter', sans-serif; min-width: 150px;"><b style="color:var(--deep-navy); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--accent-gold); padding-bottom:5px;">Zona Nilai Tanah</b><div style="font-size:12px; font-weight:600; text-align:center;">Harga: Rp ${harga}</div></div>`; l.bindPopup(popupContent); l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); }); l.on('mouseout', function(e) { zntLayer.resetStyle(e.target); }); } });
+            if (document.getElementById('check-znt').checked) map.addLayer(zntLayer); renderLegend();
+        }).catch(e => console.log("Data ZNT belum tersedia."));
+
+        fetch('penggunaanlahan.geojson').then(res => res.json()).then(data => {
+            rawPenggunaanData = data;
+            penggunaanLayer = L.geoJSON(data, { style: stylePenggunaan, onEachFeature: function(f, l) { let guna = getPropValue(f.properties, 'penggunaan', 'PENGGUNAAN'); let popupContent = `<div style="font-family:'Inter', sans-serif; min-width: 150px;"><b style="color:var(--deep-navy); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--accent-gold); padding-bottom:5px;">Penggunaan Lahan</b><div style="font-size:12px; font-weight:600; text-align:center;">${guna}</div></div>`; l.bindPopup(popupContent); l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); }); l.on('mouseout', function(e) { penggunaanLayer.resetStyle(e.target); }); } });
+            if (document.getElementById('check-penggunaan').checked) map.addLayer(penggunaanLayer); renderLegend();
+        }).catch(e => console.log("Data Penggunaan Lahan belum tersedia."));
+
+        fetch('kp2bwunut.geojson').then(res => res.json()).then(data => {
+            rawKp2bData = data;
+            kp2bLayer = L.geoJSON(data, { style: styleKp2b, onEachFeature: function(f, l) { let val = getPropValue(f.properties, 'KP2B', 'kp2b'); let popupContent = `<div style="font-family:'Inter', sans-serif; min-width: 150px;"><b style="color:var(--deep-navy); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--accent-gold); padding-bottom:5px;">Data KP2B</b><div style="font-size:12px; font-weight:600; text-align:center;">${val}</div></div>`; l.bindPopup(popupContent); l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); }); l.on('mouseout', function(e) { kp2bLayer.resetStyle(e.target); }); } });
+            if (document.getElementById('check-kp2b').checked) map.addLayer(kp2bLayer); renderLegend();
+        }).catch(e => console.log("Data KP2B belum tersedia."));
+
+        fetch('lsdwunut.geojson').then(res => res.json()).then(data => {
+            rawLsdData = data;
+            lsdLayer = L.geoJSON(data, { style: styleLsd, onEachFeature: function(f, l) { let val = getPropValue(f.properties, 'LSD', 'lsd'); let popupContent = `<div style="font-family:'Inter', sans-serif; min-width: 150px;"><b style="color:var(--deep-navy); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--accent-gold); padding-bottom:5px;">Data LSD</b><div style="font-size:12px; font-weight:600; text-align:center;">${val}</div></div>`; l.bindPopup(popupContent); l.on('mouseover', function(e) { e.target.setStyle({fillOpacity: 1, weight: 3, color: '#000'}); }); l.on('mouseout', function(e) { lsdLayer.resetStyle(e.target); }); } });
+            if (document.getElementById('check-lsd').checked) map.addLayer(lsdLayer); renderLegend();
+        }).catch(e => console.log("Data LSD belum tersedia."));
+
+        // --- Fitur Download Cerdas ZIP/GeoJSON ---
         function downloadData() {
-            const isPola = document.getElementById('check-polaruang').checked;
-            const isBidang = document.getElementById('check-bidangtanah').checked;
+            const layersToDownload = [];
+            if (document.getElementById('check-polaruang').checked && rawPolaRuangData) layersToDownload.push({name: "Pola_Ruang_Wunut.geojson", data: rawPolaRuangData});
+            if (document.getElementById('check-bidangtanah').checked && rawBidangTanahData) layersToDownload.push({name: "Bidang_Tanah_Wunut.geojson", data: rawBidangTanahData});
+            if (document.getElementById('check-znt').checked && rawZntData) layersToDownload.push({name: "ZNT_Wunut.geojson", data: rawZntData});
+            if (document.getElementById('check-penggunaan').checked && rawPenggunaanData) layersToDownload.push({name: "Penggunaan_Lahan_Wunut.geojson", data: rawPenggunaanData});
+            if (document.getElementById('check-kp2b').checked && rawKp2bData) layersToDownload.push({name: "KP2B_Wunut.geojson", data: rawKp2bData});
+            if (document.getElementById('check-lsd').checked && rawLsdData) layersToDownload.push({name: "LSD_Wunut.geojson", data: rawLsdData});
 
-            if (!isPola && !isBidang) {
-                alert("Pilih minimal satu Lapisan Data Spasial yang ingin diunduh."); return;
+            if (layersToDownload.length === 0) {
+                alert("Pilih minimal satu Lapisan Data (centang di panel kiri) yang ingin diunduh."); return;
             }
 
-            if (isPola && isBidang && rawPolaRuangData && rawBidangTanahData) {
-                alert("Menyiapkan file ZIP Data Spasial Wunut...");
-                var zip = new JSZip();
-                zip.file("Pola_Ruang_Wunut.geojson", JSON.stringify(rawPolaRuangData));
-                zip.file("Bidang_Tanah_Wunut.geojson", JSON.stringify(rawBidangTanahData));
-                zip.generateAsync({type:"blob"}).then(function(content) {
-                    saveAs(content, "Data_Spasial_Wunut.zip");
-                });
-            } 
-            else if (isPola && rawPolaRuangData) {
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rawPolaRuangData));
-                const dl = document.createElement('a'); dl.href = dataStr; dl.download = "Pola_Ruang_Wunut.geojson";
-                document.body.appendChild(dl); dl.click(); dl.remove();
-            } 
-            else if (isBidang && rawBidangTanahData) {
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rawBidangTanahData));
-                const dl = document.createElement('a'); dl.href = dataStr; dl.download = "Bidang_Tanah_Wunut.geojson";
+            if (layersToDownload.length === 1) {
+                // Download 1 file GeoJSON
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(layersToDownload[0].data));
+                const dl = document.createElement('a'); dl.href = dataStr; dl.download = layersToDownload[0].name;
                 document.body.appendChild(dl); dl.click(); dl.remove();
             } else {
-                alert("Data sedang dimuat dari server. Coba beberapa saat lagi.");
+                // Download ZIP jika > 1 layer
+                alert(`Menyiapkan file ZIP berisi ${layersToDownload.length} data spasial...`);
+                var zip = new JSZip();
+                layersToDownload.forEach(layer => { zip.file(layer.name, JSON.stringify(layer.data)); });
+                zip.generateAsync({type:"blob"}).then(function(content) { saveAs(content, "Data_Spasial_Wunut.zip"); });
             }
         }
 
