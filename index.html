@@ -11,6 +11,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+    <!-- Plugin Leaflet Geoman untuk Digitasi -->
+    <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
+    <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
+
+    <!-- Plugin Leaflet Omnivore untuk import KML -->
+    <script src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
+
+    <!-- Plugin shp-write untuk Export SHP -->
+    <script src="https://unpkg.com/shp-write@latest/shpwrite.js"></script>
+
     <style>
         :root {
             --purple-light: #A497C4;
@@ -253,6 +263,22 @@
                             </div>
                             <input type="range" id="opacity-slider" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacity(this.value)">
                         </div>
+
+                        <div class="legend-title" style="margin-top: 25px;"><i class="fa-solid fa-toolbox"></i> Alat Analisis Spasial</div>
+                        <div style="background: var(--bg-body); padding: 15px; border-radius: 12px;">
+                            
+                            <!-- Fitur 1: Download SHP -->
+                            <button class="map-action-btn" style="width: 100%; height: auto; padding: 10px; margin-bottom: 15px; font-size: 13px; font-weight: 700; background: var(--purple-deep); color: white;" onclick="downloadSHP()">
+                                <i class="fa-solid fa-download"></i> Ekspor SHP Pola Ruang
+                            </button>
+
+                            <!-- Fitur 3: Import KML -->
+                            <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-dark);">
+                                <i class="fa-solid fa-upload"></i> Unggah File KML:
+                            </label>
+                            <input type="file" id="kml-upload" accept=".kml" style="width: 100%; font-size: 12px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px;" onchange="loadKML(event)">
+                        </div>
+
                     </div>
 
                     <div id="main-map-container">
@@ -413,6 +439,7 @@
         var polaRuangLayer;
         var bidangTanahLayer;
         var userMarker;
+        var rawPolaRuangData = null; // Menampung raw GeoJSON untuk keperluan ekspor SHP
 
         const WUNUT_CENTER = [-7.5990, 110.6188];
         const DEFAULT_ZOOM = 15;
@@ -461,6 +488,30 @@
         L.control.zoom({ position: 'topleft' }).addTo(map);
         
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
+
+        // ==========================================
+        // FITUR 2: DIGITASI DI ATAS PETA (GEOMAN)
+        // ==========================================
+        map.pm.addControls({
+            position: 'topleft',
+            drawMarker: true,
+            drawPolygon: true,
+            drawLine: true,
+            drawCircle: false,      
+            drawCircleMarker: false,
+            editMode: true,
+            dragMode: true,
+            cutPolygon: true,
+            removalMode: true
+        });
+
+        // Style default hasil digitasi
+        map.pm.setPathOptions({
+            color: '#ef4444',
+            fillColor: '#ef4444',
+            fillOpacity: 0.4
+        });
+        // ==========================================
 
         var miniMap = L.map('mini-map', { center: WUNUT_CENTER, zoom: 10, layers: [osmMini], dragging: false, zoomControl: false, scrollWheelZoom: false });
 
@@ -610,6 +661,7 @@
                 return res.json();
             })
             .then(data => {
+                rawPolaRuangData = data; // Menyimpan data untuk Download SHP
                 polaRuangLayer = L.geoJSON(data, {
                     style: stylePolaRuang,
                     onEachFeature: function(f, l) {
@@ -702,6 +754,65 @@
                 console.error("Gagal Muat Data Bidang Tanah:", e);
                 alert("File bidangtanahwunut.geojson tidak ditemukan! Pastikan file sudah ter-upload di folder yang sama.");
             });
+
+        // ==========================================
+        // FITUR 1: FUNGSI DOWNLOAD SHP
+        // ==========================================
+        function downloadSHP() {
+            if (!rawPolaRuangData) {
+                alert("Data Pola Ruang belum selesai dimuat atau tidak ditemukan!");
+                return;
+            }
+
+            try {
+                // shpwrite mengkonversi feature collection menjadi file .zip berisi shp, dbf, prj, shx
+                var options = {
+                    folder: 'SHP_Pola_Ruang_Wunut',
+                    types: {
+                        point: 'Titik_Wunut',
+                        polygon: 'PolaRuang_Wunut',
+                        line: 'Garis_Wunut'
+                    }
+                };
+                shpwrite.download(rawPolaRuangData, options);
+            } catch (error) {
+                console.error("Gagal export SHP:", error);
+                alert("Terjadi kesalahan saat mengonversi data ke SHP. Pastikan format geometri file GeoJSON sudah valid.");
+            }
+        }
+
+        // ==========================================
+        // FITUR 3: FUNGSI IMPORT FILE KML 
+        // ==========================================
+        function loadKML(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const kmlText = e.target.result;
+                
+                try {
+                    const customLayer = omnivore.kml.parse(kmlText);
+                    
+                    customLayer.setStyle({
+                        color: '#38bdf8', 
+                        weight: 3,
+                        fillOpacity: 0.5
+                    });
+
+                    customLayer.addTo(map);
+                    map.fitBounds(customLayer.getBounds(), { padding: [30, 30] });
+                    
+                    alert(`File KML '${file.name}' berhasil ditambahkan ke peta!`);
+                } catch (error) {
+                    console.error("Gagal membaca KML:", error);
+                    alert("Format KML tidak valid atau tidak didukung.");
+                }
+            };
+            reader.readAsText(file);
+        }
+        // ==========================================
 
     </script>
 </body>
