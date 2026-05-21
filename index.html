@@ -21,10 +21,10 @@
     <style>
         :root {
             /* Tema: Tirta Kamulyan */
-            --tirta-blue: #0284c7; /* Biru jernih Umbul Pelem */
+            --tirta-blue: #0284c7; 
             --tirta-light: #e0f2fe; 
-            --agri-green: #10b981; /* Hijau asri Mina Wisata */
-            --kamulyan-gold: #f59e0b; /* Emas kemakmuran BUMDes */
+            --agri-green: #10b981; 
+            --kamulyan-gold: #f59e0b; 
             --bg-body: #f8fafc;
             --text-dark: #0f172a;
             --white: #ffffff;
@@ -52,7 +52,6 @@
         .login-card p { color: #64748b; font-size: 13px; margin-bottom: 25px; }
         .login-input { width: 100%; padding: 12px 15px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; transition: var(--transition); }
         .login-input:focus { border-color: var(--tirta-blue); }
-        
         .login-btn { width: 100%; padding: 12px; background: var(--tirta-blue); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: var(--transition); font-family: 'Inter', sans-serif; }
         .login-btn:hover { background: var(--agri-green); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); }
         .btn-secondary { background: var(--kamulyan-gold); }
@@ -70,43 +69,66 @@
         nav a::after { content: ''; position: absolute; width: 0; height: 3px; bottom: 0; left: 0; background: var(--kamulyan-gold); transition: var(--transition); }
         nav a:hover::after, nav a.active::after { width: 100%; }
 
-        /* Hero & Stats */
-        .hero { height: 75vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--tirta-light) 0%, var(--white) 100%); text-align: center; padding: 0 20px; }
-        .hero-card { background: rgba(255,255,255,0.7); padding: 60px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); backdrop-filter: blur(5px); border: 1px solid var(--white); }
-        .hero h2 { font-family: 'Montserrat', sans-serif; font-size: 3.5rem; margin: 0; color: var(--tirta-blue); }
-        .hero p { font-size: 1.1rem; color: var(--agri-green); font-weight: 600; letter-spacing: 4px; text-transform: uppercase; }
+        .content-section { display: none; padding: 80px 0 60px; }
+        .active-section { display: block; animation: fadeIn 0.8s ease; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; max-width: 1200px; margin: -60px auto 50px; padding: 0 30px; position: relative; z-index: 10; }
-        .stat-item { background: var(--white); padding: 35px; border-radius: 20px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.03); border-bottom: 5px solid var(--agri-green); transition: var(--transition); }
-        .stat-item:hover { transform: translateY(-10px); border-bottom-color: var(--kamulyan-gold); box-shadow: 0 15px 35px rgba(245, 158, 11, 0.1); }
-        .stat-item i { font-size: 2rem; color: var(--tirta-blue); margin-bottom: 15px; }
-        .stat-item h3 { font-size: 2rem; margin: 5px 0; color: var(--text-dark); }
-        .stat-item p { margin: 0; font-size: 13px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        /* --- TATA LETAK DASHBOARD BERANDA BARU --- */
+        .hero { height: 60vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(rgba(2, 132, 199, 0.1), rgba(16, 185, 129, 0.05)), url('https://images.unsplash.com/photo-1505322022379-7c3353ee6291?q=80&w=1500&auto=format&fit=crop') center/cover; text-align: center; padding: 0 20px; position: relative; border-bottom: 5px solid var(--kamulyan-gold); }
+        .hero-card { background: rgba(255,255,255,0.85); padding: 50px 70px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); backdrop-filter: blur(8px); }
+        .hero h2 { font-family: 'Montserrat', sans-serif; font-size: 3.5rem; margin: 0; color: var(--tirta-blue); }
+        .hero p { font-size: 1.1rem; color: var(--text-dark); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 0; }
+
+        .dashboard-container { max-width: 1200px; margin: 0 auto; padding: 0 30px; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; margin: -50px auto 40px; position: relative; z-index: 10; }
+        .stat-item { background: var(--white); padding: 35px; border-radius: 20px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.06); border-bottom: 5px solid var(--agri-green); transition: var(--transition); }
+        .stat-item:hover { transform: translateY(-10px); border-bottom-color: var(--kamulyan-gold); box-shadow: 0 15px 35px rgba(245, 158, 11, 0.15); }
+        .stat-item i { font-size: 2.2rem; color: var(--tirta-blue); margin-bottom: 15px; }
+        .stat-item h3 { font-size: 2.2rem; margin: 5px 0; color: var(--text-dark); font-family: 'Montserrat', sans-serif; }
+        .stat-item p { margin: 0; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; }
+
+        .section-header { text-align: center; margin-bottom: 40px; margin-top: 80px; }
+        .section-header h2 { color: var(--tirta-blue); font-size: 2.2rem; margin: 0 0 10px; font-family: 'Montserrat', sans-serif; }
+        .section-header p { color: var(--agri-green); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin: 0; font-size: 0.9rem; }
+
+        /* Gambaran Wilayah (SPOK Text) */
+        .about-text { background: var(--white); padding: 40px 50px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); font-size: 1.15rem; line-height: 2; color: #475569; border-left: 6px solid var(--kamulyan-gold); position: relative; }
+        .about-text::before { content: '\f10d'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; top: 20px; left: -25px; font-size: 2rem; color: var(--kamulyan-gold); background: var(--bg-body); padding: 5px; }
 
         /* Charts */
-        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto 50px; padding: 0 30px; }
-        .chart-card { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); transition: var(--transition); }
-        .chart-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
-        .chart-card h3 { color: var(--tirta-blue); font-size: 16px; margin-top: 0; margin-bottom: 20px; text-align: center; }
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 30px; }
+        .chart-card { background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
+        .chart-card h3 { color: var(--text-dark); font-size: 16px; margin-top: 0; margin-bottom: 25px; text-align: center; border-bottom: 2px dashed #e2e8f0; padding-bottom: 15px; }
 
-        .content-section { display: none; padding: 100px 0 60px; }
-        .active-section { display: block; animation: fadeIn 0.8s ease; }
+        /* News */
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .news-card { background: var(--white); border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03); transition: var(--transition); border: 1px solid #f1f5f9; display: flex; flex-direction: column; }
+        .news-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(2,132,199,0.1); }
+        .news-img { width: 100%; height: 200px; object-fit: cover; }
+        .news-content { padding: 30px; display: flex; flex-direction: column; flex-grow: 1; }
+        .news-date { font-size: 0.85rem; color: var(--kamulyan-gold); font-weight: 700; margin-bottom: 12px; }
+        .news-title { font-size: 1.25rem; color: var(--tirta-blue); margin: 0 0 15px; font-weight: 700; line-height: 1.4; font-family: 'Montserrat', sans-serif; }
+        .news-desc { font-size: 0.95rem; color: #64748b; line-height: 1.7; margin: 0 0 20px; flex-grow: 1; }
+        .news-link { color: var(--agri-green); font-weight: 700; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
+        .news-link:hover { color: var(--tirta-blue); }
+
+        /* Gallery */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+        .gallery-item { border-radius: 15px; overflow: hidden; height: 260px; position: relative; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .gallery-item:hover img { transform: scale(1.1); }
+        .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 30px 20px 20px; color: white; opacity: 0; transition: opacity 0.3s ease; }
+        .gallery-item:hover .gallery-overlay { opacity: 1; }
+        .gallery-overlay h4 { margin: 0; font-size: 1.1rem; font-family: 'Montserrat', sans-serif; }
+        .gallery-overlay p { margin: 5px 0 0; font-size: 0.85rem; color: #cbd5e1; }
+        /* ------------------------------------------- */
         
-        /* NEW LAYOUT: Floating Glassmorphism Map */
-        .map-layout { 
-            display: block; position: relative; height: 85vh; width: 96%; max-width: 1500px; 
-            margin: 0 auto 50px; border-radius: 25px; overflow: hidden; 
-            box-shadow: 0 20px 50px rgba(2,132,199,0.15); 
-        }
+        /* Map Layout */
+        .map-layout { display: block; position: relative; height: 85vh; width: 96%; max-width: 1500px; margin: 20px auto 50px; border-radius: 25px; overflow: hidden; box-shadow: 0 20px 50px rgba(2,132,199,0.15); }
         #main-map-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
         #map { height: 100%; width: 100%; }
 
-        .sidebar-card { 
-            position: absolute; top: 20px; left: 20px; z-index: 1000; width: 320px; 
-            max-height: calc(100% - 40px); background: var(--glass-bg); backdrop-filter: blur(12px); 
-            border: 1px solid rgba(255,255,255,0.6); padding: 25px 20px; border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow-y: auto; 
-        }
+        .sidebar-card { position: absolute; top: 20px; left: 20px; z-index: 1000; width: 320px; max-height: calc(100% - 40px); background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.6); padding: 25px 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow-y: auto; }
         .sidebar-card::-webkit-scrollbar { width: 6px; }
         .sidebar-card::-webkit-scrollbar-thumb { background: var(--tirta-blue); border-radius: 10px; }
 
@@ -129,7 +151,7 @@
         .color-box { width: 18px; height: 18px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; }
 
         /* Footer */
-        footer { background: var(--text-dark); color: white; padding: 60px 0 30px; }
+        footer { background: var(--text-dark); color: white; padding: 60px 0 30px; margin-top: 50px; }
         .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 50px; padding: 0 30px; }
         .footer-title { font-size: 16px; font-weight: 700; margin-bottom: 25px; color: var(--kamulyan-gold); text-transform: uppercase; letter-spacing: 1px; }
         .footer-map-box { border-radius: 12px; overflow: hidden; height: 180px; border: 1px solid #334155; }
@@ -182,23 +204,101 @@
 
         <main>
             <div id="beranda" class="content-section active-section">
-                <div class="hero"><div class="hero-card fade-in"><p>Sistem Informasi Peruntukan Tata Ruang</p><h2>DESA WUNUT</h2></div></div>
                 
-                <div class="stats-grid">
-                    <div class="stat-item fade-in"><i class="fa-solid fa-map-location-dot"></i><h3 id="stat-luas">720</h3><p>Luas Wilayah (Ha)</p></div>
-                    <div class="stat-item fade-in" style="animation-delay: 0.2s;"><i class="fa-solid fa-people-group"></i><h3 id="stat-penduduk">2,290</h3><p>Total Penduduk</p></div>
-                    <div class="stat-item fade-in" style="animation-delay: 0.4s;"><i class="fa-solid fa-droplet"></i><h3 id="stat-air">15</h3><p>Titik Mata Air</p></div>
+                <div class="hero">
+                    <div class="hero-card fade-in">
+                        <p>Sistem Informasi Peruntukan Tata Ruang</p>
+                        <h2>DESA WUNUT</h2>
+                    </div>
                 </div>
+                
+                <div class="dashboard-container">
+                    <div class="stats-grid">
+                        <div class="stat-item fade-in"><i class="fa-solid fa-map-location-dot"></i><h3 id="stat-luas">720</h3><p>Luas Wilayah (Ha)</p></div>
+                        <div class="stat-item fade-in" style="animation-delay: 0.2s;"><i class="fa-solid fa-people-group"></i><h3 id="stat-penduduk">2,290</h3><p>Total Penduduk</p></div>
+                        <div class="stat-item fade-in" style="animation-delay: 0.4s;"><i class="fa-solid fa-droplet"></i><h3 id="stat-air">15</h3><p>Titik Mata Air</p></div>
+                    </div>
 
-                <div class="charts-grid">
-                    <div class="chart-card fade-in" style="animation-delay: 0.6s;">
-                        <h3>Dinamika Kelahiran & Kematian</h3>
-                        <div id="chart-dinamika"></div>
+                    <div class="section-header">
+                        <h2>Gambaran Wilayah</h2>
+                        <p>Kondisi Fasilitas Desa Wunut</p>
                     </div>
-                    <div class="chart-card fade-in" style="animation-delay: 0.8s;">
-                        <h3>Piramida Penduduk Desa Wunut</h3>
-                        <div id="chart-piramida"></div>
+                    <div class="about-text fade-in">
+                        Pemerintah Desa Wunut mengelola fasilitas wisata air. Fasilitas Umbul Pelem memiliki kolam renang alami. Wisatawan mengunjungi fasilitas ekowisata setiap hari. BUMDes Sumber Kamulyan mendistribusikan pendapatan wisata kepada warga desa.
                     </div>
+
+                    <div class="section-header">
+                        <h2>Data Statistik</h2>
+                        <p>Dinamika & Demografi Penduduk</p>
+                    </div>
+                    <div class="charts-grid">
+                        <div class="chart-card fade-in">
+                            <h3>Kelahiran & Kematian</h3>
+                            <div id="chart-dinamika"></div>
+                        </div>
+                        <div class="chart-card fade-in">
+                            <h3>Piramida Penduduk</h3>
+                            <div id="chart-piramida"></div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <h2>Berita Terbaru</h2>
+                        <p>Informasi Seputar Desa Wunut</p>
+                    </div>
+                    <div class="news-grid">
+                        <div class="news-card fade-in">
+                            <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=500&q=80" alt="News 1" class="news-img">
+                            <div class="news-content">
+                                <span class="news-date">10 Mei 2026</span>
+                                <h4 class="news-title">Pengembangan Zona Fasilitas Wisata Air</h4>
+                                <p class="news-desc">Pemerintah Desa Wunut membuka area kolam renang alami baru untuk meningkatkan daya tampung wisatawan di akhir pekan.</p>
+                                <a href="#" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="news-card fade-in" style="animation-delay: 0.2s;">
+                            <img src="https://images.unsplash.com/photo-1583508462002-c9261a868955?w=500&q=80" alt="News 2" class="news-img">
+                            <div class="news-content">
+                                <span class="news-date">02 April 2026</span>
+                                <h4 class="news-title">Distribusi Pendapatan BUMDes</h4>
+                                <p class="news-desc">BUMDes Sumber Kamulyan merealisasikan program distribusi pendapatan wisata bagi seluruh warga desa secara merata.</p>
+                                <a href="#" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="news-card fade-in" style="animation-delay: 0.4s;">
+                            <img src="https://images.unsplash.com/photo-1596422846543-7f781190bc93?w=500&q=80" alt="News 3" class="news-img">
+                            <div class="news-content">
+                                <span class="news-date">15 Maret 2026</span>
+                                <h4 class="news-title">Pemeliharaan Saluran Irigasi</h4>
+                                <p class="news-desc">Kegiatan gotong royong pemeliharaan titik mata air untuk menjaga debit air irigasi menuju kawasan agraris.</p>
+                                <a href="#" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <h2>Galeri Fasilitas</h2>
+                        <p>Dokumentasi Potensi Desa</p>
+                    </div>
+                    <div class="gallery-grid">
+                        <div class="gallery-item fade-in">
+                            <img src="https://images.unsplash.com/photo-1518099074172-2e47ee6cb394?w=500&q=80" alt="Gallery 1">
+                            <div class="gallery-overlay"><h4>Mata Air Alami</h4><p>Titik sumber air jernih</p></div>
+                        </div>
+                        <div class="gallery-item fade-in" style="animation-delay: 0.1s;">
+                            <img src="https://images.unsplash.com/photo-1520052205864-92d242b3a4e4?w=500&q=80" alt="Gallery 2">
+                            <div class="gallery-overlay"><h4>Area Rekreasi</h4><p>Fasilitas penunjang wisata</p></div>
+                        </div>
+                        <div class="gallery-item fade-in" style="animation-delay: 0.2s;">
+                            <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80" alt="Gallery 3">
+                            <div class="gallery-overlay"><h4>Lanskap Hijau</h4><p>Zona pertanian warga</p></div>
+                        </div>
+                        <div class="gallery-item fade-in" style="animation-delay: 0.3s;">
+                            <img src="https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=500&q=80" alt="Gallery 4">
+                            <div class="gallery-overlay"><h4>Ekowisata</h4><p>Kawasan penyangga</p></div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -403,8 +503,6 @@
         var satelitMini = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Satelit' });
 
         var map = L.map('map', { center: WUNUT_CENTER, zoom: DEFAULT_ZOOM, layers: [osmMain], zoomControl: false });
-        
-        // Pindahkan posisi Zoom & Geoman agar tidak tertutup panel
         L.control.zoom({ position: 'bottomleft' }).addTo(map);
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
         map.pm.addControls({ position: 'bottomleft', drawMarker: true, drawPolygon: true, drawLine: true, drawCircle: false, drawCircleMarker: false, drawText: false, editMode: true, dragMode: false, cutPolygon: false, removalMode: true });
