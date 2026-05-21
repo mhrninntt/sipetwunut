@@ -170,13 +170,15 @@
             </div>
             
             <h2>SIPET WUNUT</h2>
-            <p>Silakan masuk untuk mengakses sistem</p>
+            <p>Silakan masuk atau daftar untuk mengakses sistem</p>
             
-            <input type="text" id="login-user" class="login-input" placeholder="Username" autocomplete="off">
-            <input type="password" id="login-pass" class="login-input" placeholder="Password">
+            <input type="email" id="login-user" class="login-input" placeholder="Alamat Email" autocomplete="off">
+            <input type="password" id="login-pass" class="login-input" placeholder="Password (Min. 6 karakter)">
             
-            <button class="login-btn" onclick="prosesLogin()">MASUK</button>
-            <div id="login-msg" class="login-error">Username atau Password salah!</div>
+            <button class="login-btn" onclick="prosesLoginAuth()" style="margin-bottom: 10px;">MASUK</button>
+            <button class="login-btn" onclick="prosesDaftarAuth()" style="background: var(--purple-light);">DAFTAR AKUN BARU</button>
+            
+            <div id="login-msg" class="login-error"></div>
         </div>
     </div>
 
@@ -193,7 +195,7 @@
                 <a href="#" onclick="switchTab('beranda')" id="btn-beranda" class="active">Beranda</a>
                 <a href="#" onclick="switchTab('peta')" id="btn-peta">Peta Spasial</a>
                 <a href="#" onclick="switchTab('profil')" id="btn-profil">Profil Desa</a>
-                <a href="#" onclick="logout()" style="color: #ef4444;"><i class="fa-solid fa-power-off"></i> Keluar</a>
+                <a href="#" onclick="logoutAuth()" style="color: #ef4444;"><i class="fa-solid fa-power-off"></i> Keluar</a>
             </nav>
         </header>
 
@@ -386,46 +388,125 @@
         </footer>
     </div>
 
-    <script>
-        // --- LOGIKA LOGIN SCREEN ---
-        function prosesLogin() {
-            var user = document.getElementById('login-user').value;
-            var pass = document.getElementById('login-pass').value;
-            var msg = document.getElementById('login-msg');
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } 
+        from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 
-            // Username: admin | Password: wunut123
-            if (user === 'admin' && pass === 'wunut123') {
-                document.getElementById('login-overlay').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('login-overlay').style.display = 'none';
-                    document.getElementById('main-content').style.display = 'block';
-                    triggerMapResize();
-                }, 500);
-            } else {
-                msg.style.display = 'block';
+        // Kunci Rahasia Firebase milikmu
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9Wu4aZNC5ai-UovFyF4al9Prl04xPrFk",
+            authDomain: "sipewunut.firebaseapp.com",
+            projectId: "sipewunut",
+            storageBucket: "sipewunut.firebasestorage.app",
+            messagingSenderId: "404576970474",
+            appId: "1:404576970474:web:99ff1412dc6adb581d9993",
+            measurementId: "G-9MLXMTP7PN"
+        };
+
+        // Menyalakan Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Menjadikan fungsi Firebase bisa dipakai oleh tombol di HTML
+        window.firebaseAuth = auth;
+        window.signIn = signInWithEmailAndPassword;
+        window.signUp = createUserWithEmailAndPassword;
+        window.logOut = signOut;
+    </script>
+
+
+    <script>
+        // --- LOGIKA SISTEM AUTENTIKASI ---
+        function tampilkanPesan(text, color = '#ef4444') {
+            const msgBox = document.getElementById('login-msg');
+            msgBox.innerText = text;
+            msgBox.style.color = color;
+            msgBox.style.display = 'block';
+        }
+
+        function tanganiPesanError(code) {
+            switch(code) {
+                case 'auth/invalid-email': return 'Format email tidak valid.';
+                case 'auth/user-not-found': return 'Akun belum terdaftar.';
+                case 'auth/wrong-password': return 'Password salah.';
+                case 'auth/invalid-credential': return 'Email atau Password salah.';
+                case 'auth/email-already-in-use': return 'Email ini sudah dipakai.';
+                case 'auth/weak-password': return 'Password minimal harus 6 karakter.';
+                default: return 'Terjadi kesalahan sistem.';
             }
         }
 
-        function logout() {
-            document.getElementById('login-user').value = '';
-            document.getElementById('login-pass').value = '';
-            document.getElementById('login-msg').style.display = 'none';
-            document.getElementById('main-content').style.display = 'none';
-            document.getElementById('login-overlay').style.display = 'flex';
-            
-            // Beri sedikit jeda agar transisinya mulus
-            setTimeout(() => {
-                document.getElementById('login-overlay').style.opacity = '1';
-            }, 50);
+        // Fungsi Tombol Daftar
+        function prosesDaftarAuth() {
+            const email = document.getElementById('login-user').value;
+            const pass = document.getElementById('login-pass').value;
+            if (!email || !pass) {
+                tampilkanPesan("Isi email dan password terlebih dahulu!");
+                return;
+            }
+            if(window.signUp) {
+                window.signUp(window.firebaseAuth, email, pass)
+                    .then(() => {
+                        tampilkanPesan("Akun berhasil dibuat! Silakan klik tombol MASUK.", "#378D68");
+                    })
+                    .catch((error) => {
+                        tampilkanPesan(tanganiPesanError(error.code));
+                    });
+            } else {
+                tampilkanPesan("Sistem keamanan sedang dimuat, tunggu sebentar...");
+            }
         }
 
+        // Fungsi Tombol Masuk
+        function prosesLoginAuth() {
+            const email = document.getElementById('login-user').value;
+            const pass = document.getElementById('login-pass').value;
+            if (!email || !pass) {
+                tampilkanPesan("Isi email dan password terlebih dahulu!");
+                return;
+            }
+            if(window.signIn) {
+                window.signIn(window.firebaseAuth, email, pass)
+                    .then(() => {
+                        // Jika berhasil masuk, hilangkan halaman login dan buka peta
+                        document.getElementById('login-msg').style.display = 'none';
+                        document.getElementById('login-overlay').style.opacity = '0';
+                        setTimeout(() => {
+                            document.getElementById('login-overlay').style.display = 'none';
+                            document.getElementById('main-content').style.display = 'block';
+                            triggerMapResize();
+                        }, 500);
+                    })
+                    .catch((error) => {
+                        tampilkanPesan(tanganiPesanError(error.code));
+                    });
+            }
+        }
+
+        // Fungsi Tombol Keluar (Logout)
+        function logoutAuth() {
+            if(window.logOut) {
+                window.logOut(window.firebaseAuth).then(() => {
+                    document.getElementById('login-user').value = '';
+                    document.getElementById('login-pass').value = '';
+                    document.getElementById('login-msg').style.display = 'none';
+                    document.getElementById('main-content').style.display = 'none';
+                    document.getElementById('login-overlay').style.display = 'flex';
+                    setTimeout(() => { document.getElementById('login-overlay').style.opacity = '1'; }, 50);
+                });
+            }
+        }
+
+        // Otomatis menekan tombol Masuk saat tekan 'Enter' di keyboard
         document.getElementById("login-pass").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
-                prosesLogin();
+                prosesLoginAuth();
             }
         });
-        // ---------------------------
+        // ---------------------------------------------
+
 
         var polaRuangLayer;
         var bidangTanahLayer;
@@ -481,7 +562,7 @@
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
         // ==========================================
-        // FITUR 2: DIGITASI DI ATAS PETA (GEOMAN)
+        // DIGITASI DI ATAS PETA (GEOMAN)
         // ==========================================
         map.pm.addControls({
             position: 'topleft',
@@ -496,12 +577,7 @@
             removalMode: true
         });
 
-        // Style default hasil digitasi
-        map.pm.setPathOptions({
-            color: '#ef4444',
-            fillColor: '#ef4444',
-            fillOpacity: 0.4
-        });
+        map.pm.setPathOptions({ color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.4 });
         // ==========================================
 
         var miniMap = L.map('mini-map', { center: WUNUT_CENTER, zoom: 10, layers: [osmMini], dragging: false, zoomControl: false, scrollWheelZoom: false });
@@ -652,7 +728,7 @@
                 return res.json();
             })
             .then(data => {
-                rawPolaRuangData = data; // Menyimpan data untuk Download SHP
+                rawPolaRuangData = data;
                 polaRuangLayer = L.geoJSON(data, {
                     style: stylePolaRuang,
                     onEachFeature: function(f, l) {
@@ -747,7 +823,7 @@
             });
 
         // ==========================================
-        // FITUR 1: FUNGSI DOWNLOAD SHP (DIUPGRADE)
+        // FUNGSI DOWNLOAD SHP
         // ==========================================
         function downloadSHP() {
             if (!rawPolaRuangData || !rawPolaRuangData.features) {
@@ -756,27 +832,20 @@
             }
 
             try {
-                // 1. Buat salinan data agar tidak mengubah data asli yang sedang tampil di peta
                 let cleanData = JSON.parse(JSON.stringify(rawPolaRuangData));
 
-                // 2. Bersihkan dan perbaiki format fitur satu per satu
                 cleanData.features = cleanData.features
-                    .filter(f => f.geometry && f.geometry.coordinates) // Buang data yang geometrinya kosong/null
+                    .filter(f => f.geometry && f.geometry.coordinates)
                     .map(f => {
-                        // A. Paksa ubah MultiPolygon menjadi Polygon (Workaround shp-write)
                         if (f.geometry.type === 'MultiPolygon') {
                             f.geometry.type = 'Polygon';
-                            // Mengambil cincin luar (outer ring) pertama saja untuk menghindari crash
                             f.geometry.coordinates = f.geometry.coordinates[0]; 
                         }
 
-                        // B. Bersihkan atribut (Properties) untuk DBF
                         for (let key in f.properties) {
-                            // DBF tidak bisa membaca tipe object/array, jadi ubah ke teks/string
                             if (typeof f.properties[key] === 'object' && f.properties[key] !== null) {
                                 f.properties[key] = JSON.stringify(f.properties[key]);
                             }
-                            // Batasi nama kolom maksimal 10 karakter (Aturan format SHP/DBF standar)
                             if (key.length > 10) {
                                 let shortKey = key.substring(0, 10);
                                 f.properties[shortKey] = f.properties[key];
@@ -786,7 +855,6 @@
                         return f;
                     });
 
-                // 3. Proses Export
                 var options = {
                     folder: 'SHP_Pola_Ruang_Wunut',
                     types: {
@@ -799,14 +867,13 @@
                 shpwrite.download(cleanData, options);
 
             } catch (error) {
-                // Log ke console agar lebih mudah dilacak jika masih error
                 console.error("Detail Error Ekspor SHP:", error);
                 alert("Masih terjadi kesalahan saat konversi ke SHP. Tekan F12 lalu cek tab 'Console' untuk melihat detail error.");
             }
         }
 
         // ==========================================
-        // FITUR 3: FUNGSI IMPORT FILE KML 
+        // FUNGSI IMPORT FILE KML 
         // ==========================================
         function loadKML(event) {
             const file = event.target.files[0];
@@ -815,19 +882,11 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const kmlText = e.target.result;
-                
                 try {
                     const customLayer = omnivore.kml.parse(kmlText);
-                    
-                    customLayer.setStyle({
-                        color: '#38bdf8', 
-                        weight: 3,
-                        fillOpacity: 0.5
-                    });
-
+                    customLayer.setStyle({ color: '#38bdf8', weight: 3, fillOpacity: 0.5 });
                     customLayer.addTo(map);
                     map.fitBounds(customLayer.getBounds(), { padding: [30, 30] });
-                    
                     alert(`File KML '${file.name}' berhasil ditambahkan ke peta!`);
                 } catch (error) {
                     console.error("Gagal membaca KML:", error);
@@ -836,8 +895,6 @@
             };
             reader.readAsText(file);
         }
-        // ==========================================
-
     </script>
 </body>
 </html>
