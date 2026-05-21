@@ -38,51 +38,18 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         .logo-wrapper { display: flex; align-items: center; justify-content: center; }
-        .animated-water-logo {
-            width: 35px; height: 35px;
-            background: #e0f2fe; 
-            border-radius: 50%; position: relative; overflow: hidden;
-            border: 2px solid var(--purple-deep);
-            margin-right: 12px;
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); 
-        }
-        .water-wave {
-            position: absolute; width: 200%; height: 200%;
-            background: var(--water-blue);
-            top: 45%; left: -50%; border-radius: 40%;
-            animation: spinWater 4s infinite linear;
-        }
-        .water-wave:nth-child(2) {
-            background: rgba(83, 178, 136, 0.6); 
-            top: 55%; border-radius: 45%;
-            animation: spinWater 5s infinite linear;
-        }
+        .animated-water-logo { width: 35px; height: 35px; background: #e0f2fe; border-radius: 50%; position: relative; overflow: hidden; border: 2px solid var(--purple-deep); margin-right: 12px; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
+        .water-wave { position: absolute; width: 200%; height: 200%; background: var(--water-blue); top: 45%; left: -50%; border-radius: 40%; animation: spinWater 4s infinite linear; }
+        .water-wave:nth-child(2) { background: rgba(83, 178, 136, 0.6); top: 55%; border-radius: 45%; animation: spinWater 5s infinite linear; }
         @keyframes spinWater { 100% { transform: rotate(360deg); } }
 
-        #login-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background: linear-gradient(135deg, var(--green-soft) 0%, var(--purple-deep) 100%);
-            z-index: 9999; display: flex; align-items: center; justify-content: center;
-            transition: opacity 0.5s ease;
-        }
-        .login-card {
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            width: 100%; max-width: 350px; text-align: center;
-        }
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, var(--green-soft) 0%, var(--purple-deep) 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
+        .login-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); width: 100%; max-width: 350px; text-align: center; }
         .login-card h2 { color: var(--purple-deep); font-family: 'Montserrat', sans-serif; margin-bottom: 5px; margin-top: 10px; }
         .login-card p { color: #64748b; font-size: 13px; margin-bottom: 25px; }
-        .login-input {
-            width: 100%; padding: 12px 15px; margin-bottom: 15px; border: 2px solid #e2e8f0;
-            border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 14px;
-            outline: none; transition: var(--transition);
-        }
+        .login-input { width: 100%; padding: 12px 15px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; transition: var(--transition); }
         .login-input:focus { border-color: var(--green-mid); }
-        .login-btn {
-            width: 100%; padding: 12px; background: var(--green-deep); color: white;
-            border: none; border-radius: 10px; font-weight: 700; cursor: pointer;
-            transition: var(--transition); font-family: 'Inter', sans-serif;
-        }
+        .login-btn { width: 100%; padding: 12px; background: var(--green-deep); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: var(--transition); font-family: 'Inter', sans-serif; }
         .login-btn:hover { background: var(--purple-deep); transform: translateY(-2px); }
         .login-error { color: #ef4444; font-size: 12px; margin-top: 10px; display: none; font-weight: 600; }
 
@@ -112,10 +79,9 @@
         .content-section { display: none; padding: 100px 0 60px; }
         .active-section { display: block; animation: fadeIn 0.8s ease; }
         
-        .map-layout { display: grid; grid-template-columns: 350px 1fr; gap: 25px; max-width: 1400px; margin: 0 auto; padding: 0 30px; }
-        .sidebar-card { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); height: 75vh; overflow-y: auto; }
-        
-        /* Modifikasi z-index agar sidebar selalu di atas saat scroll */
+        /* SIDEBAR LEBIH KECIL AGAR PETA LEBAR */
+        .map-layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; max-width: 1400px; margin: 0 auto; padding: 0 30px; }
+        .sidebar-card { background: var(--white); padding: 25px 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); height: 75vh; overflow-y: auto; }
         .sidebar-card::-webkit-scrollbar { width: 6px; }
         .sidebar-card::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 10px; }
 
@@ -127,8 +93,31 @@
         .map-action-btn:hover { background: var(--purple-deep); color: white; border-color: var(--purple-deep); }
 
         .north-arrow { position: absolute; top: 85px; left: 10px; z-index: 1000; background: rgba(255, 255, 255, 0.9); padding: 5px 8px; border-radius: 6px; border: 2px solid rgba(0,0,0,0.1); text-align: center; pointer-events: none; }
-
         #mini-map { position: absolute; bottom: 20px; right: 20px; width: 180px; height: 130px; background: white; z-index: 999; border-radius: 12px; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.2); pointer-events: none; }
+
+        /* --- DESAIN BARU LEGENDA SLIDE OUT (SEBELAH KANAN) --- */
+        .slide-legend-wrapper {
+            position: absolute; top: 50%; right: 0; z-index: 1000;
+            transform: translateY(-50%) translateX(280px); /* Tersembunyi di luar layar kanan */
+            display: flex; align-items: flex-start;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .slide-legend-wrapper.open {
+            transform: translateY(-50%) translateX(0); /* Tampil */
+        }
+        .legend-toggle-btn {
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(5px);
+            border: 2px solid rgba(0,0,0,0.1); border-right: none;
+            padding: 12px 15px; border-radius: 10px 0 0 10px;
+            cursor: pointer; font-weight: 700; color: var(--purple-deep);
+            box-shadow: -4px 4px 10px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 8px; white-space: nowrap; margin-top: 20px;
+        }
+        .slide-legend-content {
+            width: 280px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border: 2px solid rgba(0,0,0,0.1); border-right: none; border-radius: 0 0 0 15px;
+            padding: 20px; box-shadow: -5px 5px 20px rgba(0,0,0,0.08); max-height: 70vh; overflow-y: auto;
+        }
+        /* --------------------------------------------------- */
 
         .legend-title { font-weight: 700; color: var(--purple-deep); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
         .legend-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 13px; font-weight: 600; }
@@ -159,16 +148,12 @@
     <div id="login-overlay">
         <div class="login-card fade-in">
             <div class="logo-wrapper">
-                <div class="animated-water-logo" style="width: 60px; height: 60px; margin-right: 0;">
-                    <div class="water-wave"></div><div class="water-wave"></div>
-                </div>
+                <div class="animated-water-logo" style="width: 60px; height: 60px; margin-right: 0;"><div class="water-wave"></div><div class="water-wave"></div></div>
             </div>
             <h2>SIPET WUNUT</h2>
             <p>Silakan masuk atau daftar untuk mengakses sistem</p>
-            
             <input type="email" id="login-user" class="login-input" placeholder="Alamat Email" autocomplete="off">
             <input type="password" id="login-pass" class="login-input" placeholder="Password (Min. 6 karakter)">
-            
             <button class="login-btn" onclick="prosesLoginAuth()" style="margin-bottom: 10px;">MASUK</button>
             <button class="login-btn" onclick="prosesDaftarAuth()" style="background: var(--purple-light);">DAFTAR AKUN BARU</button>
             <div id="login-msg" class="login-error"></div>
@@ -178,9 +163,7 @@
     <div id="main-content">
         <header>
             <div class="logo-box logo-wrapper">
-                <div class="animated-water-logo">
-                    <div class="water-wave"></div><div class="water-wave"></div>
-                </div>
+                <div class="animated-water-logo"><div class="water-wave"></div><div class="water-wave"></div></div>
                 <h1>SIPET <span>WUNUT</span></h1>
             </div>
             <nav>
@@ -193,12 +176,7 @@
 
         <main>
             <div id="beranda" class="content-section active-section">
-                <div class="hero">
-                    <div class="hero-card fade-in">
-                        <p>Sistem Informasi Peruntukan Tata Ruang</p>
-                        <h2>DESA WUNUT</h2>
-                    </div>
-                </div>
+                <div class="hero"><div class="hero-card fade-in"><p>Sistem Informasi Peruntukan Tata Ruang</p><h2>DESA WUNUT</h2></div></div>
                 <div class="stats-grid">
                     <div class="stat-item fade-in"><i class="fa-solid fa-map-location-dot"></i><h3 id="stat-luas">720</h3><p>Luas Wilayah (Ha)</p></div>
                     <div class="stat-item fade-in" style="animation-delay: 0.2s;"><i class="fa-solid fa-people-group"></i><h3 id="stat-penduduk">2,290</h3><p>Total Penduduk</p></div>
@@ -212,49 +190,48 @@
                     <div class="sidebar-card">
                         <div class="legend-title"><i class="fa-solid fa-layer-group"></i> Basemap</div>
                         <div style="margin-bottom: 25px; background: var(--bg-body); padding: 15px; border-radius: 12px;">
-                            <label style="display: block; margin-bottom: 10px; font-size: 13px; font-weight: 700; cursor: pointer;">
+                            <label style="display: block; margin-bottom: 10px; font-size: 12px; font-weight: 700; cursor: pointer;">
                                 <input type="radio" name="basemap" value="osm" checked onchange="changeBase(this.value)"> OpenStreetMap
                             </label>
-                            <label style="display: block; font-size: 13px; font-weight: 700; cursor: pointer;">
+                            <label style="display: block; font-size: 12px; font-weight: 700; cursor: pointer;">
                                 <input type="radio" name="basemap" value="satelit" onchange="changeBase(this.value)"> Citra Satelit
                             </label>
                         </div>
 
                         <div class="legend-title"><i class="fa-solid fa-map"></i> Layer Data</div>
                         <div style="margin-bottom: 25px; background: var(--bg-body); padding: 15px; border-radius: 12px;">
-                            <label style="display: block; margin-bottom: 10px; font-size: 13px; font-weight: 700; cursor: pointer;">
+                            <label style="display: block; margin-bottom: 10px; font-size: 12px; font-weight: 700; cursor: pointer;">
                                 <input type="checkbox" id="check-polaruang" checked onchange="toggleLayers()"> Pola Ruang (Sub Zona)
                             </label>
-                            <label style="display: block; font-size: 13px; font-weight: 700; cursor: pointer;">
+                            <label style="display: block; font-size: 12px; font-weight: 700; cursor: pointer;">
                                 <input type="checkbox" id="check-bidangtanah" onchange="toggleLayers()"> Bidang Tanah (Status)
                             </label>
                         </div>
                         
                         <div class="legend-title"><i class="fa-solid fa-droplet"></i> Transparansi</div>
                         <div style="background: var(--bg-body); padding: 15px; border-radius: 12px; margin-bottom: 25px;">
-                            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:10px; color:#64748b; font-weight:600;">
-                                <span>0%</span><span>100%</span>
+                            
+                            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:5px; color:var(--text-dark); font-weight:700;">
+                                <span>Pola Ruang</span><span id="val-op-pola">80%</span>
                             </div>
-                            <input type="range" id="opacity-slider" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacity(this.value)">
+                            <input type="range" id="opacity-polaruang" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityPolaRuang(this.value)" style="margin-bottom: 15px;">
+
+                            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:5px; color:var(--text-dark); font-weight:700;">
+                                <span>Bidang Tanah</span><span id="val-op-bidang">80%</span>
+                            </div>
+                            <input type="range" id="opacity-bidangtanah" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityBidangTanah(this.value)">
                         </div>
 
                         <div class="legend-title"><i class="fa-solid fa-toolbox"></i> Alat Analisis</div>
                         <div style="background: var(--bg-body); padding: 15px; border-radius: 12px;">
-                            <button class="map-action-btn" style="width: 100%; height: auto; padding: 10px; margin-bottom: 15px; font-size: 13px; font-weight: 700; background: var(--purple-deep); color: white;" onclick="downloadData()">
+                            <button class="map-action-btn" style="width: 100%; height: auto; padding: 10px; margin-bottom: 15px; font-size: 12px; font-weight: 700; background: var(--purple-deep); color: white;" onclick="downloadData()">
                                 <i class="fa-solid fa-download"></i> Unduh Data (GeoJSON)
                             </button>
-
-                            <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-dark);">
+                            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 8px; color: var(--text-dark);">
                                 <i class="fa-solid fa-upload"></i> Unggah File KML:
                             </label>
-                            <input type="file" id="kml-upload" accept=".kml" style="width: 100%; font-size: 12px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px;" onchange="loadKML(event)">
+                            <input type="file" id="kml-upload" accept=".kml" style="width: 100%; font-size: 11px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px;" onchange="loadKML(event)">
                         </div>
-
-                        <div id="sidebar-legend-container" style="display: none; margin-top: 25px;">
-                            <div class="legend-title" style="color: var(--green-deep);"><i class="fa-solid fa-list-check"></i> Keterangan Legenda</div>
-                            <div id="legend-list" style="background: var(--bg-body); padding: 15px; border-radius: 12px; max-height: 250px; overflow-y: auto;"></div>
-                        </div>
-
                     </div>
 
                     <div id="main-map-container">
@@ -269,6 +246,14 @@
                             <button class="map-action-btn" onclick="goHome()" title="Kembali ke Desa Wunut"><i class="fa-solid fa-house"></i></button>
                             <button class="map-action-btn" onclick="findLocation()" title="Cari Lokasi Saya"><i class="fa-solid fa-location-crosshairs"></i></button>
                             <button class="map-action-btn" onclick="toggleFullScreen()" title="Layar Penuh"><i class="fa-solid fa-expand"></i></button>
+                        </div>
+
+                        <div id="slide-legend" class="slide-legend-wrapper">
+                            <button class="legend-toggle-btn" onclick="toggleLegendPanel()"><i class="fa-solid fa-chevron-left" id="legend-icon"></i> Legenda</button>
+                            <div class="slide-legend-content">
+                                <div class="legend-title" style="color: var(--green-deep); margin-bottom: 10px;"><i class="fa-solid fa-list-check"></i> Keterangan</div>
+                                <div id="legend-list-content"></div>
+                            </div>
                         </div>
 
                         <div id="mini-map"></div> 
@@ -334,11 +319,8 @@
             appId: "1:404576970474:web:99ff1412dc6adb581d9993",
             measurementId: "G-9MLXMTP7PN"
         };
-
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        window.firebaseAuth = auth;
+        window.firebaseAuth = getAuth(app);
         window.signIn = signInWithEmailAndPassword;
         window.signUp = createUserWithEmailAndPassword;
         window.logOut = signOut;
@@ -346,12 +328,11 @@
 
 
     <script>
-        // Logika Firebase UI
+        // Logika UI Login
         function tampilkanPesan(text, color = '#ef4444') {
             const msgBox = document.getElementById('login-msg');
             msgBox.innerText = text; msgBox.style.color = color; msgBox.style.display = 'block';
         }
-
         function tanganiPesanError(code) {
             switch(code) {
                 case 'auth/invalid-email': return 'Format email tidak valid.';
@@ -363,91 +344,51 @@
                 default: return 'Terjadi kesalahan sistem.';
             }
         }
-
         function prosesDaftarAuth() {
-            const email = document.getElementById('login-user').value;
-            const pass = document.getElementById('login-pass').value;
+            const email = document.getElementById('login-user').value; const pass = document.getElementById('login-pass').value;
             if (!email || !pass) { tampilkanPesan("Isi email dan password terlebih dahulu!"); return; }
             if(window.signUp) {
-                window.signUp(window.firebaseAuth, email, pass)
-                    .then(() => { tampilkanPesan("Akun berhasil dibuat! Silakan klik tombol MASUK.", "#378D68"); })
-                    .catch((error) => { tampilkanPesan(tanganiPesanError(error.code)); });
+                window.signUp(window.firebaseAuth, email, pass).then(() => { tampilkanPesan("Akun berhasil dibuat! Silakan klik tombol MASUK.", "#378D68"); }).catch((error) => { tampilkanPesan(tanganiPesanError(error.code)); });
             }
         }
-
         function prosesLoginAuth() {
-            const email = document.getElementById('login-user').value;
-            const pass = document.getElementById('login-pass').value;
+            const email = document.getElementById('login-user').value; const pass = document.getElementById('login-pass').value;
             if (!email || !pass) { tampilkanPesan("Isi email dan password terlebih dahulu!"); return; }
             if(window.signIn) {
-                window.signIn(window.firebaseAuth, email, pass)
-                    .then(() => {
-                        document.getElementById('login-msg').style.display = 'none';
-                        document.getElementById('login-overlay').style.opacity = '0';
-                        setTimeout(() => {
-                            document.getElementById('login-overlay').style.display = 'none';
-                            document.getElementById('main-content').style.display = 'block';
-                            triggerMapResize();
-                        }, 500);
-                    })
-                    .catch((error) => { tampilkanPesan(tanganiPesanError(error.code)); });
+                window.signIn(window.firebaseAuth, email, pass).then(() => {
+                    document.getElementById('login-msg').style.display = 'none'; document.getElementById('login-overlay').style.opacity = '0';
+                    setTimeout(() => { document.getElementById('login-overlay').style.display = 'none'; document.getElementById('main-content').style.display = 'block'; triggerMapResize(); }, 500);
+                }).catch((error) => { tampilkanPesan(tanganiPesanError(error.code)); });
             }
         }
-
         function logoutAuth() {
             if(window.logOut) {
                 window.logOut(window.firebaseAuth).then(() => {
-                    document.getElementById('login-user').value = '';
-                    document.getElementById('login-pass').value = '';
-                    document.getElementById('login-msg').style.display = 'none';
-                    document.getElementById('main-content').style.display = 'none';
-                    document.getElementById('login-overlay').style.display = 'flex';
-                    setTimeout(() => { document.getElementById('login-overlay').style.opacity = '1'; }, 50);
+                    document.getElementById('login-user').value = ''; document.getElementById('login-pass').value = ''; document.getElementById('login-msg').style.display = 'none'; document.getElementById('main-content').style.display = 'none'; document.getElementById('login-overlay').style.display = 'flex'; setTimeout(() => { document.getElementById('login-overlay').style.opacity = '1'; }, 50);
                 });
             }
         }
+        document.getElementById("login-pass").addEventListener("keypress", function(event) { if (event.key === "Enter") { event.preventDefault(); prosesLoginAuth(); } });
 
-        document.getElementById("login-pass").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") { event.preventDefault(); prosesLoginAuth(); }
-        });
 
-        // Setup Leaflet
-        var polaRuangLayer;
-        var bidangTanahLayer;
-        var userMarker;
-        var rawPolaRuangData = null; 
-
-        const WUNUT_CENTER = [-7.5990, 110.6188];
-        const DEFAULT_ZOOM = 15;
+        // Logika Peta
+        var polaRuangLayer; var bidangTanahLayer; var userMarker; var rawPolaRuangData = null; 
+        const WUNUT_CENTER = [-7.5990, 110.6188]; const DEFAULT_ZOOM = 15;
 
         function getPropValue(properties, ...possibleKeys) {
-            for (let key of possibleKeys) {
-                if (properties[key] !== undefined) return properties[key];
-                for (let actualKey in properties) {
-                    if (actualKey.toLowerCase() === key.toLowerCase()) return properties[actualKey];
-                }
-            }
+            for (let key of possibleKeys) { if (properties[key] !== undefined) return properties[key]; for (let actualKey in properties) { if (actualKey.toLowerCase() === key.toLowerCase()) return properties[actualKey]; } }
             return '-';
         }
 
-        function triggerMapResize() {
-            if (typeof map !== 'undefined') map.invalidateSize();
-            if (typeof miniMap !== 'undefined') miniMap.invalidateSize();
-        }
+        function triggerMapResize() { if (typeof map !== 'undefined') map.invalidateSize(); if (typeof miniMap !== 'undefined') miniMap.invalidateSize(); }
 
         function switchTab(id) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-            document.getElementById(id).classList.add('active-section');
-            document.getElementById('btn-' + id).classList.add('active');
-            window.scrollTo(0, 0);
-            
+            document.getElementById(id).classList.add('active-section'); document.getElementById('btn-' + id).classList.add('active'); window.scrollTo(0, 0);
             if(id === 'peta') { 
-                setTimeout(triggerMapResize, 100); setTimeout(triggerMapResize, 300); 
-                setTimeout(triggerMapResize, 600); setTimeout(triggerMapResize, 1000); 
-                if (polaRuangLayer && document.getElementById('check-polaruang').checked) {
-                    setTimeout(() => { map.fitBounds(polaRuangLayer.getBounds(), { padding: [30, 30] }); }, 400);
-                }
+                setTimeout(triggerMapResize, 100); setTimeout(triggerMapResize, 300); setTimeout(triggerMapResize, 600); 
+                if (polaRuangLayer && document.getElementById('check-polaruang').checked) { setTimeout(() => { map.fitBounds(polaRuangLayer.getBounds(), { padding: [30, 30] }); }, 400); }
             }
         }
 
@@ -461,23 +402,21 @@
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
         // ==========================================
-        // PERBAIKAN 2: UI DIGITASI DIRAPIKAN
-        // Dipindah ke Kanan, Tool yang tidak perlu dimatikan
+        // ALAT DIGITASI GEOMAN LEBIH RAPI (Diletakkan di Bawah Zoom Control)
         // ==========================================
         map.pm.addControls({
-            position: 'topright',
+            position: 'topleft', // Pindah ke kiri agar tidak nabrak alat kustom di kanan
             drawMarker: true,
             drawPolygon: true,
             drawLine: true,
-            drawCircle: false,      
-            drawCircleMarker: false,
-            drawText: false,
+            drawCircle: false,      // Disembunyikan agar muka peta bersih
+            drawCircleMarker: false,// Disembunyikan
+            drawText: false,        // Disembunyikan
             editMode: true,
-            dragMode: false, // Dimatikan agar tidak ganggu
-            cutPolygon: false, // Dimatikan agar tidak ganggu
+            dragMode: false,        // Disembunyikan
+            cutPolygon: false,      // Disembunyikan
             removalMode: true
         });
-
         map.pm.setPathOptions({ color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.4 });
         // ==========================================
 
@@ -486,66 +425,48 @@
         new ResizeObserver(triggerMapResize).observe(document.getElementById('peta'));
 
         function changeBase(val) {
-            if(val === 'osm') { 
-                map.addLayer(osmMain); map.removeLayer(satelitMain); 
-                miniMap.addLayer(osmMini); miniMap.removeLayer(satelitMini); 
-            } else { 
-                map.addLayer(satelitMain); map.removeLayer(osmMain); 
-                miniMap.addLayer(satelitMini); miniMap.removeLayer(osmMini); 
-            }
+            if(val === 'osm') { map.addLayer(osmMain); map.removeLayer(satelitMain); miniMap.addLayer(osmMini); miniMap.removeLayer(satelitMini); } 
+            else { map.addLayer(satelitMain); map.removeLayer(osmMain); miniMap.addLayer(satelitMini); miniMap.removeLayer(osmMini); }
         }
-
-        function goHome() {
-            if (polaRuangLayer && document.getElementById('check-polaruang').checked) {
-                map.fitBounds(polaRuangLayer.getBounds(), { padding: [30, 30] });
-            } else {
-                map.setView(WUNUT_CENTER, DEFAULT_ZOOM);
-            }
-        }
-
+        function goHome() { if (polaRuangLayer && document.getElementById('check-polaruang').checked) { map.fitBounds(polaRuangLayer.getBounds(), { padding: [30, 30] }); } else { map.setView(WUNUT_CENTER, DEFAULT_ZOOM); } }
         function findLocation() { map.locate({setView: true, maxZoom: 16}); }
-        map.on('locationfound', function(e) {
-            if(userMarker) { map.removeLayer(userMarker); }
-            userMarker = L.marker(e.latlng).addTo(map).bindPopup("Lokasi Anda Saat Ini").openPopup();
-        });
-        
-        function toggleFullScreen() {
-            var elem = document.getElementById("main-map-container");
-            if (!document.fullscreenElement) { elem.requestFullscreen(); } else { document.exitFullscreen(); }
-        }
+        map.on('locationfound', function(e) { if(userMarker) { map.removeLayer(userMarker); } userMarker = L.marker(e.latlng).addTo(map).bindPopup("Lokasi Anda Saat Ini").openPopup(); });
+        function toggleFullScreen() { var elem = document.getElementById("main-map-container"); if (!document.fullscreenElement) { elem.requestFullscreen(); } else { document.exitFullscreen(); } }
 
-        function changeOpacity(val) {
+        // ==========================================
+        // SLIDER TRANSPARANSI MASING-MASING LAYER
+        // ==========================================
+        function changeOpacityPolaRuang(val) {
+            document.getElementById('val-op-pola').innerText = Math.round(val * 100) + '%';
             if (polaRuangLayer) polaRuangLayer.setStyle({fillOpacity: val});
+        }
+        function changeOpacityBidangTanah(val) {
+            document.getElementById('val-op-bidang').innerText = Math.round(val * 100) + '%';
             if (bidangTanahLayer) bidangTanahLayer.setStyle({fillOpacity: val});
         }
 
         const subZonaColors = {
-            'Badan Air': '#99D9EA', 'Badan Jalan': '#ED1C24', 'Hortikultura': '#D4FF54',
-            'Instalasi Pengolahan Air Minum (IPAM)': '#F5B069', 'Kawasan Peruntukan Industri': '#6B0000',
-            'Pariwisata': '#FF9EED', 'Pemakaman': '#39FF14', 'Pengelolaan Persampahan': '#C48A3F',
-            'Perdagangan dan Jasa Skala SWP': '#FF9999', 'Perdagangan dan Jasa Skala WP': '#FF6666',
-            'Pergudangan': '#404040', 'Perikanan Budidaya': '#85C1E9', 'Perkantoran': '#999999',
-            'Perkebunan': '#A9B846', 'Perkebunan Rakyat': '#96E091', 'Pertahanan dan Keamanan': '#9400D3',
-            'Peternakan': '#C8F7C8', 'Ruang Terbuka Hijau': '#194D12', 'Ruang Terbuka Non Hijau': '#066B6B',
-            'Rumah Kepadatan Rendah': '#FEFA4E', 'Rumah Kepadatan Sangat Rendah': '#FCFCC0',
-            'Rumah Kepadatan Sedang': '#FFED00', 'Rumah Kepadatan Tinggi': '#FFC000',
-            'SPU Skala Kecamatan': '#9C43A8', 'SPU Skala Kelurahan': '#BA55D3', 'SPU Skala Kota': '#660066',
-            'SPU Skala RW': '#E475DF', 'Sempadan Sungai': '#E0FFFF', 'Sentra Industri Kecil Menengah': '#5C0000',
-            'Taman Kecamatan': '#398C15', 'Taman Kelurahan': '#B84CB8', 'Tanaman Pangan': '#B9F74F',
-            'Lainnya': '#dddddd'
+            'Badan Air': '#99D9EA', 'Badan Jalan': '#ED1C24', 'Hortikultura': '#D4FF54', 'Instalasi Pengolahan Air Minum (IPAM)': '#F5B069', 'Kawasan Peruntukan Industri': '#6B0000', 'Pariwisata': '#FF9EED', 'Pemakaman': '#39FF14', 'Pengelolaan Persampahan': '#C48A3F', 'Perdagangan dan Jasa Skala SWP': '#FF9999', 'Perdagangan dan Jasa Skala WP': '#FF6666', 'Pergudangan': '#404040', 'Perikanan Budidaya': '#85C1E9', 'Perkantoran': '#999999', 'Perkebunan': '#A9B846', 'Perkebunan Rakyat': '#96E091', 'Pertahanan dan Keamanan': '#9400D3', 'Peternakan': '#C8F7C8', 'Ruang Terbuka Hijau': '#194D12', 'Ruang Terbuka Non Hijau': '#066B6B', 'Rumah Kepadatan Rendah': '#FEFA4E', 'Rumah Kepadatan Sangat Rendah': '#FCFCC0', 'Rumah Kepadatan Sedang': '#FFED00', 'Rumah Kepadatan Tinggi': '#FFC000', 'SPU Skala Kecamatan': '#9C43A8', 'SPU Skala Kelurahan': '#BA55D3', 'SPU Skala Kota': '#660066', 'SPU Skala RW': '#E475DF', 'Sempadan Sungai': '#E0FFFF', 'Sentra Industri Kecil Menengah': '#5C0000', 'Taman Kecamatan': '#398C15', 'Taman Kelurahan': '#B84CB8', 'Tanaman Pangan': '#B9F74F', 'Lainnya': '#dddddd'
         };
-
-        const statusColors = {
-            'Hak Guna Bangunan': '#387cc3', 'Hak Guna Usaha': '#df8c54', 'Hak Milik': '#f6d246',         
-            'Hak Pakai': '#50c15d', 'Jaringan Jalan': '#cb1b1d', 'Kosong': '#a07f6e', 'Sungai': '#355cf8'             
-        };
+        const statusColors = { 'Hak Guna Bangunan': '#387cc3', 'Hak Guna Usaha': '#df8c54', 'Hak Milik': '#f6d246', 'Hak Pakai': '#50c15d', 'Jaringan Jalan': '#cb1b1d', 'Kosong': '#a07f6e', 'Sungai': '#355cf8' };
 
         // ==========================================
-        // PERBAIKAN 3: LEGENDA PINDAH KE SIDEBAR
+        // LEGENDA SLIDE OUT LOGIC
         // ==========================================
+        function toggleLegendPanel() {
+            const wrapper = document.getElementById('slide-legend');
+            const icon = document.getElementById('legend-icon');
+            wrapper.classList.toggle('open');
+            if (wrapper.classList.contains('open')) {
+                icon.classList.replace('fa-chevron-left', 'fa-chevron-right');
+            } else {
+                icon.classList.replace('fa-chevron-right', 'fa-chevron-left');
+            }
+        }
+
         function renderLegend() {
-            const legWrapper = document.getElementById('sidebar-legend-container');
-            const legDiv = document.getElementById('legend-list');
+            const legWrapper = document.getElementById('slide-legend');
+            const legDiv = document.getElementById('legend-list-content');
             legDiv.innerHTML = ''; 
 
             const isPolaRuangActive = document.getElementById('check-polaruang').checked;
@@ -554,9 +475,7 @@
             if (isPolaRuangActive) {
                 legDiv.innerHTML += `<div style="font-size:11px; color:#888; margin-bottom:8px; text-transform:uppercase; font-weight:700;">• Pola Ruang (Sub Zona)</div>`;
                 for (const [key, color] of Object.entries(subZonaColors)) {
-                    if (key !== 'Lainnya') {
-                        legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`;
-                    }
+                    if (key !== 'Lainnya') { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; }
                 }
             }
 
@@ -567,38 +486,38 @@
                 }
             }
 
+            // Jika tidak ada layer aktif, sembunyikan tombol legendanya
             if (!isPolaRuangActive && !isBidangTanahActive) {
                 legWrapper.style.display = 'none';
+                legWrapper.classList.remove('open'); // tutup otomatis
+                document.getElementById('legend-icon').classList.replace('fa-chevron-right', 'fa-chevron-left');
             } else {
-                legWrapper.style.display = 'block';
+                legWrapper.style.display = 'flex';
             }
         }
-        // ==========================================
 
         function toggleLayers() {
             const checkPolaRuang = document.getElementById('check-polaruang').checked;
             const checkBidangTanah = document.getElementById('check-bidangtanah').checked;
 
-            if (checkPolaRuang && polaRuangLayer) {
-                if (!map.hasLayer(polaRuangLayer)) map.addLayer(polaRuangLayer);
-            } else if (polaRuangLayer) { map.removeLayer(polaRuangLayer); }
+            if (checkPolaRuang && polaRuangLayer) { if (!map.hasLayer(polaRuangLayer)) map.addLayer(polaRuangLayer); } 
+            else if (polaRuangLayer) { map.removeLayer(polaRuangLayer); }
 
-            if (checkBidangTanah && bidangTanahLayer) {
-                if (!map.hasLayer(bidangTanahLayer)) map.addLayer(bidangTanahLayer);
-            } else if (bidangTanahLayer) { map.removeLayer(bidangTanahLayer); }
+            if (checkBidangTanah && bidangTanahLayer) { if (!map.hasLayer(bidangTanahLayer)) map.addLayer(bidangTanahLayer); } 
+            else if (bidangTanahLayer) { map.removeLayer(bidangTanahLayer); }
 
             renderLegend(); 
         }
 
         function stylePolaRuang(feature) {
             let val = getPropValue(feature.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona');
-            let currentOp = document.getElementById('opacity-slider') ? parseFloat(document.getElementById('opacity-slider').value) : 0.8;
+            let currentOp = document.getElementById('opacity-polaruang') ? parseFloat(document.getElementById('opacity-polaruang').value) : 0.8;
             return { fillColor: subZonaColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: currentOp };
         }
 
         function styleBidangTanah(feature) {
             let val = getPropValue(feature.properties, 'STATUS', 'Status', 'status');
-            let currentOp = document.getElementById('opacity-slider') ? parseFloat(document.getElementById('opacity-slider').value) : 0.8;
+            let currentOp = document.getElementById('opacity-bidangtanah') ? parseFloat(document.getElementById('opacity-bidangtanah').value) : 0.8;
             return { fillColor: statusColors[val] || '#cccccc', weight: 1.2, opacity: 1, color: '#444444', fillOpacity: currentOp };
         }
 
@@ -609,9 +528,7 @@
                 polaRuangLayer = L.geoJSON(data, {
                     style: stylePolaRuang,
                     onEachFeature: function(f, l) {
-                        let kode = getPropValue(f.properties, 'KODE', 'Kode', 'kode');
-                        let zona = getPropValue(f.properties, 'ZONA', 'Zona', 'zona');
-                        let subZona = getPropValue(f.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona');
+                        let kode = getPropValue(f.properties, 'KODE', 'Kode', 'kode'); let zona = getPropValue(f.properties, 'ZONA', 'Zona', 'zona'); let subZona = getPropValue(f.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona');
                         let popupContent = `
                             <div style="font-family:'Inter', sans-serif; min-width: 200px;">
                                 <b style="color:var(--purple-deep); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--green-soft); padding-bottom:5px;">Informasi Pola Ruang</b>
@@ -638,8 +555,7 @@
                 bidangTanahLayer = L.geoJSON(data, {
                     style: styleBidangTanah,
                     onEachFeature: function(f, l) {
-                        let status = getPropValue(f.properties, 'STATUS', 'Status', 'status');
-                        let luas = getPropValue(f.properties, 'Luas', 'LUAS', 'luas');
+                        let status = getPropValue(f.properties, 'STATUS', 'Status', 'status'); let luas = getPropValue(f.properties, 'Luas', 'LUAS', 'luas');
                         let popupContent = `
                             <div style="font-family:'Inter', sans-serif; min-width: 180px;">
                                 <b style="color:var(--purple-deep); font-size:14px; display:block; margin-bottom:10px; text-align:center; border-bottom:2px solid var(--green-soft); padding-bottom:5px;">Informasi Bidang Tanah</b>
@@ -659,33 +575,15 @@
                 renderLegend();
             });
 
-        // ==========================================
-        // PERBAIKAN 1: DOWNLOAD DIUBAH KE GEOJSON (Anti Gagal)
-        // ==========================================
         function downloadData() {
-            if (!rawPolaRuangData || !rawPolaRuangData.features) {
-                alert("Data Pola Ruang belum siap. Tunggu sebentar...");
-                return;
-            }
-
+            if (!rawPolaRuangData || !rawPolaRuangData.features) { alert("Data Pola Ruang belum siap. Tunggu sebentar..."); return; }
             try {
-                // Mengonversi data JSON ke format teks yang bisa didownload
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rawPolaRuangData));
-                
-                // Membuat elemen link tersembunyi untuk memicu download file .geojson
                 const dlAnchorElem = document.createElement('a');
-                dlAnchorElem.setAttribute("href", dataStr);
-                dlAnchorElem.setAttribute("download", "Pola_Ruang_Wunut.geojson");
-                document.body.appendChild(dlAnchorElem);
-                dlAnchorElem.click();
-                dlAnchorElem.remove();
-
-            } catch (error) {
-                console.error("Gagal Download Data:", error);
-                alert("Terjadi kesalahan saat mengunduh data.");
-            }
+                dlAnchorElem.setAttribute("href", dataStr); dlAnchorElem.setAttribute("download", "Pola_Ruang_Wunut.geojson");
+                document.body.appendChild(dlAnchorElem); dlAnchorElem.click(); dlAnchorElem.remove();
+            } catch (error) { alert("Terjadi kesalahan saat mengunduh data."); }
         }
-        // ==========================================
 
         function loadKML(event) {
             const file = event.target.files[0];
@@ -695,8 +593,7 @@
                 try {
                     const customLayer = omnivore.kml.parse(e.target.result);
                     customLayer.setStyle({ color: '#38bdf8', weight: 3, fillOpacity: 0.5 });
-                    customLayer.addTo(map);
-                    map.fitBounds(customLayer.getBounds(), { padding: [30, 30] });
+                    customLayer.addTo(map); map.fitBounds(customLayer.getBounds(), { padding: [30, 30] });
                     alert(`File KML '${file.name}' berhasil ditambahkan ke peta!`);
                 } catch (error) { alert("Format KML tidak valid."); }
             };
