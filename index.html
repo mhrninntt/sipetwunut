@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIPET WUNUT - Banyu Nusantara Edition</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@700&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -88,9 +88,19 @@
         .shortcut-btn { background: var(--white); color: var(--deep-navy); padding: 12px 25px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid var(--accent-gold); transition: var(--transition); display: flex; align-items: center; gap: 8px; cursor: pointer; }
         .shortcut-btn:hover { background: var(--deep-navy); color: var(--accent-gold); transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0,0,0,0.1); }
 
-        /* Gambaran Wilayah */
-        .about-text { background: var(--white); padding: 40px 50px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); font-size: 1.15rem; line-height: 2; color: #475569; border-left: 6px solid var(--accent-gold); position: relative; margin-bottom: 60px; }
-        .about-text::before { content: '\f10d'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; top: 20px; left: -25px; font-size: 2rem; color: var(--accent-gold); background: var(--soft-sand); padding: 5px; }
+        /* --- INTERACTIVE PROFIL DESA WUNUT (NEW) --- */
+        .profil-container { display: flex; flex-wrap: wrap; background: var(--white); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 60px; border-left: 6px solid var(--accent-gold); }
+        .profil-tabs { flex: 0 0 260px; background: var(--deep-navy); display: flex; flex-direction: column; padding: 20px 0; }
+        .profil-tab { background: transparent; color: rgba(255,255,255,0.6); border: none; text-align: left; padding: 18px 25px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition); border-left: 4px solid transparent; display: flex; align-items: center; gap: 12px; }
+        .profil-tab:hover { color: var(--white); background: rgba(255,255,255,0.05); }
+        .profil-tab.active { color: var(--accent-gold); border-left-color: var(--accent-gold); background: rgba(255,255,255,0.05); }
+        .profil-tab i { font-size: 16px; width: 20px; text-align: center; }
+        .profil-content-wrapper { flex: 1; padding: 40px 50px; position: relative; background: url("https://www.transparenttextures.com/patterns/cream-paper.png"); }
+        .profil-content { display: none; opacity: 0; transition: opacity 0.4s ease; }
+        .profil-content.active-fade { opacity: 1; }
+        .profil-content h3 { font-family: 'Playfair Display', serif; color: var(--deep-navy); font-size: 2rem; margin-top: 0; margin-bottom: 20px; }
+        .profil-content p { font-family: 'Lora', serif; font-size: 1.15rem; line-height: 1.9; color: var(--text-body); margin-bottom: 15px; text-align: justify; }
+        @media (max-width: 768px) { .profil-container { flex-direction: column; } .profil-tabs { flex: 1; flex-direction: row; overflow-x: auto; } .profil-tab { white-space: nowrap; border-left: none; border-bottom: 4px solid transparent; padding: 15px; } .profil-tab.active { border-left-color: transparent; border-bottom-color: var(--accent-gold); } .profil-content-wrapper { padding: 30px 20px; } }
 
         /* Charts */
         .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 40px; margin-bottom: 60px; }
@@ -232,16 +242,57 @@
                     </div>
 
                     <div class="dashboard-shortcuts" data-aos="fade-up" data-aos-delay="400">
-                        <a href="#sec-gambaran" class="shortcut-btn" onclick="scrollToSection(event, 'sec-gambaran')"><i class="fa-solid fa-map"></i> Gambaran Wilayah</a>
+                        <a href="#sec-gambaran" class="shortcut-btn" onclick="scrollToSection(event, 'sec-gambaran')"><i class="fa-solid fa-map"></i> Profil Wilayah</a>
                         <a href="#sec-statistik" class="shortcut-btn" onclick="scrollToSection(event, 'sec-statistik')"><i class="fa-solid fa-chart-pie"></i> Data Statistik</a>
                         <a href="#sec-warta" class="shortcut-btn" onclick="scrollToSection(event, 'sec-warta')"><i class="fa-solid fa-newspaper"></i> Warta Desa</a>
                         <a href="#sec-galeri" class="shortcut-btn" onclick="scrollToSection(event, 'sec-galeri')"><i class="fa-solid fa-images"></i> Galeri Potensi</a>
                     </div>
 
                     <div id="sec-gambaran" class="scroll-target">
-                        <h2 class="section-title" data-aos="fade-up">Gambaran Wilayah</h2>
-                        <div class="about-text" data-aos="fade-up" data-aos-delay="100">
-                            Pemerintah Desa Wunut mengelola fasilitas wisata air. Fasilitas Umbul Pelem memiliki kolam renang alami. Wisatawan mengunjungi fasilitas ekowisata setiap hari. BUMDes Sumber Kamulyan mendistribusikan pendapatan wisata kepada warga desa.
+                        <h2 class="section-title" data-aos="fade-up">Profil Desa Wunut</h2>
+                        
+                        <div class="profil-container" data-aos="fade-up" data-aos-delay="100">
+                            <div class="profil-tabs">
+                                <button class="profil-tab active" onclick="openProfilTab(event, 'profil-letak')"><i class="fa-solid fa-map-pin"></i> Letak & Identitas</button>
+                                <button class="profil-tab" onclick="openProfilTab(event, 'profil-sejarah')"><i class="fa-solid fa-clock-rotate-left"></i> Sejarah Nama</button>
+                                <button class="profil-tab" onclick="openProfilTab(event, 'profil-ekonomi')"><i class="fa-solid fa-chart-line"></i> Ekonomi Desa</button>
+                                <button class="profil-tab" onclick="openProfilTab(event, 'profil-wisata')"><i class="fa-solid fa-water"></i> Potensi Wisata</button>
+                                <button class="profil-tab" onclick="openProfilTab(event, 'profil-sejahtera')"><i class="fa-solid fa-hand-holding-heart"></i> Kesejahteraan</button>
+                                <button class="profil-tab" onclick="openProfilTab(event, 'profil-status')"><i class="fa-solid fa-award"></i> Status Desa</button>
+                            </div>
+                            
+                            <div class="profil-content-wrapper">
+                                <div id="profil-letak" class="profil-content active-fade" style="display: block;">
+                                    <h3>Letak dan Identitas Wilayah</h3>
+                                    <p>Desa Wunut merupakan salah satu desa yang secara administratif terletak di Kecamatan Tulung, Kabupaten Klaten, Provinsi Jawa Tengah.</p>
+                                    <p>Lokasi desa ini sangat strategis karena berbatasan langsung dengan wilayah Kabupaten Boyolali di sisi barat, menjadikannya titik persinggungan aktivitas ekonomi dan mobilitas antar wilayah.</p>
+                                </div>
+                                <div id="profil-sejarah" class="profil-content">
+                                    <h3>Sejarah Nama Wunut</h3>
+                                    <p>Nama "Wunut" berasal dari kesepakatan penggabungan dua pemerintahan desa pada masa lampau, yakni pemerintahan Bekel (Wunut) dan Demang (Dukuh).</p>
+                                    <p>Karena jumlah penduduk yang masih sedikit dan tidak sebanding dengan luas wilayah, kedua pemerintahan tersebut sepakat untuk bersatu. Pemilihan nama dilakukan secara tradisional menggunakan lidi. Pemenangnya adalah pihak Dukuh — namun berdasarkan perjanjian, nama yang digunakan justru adalah "Wunut", dan nama itulah yang dipakai hingga sekarang.</p>
+                                </div>
+                                <div id="profil-ekonomi" class="profil-content">
+                                    <h3>Perkembangan Ekonomi Desa</h3>
+                                    <p>Pada tahun 2016, Desa Wunut masih tergolong sebagai desa tertinggal dengan Pendapatan Asli Desa (PAD) yang hanya berkisar Rp30 juta hingga Rp50 juta per tahun.</p>
+                                    <p>Namun, melalui inovasi dan strategi yang tepat dalam memanfaatkan potensi sumber daya alam lokal, desa ini berhasil meningkatkan PAD secara drastis hingga mencapai Rp2,7 miliar pada tahun 2023.</p>
+                                </div>
+                                <div id="profil-wisata" class="profil-content">
+                                    <h3>Potensi Wisata BUMDes</h3>
+                                    <p>Keberhasilan Desa Wunut tidak terlepas dari pengelolaan objek wisata Umbul Pelem yang dikelola oleh BUMDes Sumber Kamulyan. Fasilitas ini berhasil menarik 569.673 pengunjung sepanjang tahun 2022.</p>
+                                    <p>Sejak tahun 2016 hingga 2019, total dana desa yang dialokasikan untuk pengembangan wisata mencapai Rp1,6 miliar. Modal tersebut terbukti memberikan hasil yang signifikan untuk masa depan desa.</p>
+                                </div>
+                                <div id="profil-sejahtera" class="profil-content">
+                                    <h3>Program Kesejahteraan Warga</h3>
+                                    <p>Kepala Desa Wunut, Iwan Sulistiya Setiawan, menginisiasi berbagai program kesejahteraan, di antaranya pembagian Tunjangan Hari Raya (THR) serta jaminan BPJS Ketenagakerjaan dan Kesehatan untuk warga.</p>
+                                    <p>Pendapatan wisata juga dimanfaatkan untuk membayar premi BPJS bagi warga tidak mampu, santunan kematian, dan santunan warga miskin.</p>
+                                </div>
+                                <div id="profil-status" class="profil-content">
+                                    <h3>Status Desa Mandiri</h3>
+                                    <p>Omzet BUMDes Sumber Kamulyan melonjak drastis: Rp30 juta (2018), Rp576 juta (2020), Rp915 juta (2022), hingga mencapai Rp3,1 miliar pada 2024.</p>
+                                    <p>Capaian tersebut menjadikan Desa Wunut resmi berstatus sebagai <b>Desa Mandiri</b> berdasarkan Indeks Desa Membangun (IDM) dari Kementerian Desa PDTT.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -471,7 +522,30 @@
             }
         }
 
-        // 3. Fungsi Login Auth
+        // 3. Fungsi Logika Profil Interaktif
+        function openProfilTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            // Sembunyikan semua konten profil
+            tabcontent = document.getElementsByClassName("profil-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active-fade");
+            }
+            // Hilangkan class active dari semua tombol
+            tablinks = document.getElementsByClassName("profil-tab");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            // Tampilkan konten yang dipilih
+            document.getElementById(tabName).style.display = "block";
+            // Beri sedikit jeda untuk trigger animasi CSS
+            setTimeout(() => {
+                document.getElementById(tabName).classList.add("active-fade");
+            }, 10);
+            evt.currentTarget.className += " active";
+        }
+
+        // 4. Fungsi Login Auth
         function tampilkanPesan(text, color = '#ef4444') {
             const msgBox = document.getElementById('login-msg'); msgBox.innerText = text; msgBox.style.color = color; msgBox.style.display = 'block';
         }
@@ -495,7 +569,7 @@
         }
         function logoutAuth() { if(window.logOut) { window.logOut(window.firebaseAuth).then(() => { location.reload(); }); } }
 
-        // 4. Fungsi Switch Tab (Mencegah Peta Rusak)
+        // 5. Fungsi Switch Tab (Mencegah Peta Rusak)
         function switchTab(id) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
@@ -512,7 +586,7 @@
             AOS.refresh();
         }
 
-        // 5. Grafik ApexCharts
+        // 6. Grafik ApexCharts
         var optionsDinamika = {
             series: [{ name: 'Kelahiran', data: [20, 16, 7, 17, 24, 10] }, { name: 'Kematian', data: [8, 18, 9, 18, 21, 23] }],
             chart: { type: 'area', height: 350, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
@@ -540,7 +614,7 @@
         };
         new ApexCharts(document.querySelector("#chart-piramida"), optionsPiramida).render();
 
-        // 6. LOGIKA FULL WEBGIS (PETA LEAFLET)
+        // 7. LOGIKA FULL WEBGIS (PETA LEAFLET)
         var polaRuangLayer; var bidangTanahLayer; var userMarker; 
         var rawPolaRuangData = null; var rawBidangTanahData = null; 
         const WUNUT_CENTER = [-7.5990, 110.6188]; const DEFAULT_ZOOM = 15;
@@ -620,7 +694,7 @@
                 }
             });
             if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer); renderLegend();
-        }).catch(e => console.error("Data Pola Ruang belum tersedia di folder."));
+        }).catch(e => console.error("Data Pola Ruang belum tersedia."));
 
         fetch('bidangtanahwunut.geojson').then(res => res.json()).then(data => {
             rawBidangTanahData = data;
@@ -633,7 +707,7 @@
                 }
             });
             if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer); renderLegend();
-        }).catch(e => console.error("Data Bidang Tanah belum tersedia di folder."));
+        }).catch(e => console.error("Data Bidang Tanah belum tersedia."));
 
         // --- Fitur Download GeoJSON / ZIP Cerdas ---
         function downloadData() {
@@ -644,7 +718,6 @@
                 alert("Pilih minimal satu Lapisan Data Spasial yang ingin diunduh."); return;
             }
 
-            // Jika Keduanya dicentang -> Download ZIP
             if (isPola && isBidang && rawPolaRuangData && rawBidangTanahData) {
                 alert("Menyiapkan file ZIP Data Spasial Wunut...");
                 var zip = new JSZip();
@@ -654,19 +727,17 @@
                     saveAs(content, "Data_Spasial_Wunut.zip");
                 });
             } 
-            // Jika Hanya Pola Ruang
             else if (isPola && rawPolaRuangData) {
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rawPolaRuangData));
                 const dl = document.createElement('a'); dl.href = dataStr; dl.download = "Pola_Ruang_Wunut.geojson";
                 document.body.appendChild(dl); dl.click(); dl.remove();
             } 
-            // Jika Hanya Bidang Tanah
             else if (isBidang && rawBidangTanahData) {
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rawBidangTanahData));
                 const dl = document.createElement('a'); dl.href = dataStr; dl.download = "Bidang_Tanah_Wunut.geojson";
                 document.body.appendChild(dl); dl.click(); dl.remove();
             } else {
-                alert("Data sedang dimuat atau gagal diakses dari server. Coba beberapa saat lagi.");
+                alert("Data sedang dimuat dari server. Coba beberapa saat lagi.");
             }
         }
 
