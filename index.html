@@ -72,38 +72,9 @@
         .content-section { display: none; padding: 80px 0 60px; }
         .active-section { display: block; animation: fadeIn 0.8s ease; }
 
-        /* --- TATA LETAK DASHBOARD BERANDA --- */
-        .hero { 
-            position: relative; 
-            height: 60vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            text-align: center; 
-            padding: 0 20px; 
-            border-bottom: 5px solid var(--kamulyan-gold); 
-            overflow: hidden;
-        }
-        
-        /* Gambar Header dengan Efek Artistik & Blur */
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -10px; left: -10px; right: -10px; bottom: -10px;
-            background: url('header.jpg') center/cover no-repeat;
-            filter: blur(6px) brightness(0.65);
-            z-index: 0;
-        }
-
-        .hero-card { 
-            position: relative;
-            z-index: 1;
-            background: rgba(255,255,255,0.85); 
-            padding: 50px 70px; 
-            border-radius: 20px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3); 
-            backdrop-filter: blur(8px); 
-        }
+        /* --- TATA LETAK DASHBOARD BERANDA BARU --- */
+        .hero { height: 60vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(rgba(2, 132, 199, 0.1), rgba(16, 185, 129, 0.05)), url('https://images.unsplash.com/photo-1505322022379-7c3353ee6291?q=80&w=1500&auto=format&fit=crop') center/cover; text-align: center; padding: 0 20px; position: relative; border-bottom: 5px solid var(--kamulyan-gold); }
+        .hero-card { background: rgba(255,255,255,0.85); padding: 50px 70px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); backdrop-filter: blur(8px); }
         .hero h2 { font-family: 'Montserrat', sans-serif; font-size: 3.5rem; margin: 0; color: var(--tirta-blue); }
         .hero p { font-size: 1.1rem; color: var(--text-dark); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 0; }
 
@@ -120,7 +91,7 @@
         .section-header h2 { color: var(--tirta-blue); font-size: 2.2rem; margin: 0 0 10px; font-family: 'Montserrat', sans-serif; }
         .section-header p { color: var(--agri-green); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin: 0; font-size: 0.9rem; }
 
-        /* Gambaran Wilayah */
+        /* Gambaran Wilayah (SPOK Text) */
         .about-text { background: var(--white); padding: 40px 50px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); font-size: 1.15rem; line-height: 2; color: #475569; border-left: 6px solid var(--kamulyan-gold); position: relative; }
         .about-text::before { content: '\f10d'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; top: 20px; left: -25px; font-size: 2rem; color: var(--kamulyan-gold); background: var(--bg-body); padding: 5px; }
 
@@ -142,8 +113,8 @@
         .news-link:hover { color: var(--tirta-blue); }
 
         /* Gallery */
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .gallery-item { border-radius: 15px; overflow: hidden; height: 280px; position: relative; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+        .gallery-item { border-radius: 15px; overflow: hidden; height: 260px; position: relative; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
         .gallery-item:hover img { transform: scale(1.1); }
         .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 30px 20px 20px; color: white; opacity: 0; transition: opacity 0.3s ease; }
@@ -311,25 +282,20 @@
                     </div>
                     <div class="gallery-grid">
                         <div class="gallery-item fade-in">
-                            <img src="umbul pelem.webp" alt="Umbul Pelem">
-                            <div class="gallery-overlay">
-                                <h4>Umbul Pelem</h4>
-                                <p>Fasilitas kolam renang alami</p>
-                            </div>
+                            <img src="https://images.unsplash.com/photo-1518099074172-2e47ee6cb394?w=500&q=80" alt="Gallery 1">
+                            <div class="gallery-overlay"><h4>Mata Air Alami</h4><p>Titik sumber air jernih</p></div>
                         </div>
                         <div class="gallery-item fade-in" style="animation-delay: 0.1s;">
-                            <img src="wisata air.jpeg" alt="Wisata Air">
-                            <div class="gallery-overlay">
-                                <h4>Kawasan Wisata Air</h4>
-                                <p>Pusat rekreasi dan pariwisata</p>
-                            </div>
+                            <img src="https://images.unsplash.com/photo-1520052205864-92d242b3a4e4?w=500&q=80" alt="Gallery 2">
+                            <div class="gallery-overlay"><h4>Area Rekreasi</h4><p>Fasilitas penunjang wisata</p></div>
                         </div>
                         <div class="gallery-item fade-in" style="animation-delay: 0.2s;">
-                            <img src="perikanan budidaya.png" alt="Perikanan Budidaya">
-                            <div class="gallery-overlay">
-                                <h4>Perikanan Budidaya</h4>
-                                <p>Sektor penggerak ekonomi desa</p>
-                            </div>
+                            <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80" alt="Gallery 3">
+                            <div class="gallery-overlay"><h4>Lanskap Hijau</h4><p>Zona pertanian warga</p></div>
+                        </div>
+                        <div class="gallery-item fade-in" style="animation-delay: 0.3s;">
+                            <img src="https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=500&q=80" alt="Gallery 4">
+                            <div class="gallery-overlay"><h4>Ekowisata</h4><p>Kawasan penyangga</p></div>
                         </div>
                     </div>
 
