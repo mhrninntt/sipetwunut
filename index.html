@@ -76,12 +76,17 @@
         .section-title::after { content: ''; display: block; width: 80px; height: 3px; background: var(--terracotta); margin: 15px auto 0; }
 
         /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: -80px; position: relative; z-index: 10; margin-bottom: 60px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: -80px; position: relative; z-index: 10; margin-bottom: 40px; }
         .stat-item { background: var(--white); padding: 40px 20px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.05); border-top: 4px solid var(--accent-gold); transition: var(--transition); border-radius: 8px; }
         .stat-item:hover { transform: translateY(-15px); box-shadow: 0 20px 40px rgba(10, 25, 47, 0.1); }
         .stat-item i { font-size: 2.5rem; color: var(--terracotta); margin-bottom: 20px; }
         .stat-item h3 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin: 0 0 5px; color: var(--deep-navy); }
         .stat-item p { margin: 0; font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* SHORTCUT DASHBOARD */
+        .dashboard-shortcuts { display: flex; justify-content: center; gap: 15px; margin-bottom: 60px; flex-wrap: wrap; position: relative; z-index: 10; }
+        .shortcut-btn { background: var(--white); color: var(--deep-navy); padding: 12px 25px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid var(--accent-gold); transition: var(--transition); display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .shortcut-btn:hover { background: var(--deep-navy); color: var(--accent-gold); transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0,0,0,0.1); }
 
         /* Gambaran Wilayah */
         .about-text { background: var(--white); padding: 40px 50px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); font-size: 1.15rem; line-height: 2; color: #475569; border-left: 6px solid var(--accent-gold); position: relative; margin-bottom: 60px; }
@@ -117,7 +122,10 @@
         .gallery-overlay h4 { font-family: 'Playfair Display', serif; margin: 0 0 5px; font-size: 1.3rem; color: var(--accent-gold); }
         .gallery-overlay p { margin: 0; font-size: 0.85rem; }
 
-        /* --- WEBGIS PETA (TERPISAH & BERSIH) --- */
+        /* Target Scroll Margin (Mencegah tertutup Header) */
+        .scroll-target { scroll-margin-top: 100px; padding-top: 20px; }
+
+        /* --- WEBGIS PETA --- */
         #peta { padding-top: 70px; height: 100vh; overflow: hidden; }
         .map-wrapper { position: relative; width: 100%; height: calc(100vh - 70px); }
         #map { width: 100%; height: 100%; z-index: 1; }
@@ -148,27 +156,14 @@
         .btn-icon { width: 40px; height: 40px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; color: var(--deep-navy); font-size: 16px; transition: var(--transition); display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .btn-icon:hover { background: var(--accent-gold); color: white; border-color: var(--accent-gold); }
         
-        /* Arah Utara Aman di sebelah Sidebar */
+        /* Arah Utara Aman di Kiri Atas Peta */
         .north-arrow { position: absolute; top: 20px; left: 360px; z-index: 1000; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); pointer-events: none; }
 
-        /* --- LEGENDA SLIDER (SLIDE OUT KANAN) --- */
-        .legend-slider-wrapper {
-            position: absolute; top: 120px; right: 0; z-index: 1000;
-            transform: translateX(100%); transition: transform 0.4s ease-in-out;
-            display: flex; align-items: flex-start;
-        }
+        /* --- LEGENDA SLIDER KANAN --- */
+        .legend-slider-wrapper { position: absolute; top: 120px; right: 0; z-index: 1000; transform: translateX(100%); transition: transform 0.4s ease-in-out; display: flex; align-items: flex-start; }
         .legend-slider-wrapper.open { transform: translateX(0); }
-        .legend-toggle-btn {
-            background: rgba(255,255,255,0.95); border: 1px solid rgba(0,0,0,0.1); border-right: none;
-            padding: 12px 15px; border-radius: 10px 0 0 10px; cursor: pointer;
-            box-shadow: -4px 4px 10px rgba(0,0,0,0.05); color: var(--deep-navy); font-weight: 700;
-            display: flex; align-items: center; gap: 8px; font-size: 12px;
-        }
-        .legend-content {
-            background: var(--glass-bg); backdrop-filter: blur(10px);
-            padding: 20px; border-radius: 0 0 0 15px; border: 1px solid rgba(255,255,255,0.5); border-right: none;
-            width: 250px; max-height: 60vh; overflow-y: auto; box-shadow: -5px 5px 20px rgba(0,0,0,0.08);
-        }
+        .legend-toggle-btn { background: rgba(255,255,255,0.95); border: 1px solid rgba(0,0,0,0.1); border-right: none; padding: 12px 15px; border-radius: 10px 0 0 10px; cursor: pointer; box-shadow: -4px 4px 10px rgba(0,0,0,0.05); color: var(--deep-navy); font-weight: 700; display: flex; align-items: center; gap: 8px; font-size: 12px; }
+        .legend-content { background: var(--glass-bg); backdrop-filter: blur(10px); padding: 20px; border-radius: 0 0 0 15px; border: 1px solid rgba(255,255,255,0.5); border-right: none; width: 250px; max-height: 60vh; overflow-y: auto; box-shadow: -5px 5px 20px rgba(0,0,0,0.08); }
         .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 11px; font-weight: 600; color: var(--deep-navy); }
         .color-box { width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.2); flex-shrink: 0; }
 
@@ -185,7 +180,7 @@
 <body>
 
     <div id="login-overlay">
-        <div class="login-card">
+        <div class="login-card fade-in">
             <h2>SIPET WUNUT</h2>
             <p>Banyu Nusantara Edition</p>
             <input type="email" id="login-user" class="login-input" placeholder="Alamat Email">
@@ -212,7 +207,7 @@
                 <div class="hero">
                     <div class="hero-img"></div>
                     <div class="hero-content" data-aos="zoom-in" data-aos-duration="1500">
-                        <p>Sistem Informasi Peruntukan Tata Ruang</p>
+                        <p>Tata Ruang & Potensi Wilayah</p>
                         <h2>Desa Wunut</h2>
                     </div>
                 </div>
@@ -236,75 +231,91 @@
                         </div>
                     </div>
 
-                    <h2 class="section-title" data-aos="fade-up">Gambaran Wilayah</h2>
-                    <div class="about-text" data-aos="fade-up" data-aos-delay="100">
-                        Pemerintah Desa Wunut mengelola fasilitas wisata air. Fasilitas Umbul Pelem memiliki kolam renang alami. Wisatawan mengunjungi fasilitas ekowisata setiap hari. BUMDes Sumber Kamulyan mendistribusikan pendapatan wisata kepada warga desa.
+                    <div class="dashboard-shortcuts" data-aos="fade-up" data-aos-delay="400">
+                        <a href="#sec-gambaran" class="shortcut-btn" onclick="scrollToSection(event, 'sec-gambaran')"><i class="fa-solid fa-map"></i> Gambaran Wilayah</a>
+                        <a href="#sec-statistik" class="shortcut-btn" onclick="scrollToSection(event, 'sec-statistik')"><i class="fa-solid fa-chart-pie"></i> Data Statistik</a>
+                        <a href="#sec-warta" class="shortcut-btn" onclick="scrollToSection(event, 'sec-warta')"><i class="fa-solid fa-newspaper"></i> Warta Desa</a>
+                        <a href="#sec-galeri" class="shortcut-btn" onclick="scrollToSection(event, 'sec-galeri')"><i class="fa-solid fa-images"></i> Galeri Potensi</a>
                     </div>
 
-                    <h2 class="section-title" data-aos="fade-up">Data Statistik</h2>
-                    <div class="charts-grid">
-                        <div class="chart-card" data-aos="fade-right">
-                            <h3>Kelahiran & Kematian</h3>
-                            <div id="chart-dinamika"></div>
-                        </div>
-                        <div class="chart-card" data-aos="fade-left">
-                            <h3>Piramida Penduduk</h3>
-                            <div id="chart-piramida"></div>
+                    <div id="sec-gambaran" class="scroll-target">
+                        <h2 class="section-title" data-aos="fade-up">Gambaran Wilayah</h2>
+                        <div class="about-text" data-aos="fade-up" data-aos-delay="100">
+                            Pemerintah Desa Wunut mengelola fasilitas wisata air. Fasilitas Umbul Pelem memiliki kolam renang alami. Wisatawan mengunjungi fasilitas ekowisata setiap hari. BUMDes Sumber Kamulyan mendistribusikan pendapatan wisata kepada warga desa.
                         </div>
                     </div>
 
-                    <h2 class="section-title" data-aos="fade-up">Warta Desa</h2>
-                    <div class="news-grid">
-                        <div class="news-card" data-aos="fade-up" data-aos-delay="100">
-                            <div class="news-img"><img src="bpjs.jpg" alt="BPJS"></div>
-                            <div class="news-content">
-                                <div class="news-date">Kabar Desa</div>
-                                <h4 class="news-title">Wunut Jadi Desa Percontohan</h4>
-                                <p class="news-desc">Desa Wunut berhasil menjadi desa percontohan dengan jumlah kepesertaan BPJS Ketenagakerjaan terbanyak.</p>
-                                <a href="https://www.solotrust.com/berita/wunut-sebagai-peserta-bpjs-ketenagakerjaan-terbanyak-kini-jadi-desa-percontohan" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
+                    <div id="sec-statistik" class="scroll-target">
+                        <h2 class="section-title" data-aos="fade-up">Data Statistik</h2>
+                        <div class="charts-grid">
+                            <div class="chart-card" data-aos="fade-right">
+                                <h3>Kelahiran & Kematian</h3>
+                                <div id="chart-dinamika"></div>
                             </div>
-                        </div>
-                        <div class="news-card" data-aos="fade-up" data-aos-delay="200">
-                            <div class="news-img"><img src="thr.jpg" alt="THR"></div>
-                            <div class="news-content">
-                                <div class="news-date">Kesejahteraan Warga</div>
-                                <h4 class="news-title">Desa Wunut Bagikan THR Rp585 Juta</h4>
-                                <p class="news-desc">Pemerintah Desa Wunut mengalokasikan dana ratusan juta rupiah dari BUMDes untuk Tunjangan Hari Raya (THR) warga.</p>
-                                <a href="https://jateng.bpk.go.id/catatan-berita-desa-wunut-di-klaten-bagi-tunjangan-hari-raya-thr-untuk-warga-total-capai-rp585-juta/" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-                        <div class="news-card" data-aos="fade-up" data-aos-delay="300">
-                            <div class="news-img"><img src="umbul.jpg" alt="Umbul"></div>
-                            <div class="news-content">
-                                <div class="news-date">Pariwisata BUMDes</div>
-                                <h4 class="news-title">Umbul Pelem Untung Miliaran</h4>
-                                <p class="news-desc">Pengelolaan wisata Umbul Pelem oleh BUMDes terbukti sukses besar dengan raupan laba mencapai miliaran rupiah.</p>
-                                <a href="https://banyumasekspres.id/wisata-umbul-pelem-di-klaten-untung-besar-sampai-miliaran/" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
+                            <div class="chart-card" data-aos="fade-left">
+                                <h3>Piramida Penduduk</h3>
+                                <div id="chart-piramida"></div>
                             </div>
                         </div>
                     </div>
 
-                    <h2 class="section-title" data-aos="fade-up">Galeri Fasilitas</h2>
-                    <div class="gallery-grid">
-                        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100">
-                            <img src="umbul pelem.webp" alt="Umbul Pelem">
-                            <div class="gallery-overlay">
-                                <h4>Umbul Pelem</h4><p>Fasilitas kolam renang alami</p>
+                    <div id="sec-warta" class="scroll-target">
+                        <h2 class="section-title" data-aos="fade-up">Warta Banyu Nusantara</h2>
+                        <div class="news-grid">
+                            <div class="news-card" data-aos="fade-up" data-aos-delay="100">
+                                <div class="news-img"><img src="bpjs.jpg" alt="BPJS"></div>
+                                <div class="news-content">
+                                    <div class="news-date">Kesejahteraan Warga</div>
+                                    <h4 class="news-title">Wunut Jadi Desa Percontohan BPJS</h4>
+                                    <p class="news-desc">Berhasil menjadi desa percontohan dengan jumlah kepesertaan BPJS Ketenagakerjaan terbanyak.</p>
+                                    <a href="https://www.solotrust.com/berita/wunut-sebagai-peserta-bpjs-ketenagakerjaan-terbanyak-kini-jadi-desa-percontohan" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
+                                </div>
                             </div>
-                        </div>
-                        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="200">
-                            <img src="makanan khas.jpg" alt="Makanan Khas">
-                            <div class="gallery-overlay">
-                                <h4>Makanan Khas</h4><p>Cita rasa lokal Desa Wunut</p>
+                            <div class="news-card" data-aos="fade-up" data-aos-delay="200">
+                                <div class="news-img"><img src="thr.jpg" alt="THR"></div>
+                                <div class="news-content">
+                                    <div class="news-date">BUMDes Kamulyan</div>
+                                    <h4 class="news-title">Pemerintah Desa Bagikan THR Warga</h4>
+                                    <p class="news-desc">Mengalokasikan dana ratusan juta rupiah dari BUMDes untuk Tunjangan Hari Raya secara merata.</p>
+                                    <a href="https://jateng.bpk.go.id/catatan-berita-desa-wunut-di-klaten-bagi-tunjangan-hari-raya-thr-untuk-warga-total-capai-rp585-juta/" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
+                                </div>
                             </div>
-                        </div>
-                        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="300">
-                            <img src="perikanan budidaya.png" alt="Perikanan Budidaya">
-                            <div class="gallery-overlay">
-                                <h4>Perikanan Budidaya</h4><p>Sektor penggerak ekonomi desa</p>
+                            <div class="news-card" data-aos="fade-up" data-aos-delay="300">
+                                <div class="news-img"><img src="umbul.jpg" alt="Umbul"></div>
+                                <div class="news-content">
+                                    <div class="news-date">Pariwisata Desa</div>
+                                    <h4 class="news-title">Umbul Pelem Raup Laba Miliaran</h4>
+                                    <p class="news-desc">Pengelolaan kolam renang alami Umbul Pelem terbukti sukses memajukan ekonomi desa.</p>
+                                    <a href="https://banyumasekspres.id/wisata-umbul-pelem-di-klaten-untung-besar-sampai-miliaran/" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <div id="sec-galeri" class="scroll-target">
+                        <h2 class="section-title" data-aos="fade-up">Galeri Potensi</h2>
+                        <div class="gallery-grid">
+                            <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100">
+                                <img src="umbul pelem.webp" alt="Umbul Pelem">
+                                <div class="gallery-overlay">
+                                    <h4>Umbul Pelem</h4><p>Fasilitas kolam renang alami jernih</p>
+                                </div>
+                            </div>
+                            <div class="gallery-item" data-aos="zoom-in" data-aos-delay="200">
+                                <img src="makanan khas.jpg" alt="Makanan Khas">
+                                <div class="gallery-overlay">
+                                    <h4>Kuliner Khas</h4><p>Cita rasa lokal Desa Wunut</p>
+                                </div>
+                            </div>
+                            <div class="gallery-item" data-aos="zoom-in" data-aos-delay="300">
+                                <img src="perikanan budidaya.png" alt="Perikanan Budidaya">
+                                <div class="gallery-overlay">
+                                    <h4>Perikanan Budidaya</h4><p>Sektor penggerak ekonomi warga</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -319,12 +330,12 @@
                                 <input type="radio" name="basemap" value="osm" checked onchange="changeBase(this.value)"> OpenStreetMap
                             </label>
                             <label class="control-label">
-                                <input type="radio" name="basemap" value="satelit" onchange="changeBase(this.value)"> Citra Satelit
+                                <input type="radio" name="basemap" value="satelit" onchange="changeBase(this.value)"> Citra Satelit Esri
                             </label>
                         </div>
 
                         <div class="control-group">
-                            <div class="control-title"><i class="fa-solid fa-map"></i> Lapisan Data (Layer)</div>
+                            <div class="control-title"><i class="fa-solid fa-map"></i> Lapisan Data Spasial</div>
                             
                             <label class="control-label">
                                 <input type="checkbox" id="check-polaruang" checked onchange="toggleLayers()"> Pola Ruang (Sub Zona)
@@ -349,7 +360,7 @@
 
                         <div class="control-group">
                             <div class="control-title"><i class="fa-solid fa-toolbox"></i> Alat Analisis</div>
-                            <button class="btn-map-action" onclick="downloadData()"><i class="fa-solid fa-download"></i> UNDUH GEOJSON / ZIP</button>
+                            <button class="btn-map-action" onclick="downloadData()"><i class="fa-solid fa-download"></i> UNDUH DATA SPASIAL</button>
                             <label style="display: block; font-size: 11px; font-weight: 700; color: var(--terracotta); margin-top: 15px; margin-bottom: 5px;">UNGGAH FILE KML:</label>
                             <input type="file" id="kml-upload" accept=".kml" style="width: 100%; font-size: 11px; padding: 5px; border: 1px solid #ccc; border-radius: 5px; background: white;" onchange="loadKML(event)">
                         </div>
@@ -448,7 +459,19 @@
         // 1. Inisialisasi AOS Animasi
         AOS.init({ duration: 1000, once: true });
 
-        // 2. Fungsi Login Auth
+        // 2. Fungsi Animasi Scroll Shortcut
+        function scrollToSection(e, sectionId) {
+            e.preventDefault();
+            const target = document.getElementById(sectionId);
+            if (target) {
+                const headerOffset = 80; // Offset tinggi header agar teks tidak tertutup
+                const elementPosition = target.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+            }
+        }
+
+        // 3. Fungsi Login Auth
         function tampilkanPesan(text, color = '#ef4444') {
             const msgBox = document.getElementById('login-msg'); msgBox.innerText = text; msgBox.style.color = color; msgBox.style.display = 'block';
         }
@@ -463,43 +486,24 @@
             if(window.signIn) {
                 window.signIn(window.firebaseAuth, email, pass).then(() => {
                     document.getElementById('login-overlay').style.opacity = '0';
-                    setTimeout(() => { document.getElementById('login-overlay').style.display = 'none'; document.getElementById('main-content').style.display = 'block'; }, 500);
-                }).catch(() => { tampilkanPesan("Gagal Masuk. Kredensial salah."); });
+                    setTimeout(() => { 
+                        document.getElementById('login-overlay').style.display = 'none'; 
+                        document.getElementById('main-content').style.display = 'block'; 
+                    }, 500);
+                }).catch((error) => { tampilkanPesan("Gagal Masuk. Kredensial salah."); });
             }
         }
         function logoutAuth() { if(window.logOut) { window.logOut(window.firebaseAuth).then(() => { location.reload(); }); } }
 
-        // 3. Grafik ApexCharts
-        new ApexCharts(document.querySelector("#chart-dinamika"), {
-            series: [{ name: 'Kelahiran', data: [20, 16, 7, 17, 24, 10] }, { name: 'Kematian', data: [8, 18, 9, 18, 21, 23] }],
-            chart: { type: 'area', height: 350, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
-            colors: ['#10b981', '#ef4444'], dataLabels: { enabled: false }, stroke: { curve: 'smooth', width: 3 },
-            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
-            xaxis: { categories: ['2020', '2021', '2022', '2023', '2024', '2025'] }, legend: { position: 'top' }
-        }).render();
-
-        new ApexCharts(document.querySelector("#chart-piramida"), {
-            series: [{ name: 'Laki-laki', data: [-97, -74, -99, -78, -65, -107, -77, -67, -104, -79, -81, -70, -56, -32, -21, -25] }, { name: 'Perempuan', data: [81, 86, 86, 91, 77, 82, 76, 84, 90, 78, 82, 66, 58, 48, 24, 49] }],
-            chart: { type: 'bar', stacked: true, height: 380, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
-            colors: ['#0284c7', '#f59e0b'], plotOptions: { bar: { horizontal: true, barHeight: '85%', borderRadius: 2 } },
-            dataLabels: { enabled: false }, yaxis: { title: { text: 'Kel. Umur' } },
-            tooltip: { shared: false, y: { formatter: function (val) { return Math.abs(val) + " Jiwa"; } } },
-            xaxis: { categories: ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '>75'], labels: { formatter: function (val) { return Math.abs(Math.round(val)); } } },
-            legend: { position: 'top' }
-        }).render();
-
-        // 4. LOGIKA PETA (Leaflet WebGIS)
-        var polaRuangLayer; var bidangTanahLayer; var userMarker; 
-        var rawPolaRuangData = null; var rawBidangTanahData = null; // Menyimpan data JSON asli
-        const WUNUT_CENTER = [-7.5990, 110.6188]; const DEFAULT_ZOOM = 15;
-
-        // Switch Tab & Invalidate Map Size
+        // 4. Fungsi Switch Tab (Mencegah Peta Rusak)
         function switchTab(id) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-            document.getElementById(id).classList.add('active-section'); document.getElementById('btn-' + id).classList.add('active'); window.scrollTo(0, 0);
+            document.getElementById(id).classList.add('active-section'); 
+            document.getElementById('btn-' + id).classList.add('active'); 
+            window.scrollTo(0, 0);
             
-            // Perbaikan agar WebGIS tidak rusak saat tab dibuka
+            // Me-refresh ukuran peta saat tab "Peta" dibuka agar tidak abu-abu/rusak
             if(id === 'peta') { 
                 setTimeout(() => { map.invalidateSize(); }, 100); 
                 setTimeout(() => { map.invalidateSize(); }, 400); 
@@ -508,42 +512,80 @@
             AOS.refresh();
         }
 
+        // 5. Grafik ApexCharts
+        var optionsDinamika = {
+            series: [{ name: 'Kelahiran', data: [20, 16, 7, 17, 24, 10] }, { name: 'Kematian', data: [8, 18, 9, 18, 21, 23] }],
+            chart: { type: 'area', height: 350, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
+            colors: ['#c5a059', '#bc6c47'],
+            dataLabels: { enabled: false }, stroke: { curve: 'smooth', width: 3 },
+            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.05, stops: [0, 90, 100] } },
+            xaxis: { categories: ['2020', '2021', '2022', '2023', '2024', '2025'] },
+            legend: { position: 'top' }
+        };
+        new ApexCharts(document.querySelector("#chart-dinamika"), optionsDinamika).render();
+
+        var optionsPiramida = {
+            series: [
+                { name: 'Laki-laki', data: [-97, -74, -99, -78, -65, -107, -77, -67, -104, -79, -81, -70, -56, -32, -21, -25] }, 
+                { name: 'Perempuan', data: [81, 86, 86, 91, 77, 82, 76, 84, 90, 78, 82, 66, 58, 48, 24, 49] }
+            ],
+            chart: { type: 'bar', stacked: true, height: 350, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
+            colors: ['#0a192f', '#bc6c47'],
+            plotOptions: { bar: { horizontal: true, barHeight: '80%', borderRadius: 2 } },
+            dataLabels: { enabled: false },
+            yaxis: { title: { text: 'Kel. Umur' } },
+            tooltip: { shared: false, y: { formatter: function(val) { return Math.abs(val) + " Jiwa"; } } },
+            xaxis: { categories: ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '>75'], labels: { formatter: function(val) { return Math.abs(Math.round(val)); } } },
+            legend: { position: 'top' }
+        };
+        new ApexCharts(document.querySelector("#chart-piramida"), optionsPiramida).render();
+
+        // 6. LOGIKA FULL WEBGIS (PETA LEAFLET)
+        var polaRuangLayer; var bidangTanahLayer; var userMarker; 
+        var rawPolaRuangData = null; var rawBidangTanahData = null; 
+        const WUNUT_CENTER = [-7.5990, 110.6188]; const DEFAULT_ZOOM = 15;
+
         var osmMain = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' });
         var satelitMain = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Satelit' });
 
         var map = L.map('map', { center: WUNUT_CENTER, zoom: DEFAULT_ZOOM, layers: [osmMain], zoomControl: false });
-        L.control.zoom({ position: 'bottomright' }).addTo(map);
+        L.control.zoom({ position: 'bottomright' }).addTo(map); 
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
         
+        // Plugin Geoman (Digitasi)
         map.pm.addControls({ position: 'bottomright', drawCircle: false, drawCircleMarker: false, drawText: false, dragMode: false, cutPolygon: false });
         map.pm.setPathOptions({ color: '#c5a059', fillColor: '#c5a059', fillOpacity: 0.4 });
 
+        // Fungsi Kontrol Kanan
         function changeBase(val) { if(val === 'osm') { map.addLayer(osmMain); map.removeLayer(satelitMain); } else { map.addLayer(satelitMain); map.removeLayer(osmMain); } }
         function goHome() { if (polaRuangLayer && document.getElementById('check-polaruang').checked) { map.fitBounds(polaRuangLayer.getBounds(), { padding: [30, 30] }); } else { map.setView(WUNUT_CENTER, DEFAULT_ZOOM); } }
         function findLocation() { map.locate({setView: true, maxZoom: 16}); }
         map.on('locationfound', function(e) { if(userMarker) { map.removeLayer(userMarker); } userMarker = L.marker(e.latlng).addTo(map).bindPopup("Lokasi Anda Saat Ini").openPopup(); });
         function toggleFullScreen() { var elem = document.getElementById("peta"); if (!document.fullscreenElement) { elem.requestFullscreen(); } else { document.exitFullscreen(); } }
 
+        // Fungsi Transparansi Layer
         function changeOpacityPolaRuang(val) { document.getElementById('val-op-pola').innerText = Math.round(val * 100) + '%'; if (polaRuangLayer) polaRuangLayer.setStyle({fillOpacity: val}); }
         function changeOpacityBidangTanah(val) { document.getElementById('val-op-bidang').innerText = Math.round(val * 100) + '%'; if (bidangTanahLayer) bidangTanahLayer.setStyle({fillOpacity: val}); }
 
+        // Kamus Warna
         const subZonaColors = { 'Badan Air': '#99D9EA', 'Badan Jalan': '#ED1C24', 'Hortikultura': '#D4FF54', 'Instalasi Pengolahan Air Minum (IPAM)': '#F5B069', 'Kawasan Peruntukan Industri': '#6B0000', 'Pariwisata': '#FF9EED', 'Pemakaman': '#39FF14', 'Pengelolaan Persampahan': '#C48A3F', 'Perdagangan dan Jasa Skala SWP': '#FF9999', 'Perdagangan dan Jasa Skala WP': '#FF6666', 'Pergudangan': '#404040', 'Perikanan Budidaya': '#85C1E9', 'Perkantoran': '#999999', 'Perkebunan': '#A9B846', 'Perkebunan Rakyat': '#96E091', 'Pertahanan dan Keamanan': '#9400D3', 'Peternakan': '#C8F7C8', 'Ruang Terbuka Hijau': '#194D12', 'Ruang Terbuka Non Hijau': '#066B6B', 'Rumah Kepadatan Rendah': '#FEFA4E', 'Rumah Kepadatan Sangat Rendah': '#FCFCC0', 'Rumah Kepadatan Sedang': '#FFED00', 'Rumah Kepadatan Tinggi': '#FFC000', 'SPU Skala Kecamatan': '#9C43A8', 'SPU Skala Kelurahan': '#BA55D3', 'SPU Skala Kota': '#660066', 'SPU Skala RW': '#E475DF', 'Sempadan Sungai': '#E0FFFF', 'Sentra Industri Kecil Menengah': '#5C0000', 'Taman Kecamatan': '#398C15', 'Taman Kelurahan': '#B84CB8', 'Tanaman Pangan': '#B9F74F', 'Lainnya': '#dddddd' };
         const statusColors = { 'Hak Guna Bangunan': '#387cc3', 'Hak Guna Usaha': '#df8c54', 'Hak Milik': '#f6d246', 'Hak Pakai': '#50c15d', 'Jaringan Jalan': '#cb1b1d', 'Kosong': '#a07f6e', 'Sungai': '#355cf8' };
 
-        function getPropValue(properties, ...possibleKeys) { for (let key of possibleKeys) { if (properties[key] !== undefined) return properties[key]; for (let actualKey in properties) { if (actualKey.toLowerCase() === key.toLowerCase()) return properties[actualKey]; } } return '-'; }
-
-        // --- Legenda Slider Pintar ---
+        // --- Legenda Slider Pintar (Slide Out Kanan) ---
         function toggleLegendPanel() {
             const wrapper = document.getElementById('slide-legend'); const icon = document.getElementById('legend-icon'); wrapper.classList.toggle('open');
             if (wrapper.classList.contains('open')) { icon.classList.replace('fa-chevron-left', 'fa-chevron-right'); } else { icon.classList.replace('fa-chevron-right', 'fa-chevron-left'); }
         }
 
         function renderLegend() {
-            const legWrapper = document.getElementById('slide-legend'); const legDiv = document.getElementById('legend-list-content'); legDiv.innerHTML = ''; 
-            const isPolaRuangActive = document.getElementById('check-polaruang').checked; const isBidangTanahActive = document.getElementById('check-bidangtanah').checked;
+            const legWrapper = document.getElementById('slide-legend'); 
+            const legDiv = document.getElementById('legend-list-content'); 
+            legDiv.innerHTML = ''; 
+            const isPolaRuangActive = document.getElementById('check-polaruang').checked; 
+            const isBidangTanahActive = document.getElementById('check-bidangtanah').checked;
             
-            if (isPolaRuangActive) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-bottom:8px; font-weight:700;">• POLA RUANG</div>`; for (const [key, color] of Object.entries(subZonaColors)) { if (key !== 'Lainnya') { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } } }
-            if (isBidangTanahActive) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:15px; margin-bottom:8px; font-weight:700;">• BIDANG TANAH</div>`; for (const [key, color] of Object.entries(statusColors)) { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } }
+            if (isPolaRuangActive) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-bottom:5px; font-weight:700;">POLA RUANG</div>`; for (const [key, color] of Object.entries(subZonaColors)) { if (key !== 'Lainnya') { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } } }
+            if (isBidangTanahActive) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:10px; margin-bottom:5px; font-weight:700;">BIDANG TANAH</div>`; for (const [key, color] of Object.entries(statusColors)) { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } }
             
             // Menyembunyikan Slider jika tidak ada layer yang dicentang
             if (!isPolaRuangActive && !isBidangTanahActive) { 
@@ -560,9 +602,13 @@
             renderLegend(); 
         }
 
+        // Helper fungsi atribut GeoJSON
+        function getPropValue(properties, ...possibleKeys) { for (let key of possibleKeys) { if (properties[key] !== undefined) return properties[key]; for (let actualKey in properties) { if (actualKey.toLowerCase() === key.toLowerCase()) return properties[actualKey]; } } return '-'; }
+        
         function stylePolaRuang(feature) { let val = getPropValue(feature.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona'); let currentOp = document.getElementById('opacity-polaruang') ? parseFloat(document.getElementById('opacity-polaruang').value) : 0.8; return { fillColor: subZonaColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: currentOp }; }
         function styleBidangTanah(feature) { let val = getPropValue(feature.properties, 'STATUS', 'Status', 'status'); let currentOp = document.getElementById('opacity-bidangtanah') ? parseFloat(document.getElementById('opacity-bidangtanah').value) : 0.8; return { fillColor: statusColors[val] || '#cccccc', weight: 1.2, opacity: 1, color: '#444444', fillOpacity: currentOp }; }
 
+        // Fetch Data GeoJSON
         fetch('polaruangwunutbaru.geojson').then(res => res.json()).then(data => {
             rawPolaRuangData = data;
             polaRuangLayer = L.geoJSON(data, {
@@ -574,7 +620,7 @@
                 }
             });
             if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer); renderLegend();
-        }).catch(e => console.error("Gagal Muat Data Pola Ruang"));
+        }).catch(e => console.error("Data Pola Ruang belum tersedia di folder."));
 
         fetch('bidangtanahwunut.geojson').then(res => res.json()).then(data => {
             rawBidangTanahData = data;
@@ -587,7 +633,7 @@
                 }
             });
             if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer); renderLegend();
-        }).catch(e => console.error("Gagal Muat Data Bidang Tanah"));
+        }).catch(e => console.error("Data Bidang Tanah belum tersedia di folder."));
 
         // --- Fitur Download GeoJSON / ZIP Cerdas ---
         function downloadData() {
@@ -595,7 +641,7 @@
             const isBidang = document.getElementById('check-bidangtanah').checked;
 
             if (!isPola && !isBidang) {
-                alert("Pilih minimal satu Layer Data untuk diunduh."); return;
+                alert("Pilih minimal satu Lapisan Data Spasial yang ingin diunduh."); return;
             }
 
             // Jika Keduanya dicentang -> Download ZIP
@@ -620,7 +666,7 @@
                 const dl = document.createElement('a'); dl.href = dataStr; dl.download = "Bidang_Tanah_Wunut.geojson";
                 document.body.appendChild(dl); dl.click(); dl.remove();
             } else {
-                alert("Data sedang dimuat atau gagal diakses. Coba beberapa saat lagi.");
+                alert("Data sedang dimuat atau gagal diakses dari server. Coba beberapa saat lagi.");
             }
         }
 
