@@ -6,7 +6,6 @@
     <title>SIPET WUNUT - Banyu Nusantara Edition</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@700&family=Lora:wght@400;500&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
@@ -17,70 +16,27 @@
     <script src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <style>
         :root {
-            /* Tema Banyu-Nusantara */
-            --deep-navy: #0a192f;
-            --soft-sand: #fdf6e3;
-            --accent-gold: #c5a059;
-            --terracotta: #bc6c47;
-            --white: #ffffff;
-            --text-body: #475569;
-            --glass-bg: rgba(253, 246, 227, 0.85); 
+            --deep-navy: #0a192f; --soft-sand: #fdf6e3; --accent-gold: #c5a059; --terracotta: #bc6c47;
+            --white: #ffffff; --text-body: #475569; --glass-bg: rgba(253, 246, 227, 0.85); 
             --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-
-        * { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
+        * { box-sizing: border-box; } html { scroll-behavior: smooth; }
         body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--soft-sand); color: var(--deep-navy); overflow-x: hidden; }
 
         .logo-wrapper { display: flex; align-items: center; justify-content: center; }
-        
         .water-drop-logo {
-            width: 24px; height: 24px;
-            background: linear-gradient(135deg, var(--tirta-light, #e0f2fe), var(--deep-navy));
-            border-radius: 50% 50% 50% 0;
-            transform: rotate(-45deg);
-            margin-right: 12px;
-            box-shadow: 0 5px 15px rgba(2, 132, 199, 0.4);
-            animation: pulseDrop 2.5s infinite ease-in-out;
+            width: 24px; height: 24px; background: linear-gradient(135deg, #e0f2fe, var(--deep-navy));
+            border-radius: 50% 50% 50% 0; transform: rotate(-45deg); margin-right: 12px;
+            box-shadow: 0 5px 15px rgba(2, 132, 199, 0.4); animation: pulseDrop 2.5s infinite ease-in-out;
         }
-        @keyframes pulseDrop {
-            0% { transform: rotate(-45deg) scale(1); }
-            50% { transform: rotate(-45deg) scale(1.15); box-shadow: 0 8px 20px rgba(10, 25, 47, 0.6); }
-            100% { transform: rotate(-45deg) scale(1); }
-        }
-
-        /* Login Screen */
-        #login-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
-            background: rgba(10, 25, 47, 0.85); backdrop-filter: blur(8px);
-            z-index: 9999; display: none; align-items: center; justify-content: center; 
-            opacity: 0; transition: opacity 0.4s ease; 
-        }
-        .login-card { 
-            background: var(--white); padding: 50px 40px; border-radius: 20px; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3); width: 100%; max-width: 400px; 
-            text-align: center; border-bottom: 5px solid var(--accent-gold); position: relative;
-            transform: translateY(20px); transition: transform 0.4s ease;
-        }
-        .login-card.show { transform: translateY(0); }
-        .login-card h2 { font-family: 'Playfair Display', serif; color: var(--deep-navy); font-size: 2.2rem; margin-bottom: 5px; }
-        .login-card p { color: var(--text-body); font-size: 13px; font-weight: 600; margin-bottom: 30px; }
-        .login-input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; transition: var(--transition); background: var(--soft-sand); }
-        .login-input:focus { border-color: var(--accent-gold); }
-        .login-btn { width: 100%; padding: 15px; background: var(--deep-navy); color: var(--accent-gold); border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: var(--transition); font-family: 'Inter', sans-serif; letter-spacing: 1px; }
-        .login-btn:hover { background: var(--terracotta); color: white; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(188, 108, 71, 0.3); }
-        .login-error { color: #ef4444; font-size: 12px; margin-top: 15px; display: none; font-weight: 600; }
-        .close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 20px; color: var(--text-body); cursor: pointer; transition: var(--transition); }
-        .close-btn:hover { color: #ef4444; transform: rotate(90deg); }
+        @keyframes pulseDrop { 0% { transform: rotate(-45deg) scale(1); } 50% { transform: rotate(-45deg) scale(1.15); box-shadow: 0 8px 20px rgba(10, 25, 47, 0.6); } 100% { transform: rotate(-45deg) scale(1); } }
 
         /* Navigation */
-        #main-content { display: block; }
         header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; top: 0; z-index: 2000; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
         .logo-box h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0; color: var(--deep-navy); }
         .logo-box span { color: var(--terracotta); }
@@ -89,98 +45,80 @@
         nav a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 0; background: var(--accent-gold); transition: var(--transition); }
         nav a:hover::after, nav a.active::after { width: 100%; }
 
+        /* Login Modal */
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(10, 25, 47, 0.85); backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s ease; }
+        .login-card { background: var(--white); padding: 50px 40px; border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.3); width: 100%; max-width: 400px; text-align: center; border-bottom: 5px solid var(--accent-gold); position: relative; transform: translateY(20px); transition: transform 0.4s ease; }
+        .login-card.show { transform: translateY(0); }
+        .login-card h2 { font-family: 'Playfair Display', serif; color: var(--deep-navy); font-size: 2.2rem; margin-bottom: 5px; }
+        .login-input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; background: var(--soft-sand); }
+        .login-input:focus { border-color: var(--accent-gold); }
+        .login-btn { width: 100%; padding: 15px; background: var(--deep-navy); color: var(--accent-gold); border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: var(--transition); }
+        .login-btn:hover { background: var(--terracotta); color: white; transform: translateY(-3px); }
+        .close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 20px; color: var(--text-body); cursor: pointer; }
+
+        /* Main Content */
+        #main-content { display: block; }
         .content-section { display: none; padding-top: 70px; }
         .active-section { display: block; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- DASHBOARD BERANDA --- */
+        /* Dashboard Hero & Stats */
         .hero { height: 75vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
         .hero-img { position: absolute; width: 100%; height: 100%; background: url('header.jpg') center/cover; filter: brightness(0.4); z-index: 0; transform: scale(1.05); transition: transform 10s ease-out; }
         .hero:hover .hero-img { transform: scale(1); }
         .hero-content { position: relative; z-index: 1; text-align: center; color: white; }
         .hero h2 { font-family: 'Playfair Display', serif; font-size: 5rem; margin: 0 0 10px; text-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .hero p { font-size: 1.2rem; color: var(--accent-gold); font-weight: 600; letter-spacing: 5px; text-transform: uppercase; margin: 0; }
-        
         .container { max-width: 1200px; margin: 0 auto; padding: 60px 30px; }
-        .section-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--deep-navy); text-align: center; margin-bottom: 40px; position: relative; }
+        .section-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--deep-navy); text-align: center; margin-bottom: 40px; }
         .section-title::after { content: ''; display: block; width: 80px; height: 3px; background: var(--terracotta); margin: 15px auto 0; }
-
-        /* Stats Grid */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: -80px; position: relative; z-index: 10; margin-bottom: 40px; }
-        .stat-item { background: var(--white); padding: 40px 20px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.05); border-top: 4px solid var(--accent-gold); transition: var(--transition); border-radius: 8px; }
+        .stat-item { background: var(--white); padding: 40px 20px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.05); border-top: 4px solid var(--accent-gold); border-radius: 8px; transition: var(--transition); }
         .stat-item:hover { transform: translateY(-15px); box-shadow: 0 20px 40px rgba(10, 25, 47, 0.1); }
-        .stat-item i { font-size: 2.5rem; color: var(--terracotta); margin-bottom: 20px; }
-        .stat-item h3 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin: 0 0 5px; color: var(--deep-navy); }
-        .stat-item p { margin: 0; font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* SHORTCUT DASHBOARD */
-        .dashboard-shortcuts { display: flex; justify-content: center; gap: 15px; margin-bottom: 60px; flex-wrap: wrap; position: relative; z-index: 10; }
+        
+        /* Shortcuts */
+        .dashboard-shortcuts { display: flex; justify-content: center; gap: 15px; margin-bottom: 60px; flex-wrap: wrap; }
         .shortcut-btn { background: var(--white); color: var(--deep-navy); padding: 12px 25px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid var(--accent-gold); transition: var(--transition); display: flex; align-items: center; gap: 8px; cursor: pointer; }
-        .shortcut-btn:hover { background: var(--deep-navy); color: var(--accent-gold); transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0,0,0,0.1); }
+        .shortcut-btn:hover { background: var(--deep-navy); color: var(--accent-gold); transform: translateY(-3px); }
+        .scroll-target { scroll-margin-top: 100px; padding-top: 20px; }
 
-        /* Profil Desa Wunut */
+        /* Profil Desa Tabs */
         .profil-container { display: flex; flex-wrap: wrap; background: var(--white); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 60px; border-left: 6px solid var(--accent-gold); }
         .profil-tabs { flex: 0 0 260px; background: var(--deep-navy); display: flex; flex-direction: column; padding: 20px 0; }
         .profil-tab { background: transparent; color: rgba(255,255,255,0.6); border: none; text-align: left; padding: 18px 25px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition); border-left: 4px solid transparent; display: flex; align-items: center; gap: 12px; }
-        .profil-tab:hover { color: var(--white); background: rgba(255,255,255,0.05); }
         .profil-tab.active { color: var(--accent-gold); border-left-color: var(--accent-gold); background: rgba(255,255,255,0.05); }
-        .profil-tab i { font-size: 16px; width: 20px; text-align: center; }
-        .profil-content-wrapper { flex: 1; padding: 40px 50px; position: relative; background: url("https://www.transparenttextures.com/patterns/cream-paper.png"); }
+        .profil-content-wrapper { flex: 1; padding: 40px 50px; }
         .profil-content { display: none; opacity: 0; transition: opacity 0.4s ease; }
         .profil-content.active-fade { opacity: 1; }
         .profil-content h3 { font-family: 'Playfair Display', serif; color: var(--deep-navy); font-size: 2rem; margin-top: 0; margin-bottom: 20px; }
         .profil-content p { font-family: 'Lora', serif; font-size: 1.15rem; line-height: 1.9; color: var(--text-body); margin-bottom: 15px; text-align: justify; }
 
-        /* Charts */
+        /* Charts, News, Gallery */
         .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 40px; margin-bottom: 60px; }
-        .chart-card { background: var(--white); padding: 30px; box-shadow: 0 15px 30px rgba(0,0,0,0.03); transition: var(--transition); border-radius: 15px; }
-        .chart-card:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.08); transform: translateY(-5px); }
-        .chart-card h3 { font-family: 'Playfair Display', serif; color: var(--deep-navy); font-size: 1.5rem; margin-top: 0; margin-bottom: 20px; text-align: center; }
-
-        /* News */
+        .chart-card { background: var(--white); padding: 30px; box-shadow: 0 15px 30px rgba(0,0,0,0.03); border-radius: 15px; }
         .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 60px; }
-        .news-card { background: var(--white); box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: var(--transition); overflow: hidden; display: flex; flex-direction: column; border-radius: 15px; }
-        .news-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .news-img { width: 100%; height: 220px; overflow: hidden; }
-        .news-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
-        .news-card:hover .news-img img { transform: scale(1.1); }
-        .news-content { padding: 30px; display: flex; flex-direction: column; flex-grow: 1; }
-        .news-date { font-size: 0.8rem; color: var(--terracotta); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-        .news-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--deep-navy); margin: 0 0 15px; line-height: 1.3; }
-        .news-desc { font-size: 0.95rem; color: var(--text-body); line-height: 1.6; margin: 0 0 20px; flex-grow: 1; }
-        .news-link { color: var(--accent-gold); font-weight: 700; text-decoration: none; font-size: 0.9rem; transition: var(--transition); }
-        .news-link:hover { color: var(--deep-navy); }
-
-        /* Gallery */
+        .news-card { background: var(--white); box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-radius: 15px; overflow: hidden; transition: var(--transition); }
+        .news-card:hover { transform: translateY(-10px); }
+        .news-img { width: 100%; height: 220px; }
+        .news-img img { width: 100%; height: 100%; object-fit: cover; }
+        .news-content { padding: 30px; }
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .gallery-item { height: 300px; position: relative; cursor: pointer; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-radius: 15px; }
+        .gallery-item { height: 300px; position: relative; overflow: hidden; border-radius: 15px; }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; }
         .gallery-item:hover img { transform: scale(1.1); }
         .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, var(--deep-navy)); padding: 40px 20px 20px; color: white; transform: translateY(20px); opacity: 0; transition: var(--transition); }
         .gallery-item:hover .gallery-overlay { transform: translateY(0); opacity: 1; }
-        .gallery-overlay h4 { font-family: 'Playfair Display', serif; margin: 0 0 5px; font-size: 1.3rem; color: var(--accent-gold); }
-        .gallery-overlay p { margin: 0; font-size: 0.85rem; }
-
-        /* Target Scroll Margin */
-        .scroll-target { scroll-margin-top: 100px; padding-top: 20px; }
 
         /* --- WEBGIS PETA --- */
         #peta { padding-top: 70px; height: 100vh; overflow: hidden; }
         .map-wrapper { position: relative; width: 100%; height: calc(100vh - 70px); }
         #map { width: 100%; height: 100%; z-index: 1; }
         
-        .floating-sidebar {
-            position: absolute; top: 20px; left: 20px; z-index: 1000; width: 340px; 
-            max-height: calc(100vh - 110px); background: var(--glass-bg); backdrop-filter: blur(15px); 
-            border: 1px solid rgba(255,255,255,0.5); padding: 25px 20px; border-radius: 12px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow-y: auto;
-        }
+        .floating-sidebar { position: absolute; top: 20px; left: 20px; z-index: 1000; width: 340px; max-height: calc(100vh - 110px); background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.5); padding: 25px 20px; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow-y: auto; }
         .floating-sidebar::-webkit-scrollbar { width: 5px; }
         .floating-sidebar::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 10px; }
-
         .control-group { margin-bottom: 20px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 15px; }
         .control-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .control-title { font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; color: var(--terracotta); text-transform: uppercase; letter-spacing: 1px; }
+        .control-title { font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; color: var(--terracotta); text-transform: uppercase; }
         .control-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--deep-navy); margin-bottom: 5px; cursor: pointer; }
         
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; margin-bottom: 10px; }
@@ -189,31 +127,21 @@
 
         .btn-map-action { width: 100%; padding: 10px; background: var(--deep-navy); color: var(--accent-gold); border: none; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; transition: var(--transition); letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
         .btn-map-action:hover { background: var(--terracotta); color: white; }
-
-        /* Map Controls Kanan */
         .right-controls { position: absolute; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
-        .btn-icon { width: 40px; height: 40px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; color: var(--deep-navy); font-size: 16px; transition: var(--transition); display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .btn-icon:hover { background: var(--accent-gold); color: white; border-color: var(--accent-gold); }
+        .btn-icon { width: 40px; height: 40px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; color: var(--deep-navy); transition: var(--transition); display: flex; align-items: center; justify-content: center; }
         
-        /* Arah Utara */
-        .north-arrow { position: absolute; top: 20px; left: 380px; z-index: 1000; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); pointer-events: none; }
+        .north-arrow { position: absolute; top: 20px; left: 380px; z-index: 1000; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); text-align: center; pointer-events: none; }
 
-        /* --- LEGENDA SLIDER --- */
-        .legend-slider-wrapper { position: absolute; top: 120px; right: 0; z-index: 1000; transform: translateX(280px); transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); display: flex; align-items: flex-start; }
+        /* Legenda Slide Out */
+        .legend-slider-wrapper { position: absolute; top: 120px; right: 0; z-index: 1000; transform: translateX(280px); transition: transform 0.4s ease; display: flex; align-items: flex-start; }
         .legend-slider-wrapper.open { transform: translateX(0); }
-        .legend-toggle-btn { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5); border-right: none; padding: 12px 15px; border-radius: 10px 0 0 10px; cursor: pointer; box-shadow: -4px 4px 10px rgba(0,0,0,0.05); color: var(--deep-navy); font-weight: 700; display: flex; align-items: center; gap: 8px; font-size: 12px; }
-        .legend-content { background: var(--glass-bg); backdrop-filter: blur(10px); padding: 20px; border-radius: 0 0 0 15px; border: 1px solid rgba(255,255,255,0.5); border-right: none; width: 280px; max-height: 60vh; overflow-y: auto; box-shadow: -5px 5px 20px rgba(0,0,0,0.08); }
+        .legend-toggle-btn { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5); border-right: none; padding: 12px 15px; border-radius: 10px 0 0 10px; cursor: pointer; color: var(--deep-navy); font-weight: 700; display: flex; align-items: center; gap: 8px; font-size: 12px; }
+        .legend-content { background: var(--glass-bg); backdrop-filter: blur(10px); padding: 20px; border-radius: 0 0 0 15px; border: 1px solid rgba(255,255,255,0.5); border-right: none; width: 280px; max-height: 60vh; overflow-y: auto; }
         .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 11px; font-weight: 600; color: var(--deep-navy); }
         .color-box { width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.2); flex-shrink: 0; }
 
-        /* Footer */
-        footer { background: var(--deep-navy); color: white; padding: 60px 5%; }
+        footer { background: var(--deep-navy); color: white; padding: 60px 5%; margin-top: 50px; }
         .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto; }
-        .footer-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--accent-gold); margin-bottom: 20px; }
-        .footer-text { font-size: 0.9rem; color: #cbd5e1; line-height: 1.8; margin-bottom: 10px; }
-        .social-links { display: flex; gap: 15px; margin-top: 20px; }
-        .social-links a { color: white; background: rgba(255,255,255,0.1); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: var(--transition); text-decoration: none; }
-        .social-links a:hover { background: var(--terracotta); transform: translateY(-3px); }
     </style>
 </head>
 <body>
@@ -223,11 +151,11 @@
             <button class="close-btn" onclick="closeLogin()"><i class="fa-solid fa-xmark"></i></button>
             <div class="logo-wrapper"><div class="water-drop-logo"></div></div>
             <h2 id="auth-title">MASUK</h2>
-            <p id="auth-subtitle">Sistem Informasi Tata Ruang</p>
+            <p id="auth-subtitle" style="color: var(--terracotta);">Sistem Informasi Tata Ruang</p>
             <input type="email" id="login-user" class="login-input" placeholder="Alamat Email">
             <input type="password" id="login-pass" class="login-input" placeholder="Kata Sandi (Min 6 Karakter)">
             <button class="login-btn" id="auth-btn" onclick="prosesLoginAuth()">MASUK SISTEM</button>
-            <div style="margin-top: 25px; font-size: 13px; color: var(--text-body);">
+            <div style="margin-top: 20px; font-size: 13px;">
                 <span id="auth-toggle-text">Belum punya akun?</span> 
                 <a href="#" style="color: var(--terracotta); font-weight: 700; text-decoration: none;" onclick="toggleAuthMode(event)">Daftar di sini</a>
             </div>
@@ -262,18 +190,12 @@
                 
                 <div class="container">
                     <div class="stats-grid">
-                        <div class="stat-item" data-aos="fade-up" data-aos-delay="100">
-                            <i class="fa-solid fa-map-location-dot"></i><h3>720</h3><p>Luas Wilayah (Ha)</p>
-                        </div>
-                        <div class="stat-item" data-aos="fade-up" data-aos-delay="200">
-                            <i class="fa-solid fa-people-group"></i><h3>2.290</h3><p>Total Penduduk</p>
-                        </div>
-                        <div class="stat-item" data-aos="fade-up" data-aos-delay="300">
-                            <i class="fa-solid fa-droplet"></i><h3>15</h3><p>Titik Mata Air</p>
-                        </div>
+                        <div class="stat-item" data-aos="fade-up" data-aos-delay="100"><i class="fa-solid fa-map-location-dot"></i><h3 style="font-size:2.5rem;">720</h3><p>Luas Wilayah (Ha)</p></div>
+                        <div class="stat-item" data-aos="fade-up" data-aos-delay="200"><i class="fa-solid fa-people-group"></i><h3 style="font-size:2.5rem;">2.290</h3><p>Total Penduduk</p></div>
+                        <div class="stat-item" data-aos="fade-up" data-aos-delay="300"><i class="fa-solid fa-droplet"></i><h3 style="font-size:2.5rem;">15</h3><p>Titik Mata Air</p></div>
                     </div>
 
-                    <div class="dashboard-shortcuts" data-aos="fade-up" data-aos-delay="400">
+                    <div class="dashboard-shortcuts" data-aos="fade-up">
                         <a href="#sec-gambaran" class="shortcut-btn" onclick="scrollToSection(event, 'sec-gambaran')"><i class="fa-solid fa-map"></i> Profil Wilayah</a>
                         <a href="#sec-statistik" class="shortcut-btn" onclick="scrollToSection(event, 'sec-statistik')"><i class="fa-solid fa-chart-pie"></i> Data Statistik</a>
                         <a href="#sec-warta" class="shortcut-btn" onclick="scrollToSection(event, 'sec-warta')"><i class="fa-solid fa-newspaper"></i> Warta Desa</a>
@@ -282,45 +204,29 @@
 
                     <div id="sec-gambaran" class="scroll-target">
                         <h2 class="section-title" data-aos="fade-up">Profil Desa Wunut</h2>
-                        <div class="profil-container" data-aos="fade-up" data-aos-delay="100">
+                        <div class="profil-container" data-aos="fade-up">
                             <div class="profil-tabs">
                                 <button class="profil-tab active" onclick="openProfilTab(event, 'profil-letak')"><i class="fa-solid fa-map-pin"></i> Letak & Identitas</button>
                                 <button class="profil-tab" onclick="openProfilTab(event, 'profil-sejarah')"><i class="fa-solid fa-clock-rotate-left"></i> Sejarah Nama</button>
                                 <button class="profil-tab" onclick="openProfilTab(event, 'profil-ekonomi')"><i class="fa-solid fa-chart-line"></i> Ekonomi Desa</button>
                                 <button class="profil-tab" onclick="openProfilTab(event, 'profil-wisata')"><i class="fa-solid fa-water"></i> Potensi Wisata</button>
-                                <button class="profil-tab" onclick="openProfilTab(event, 'profil-sejahtera')"><i class="fa-solid fa-hand-holding-heart"></i> Kesejahteraan</button>
-                                <button class="profil-tab" onclick="openProfilTab(event, 'profil-status')"><i class="fa-solid fa-award"></i> Status Desa</button>
                             </div>
                             <div class="profil-content-wrapper">
                                 <div id="profil-letak" class="profil-content active-fade" style="display: block;">
                                     <h3>Letak dan Identitas Wilayah</h3>
-                                    <p>Desa Wunut merupakan salah satu desa yang secara administratif terletak di Kecamatan Tulung, Kabupaten Klaten, Provinsi Jawa Tengah.</p>
-                                    <p>Lokasi desa ini sangat strategis karena berbatasan langsung dengan wilayah Kabupaten Boyolali di sisi barat, menjadikannya titik persinggungan aktivitas ekonomi dan mobilitas antar wilayah.</p>
+                                    <p>Desa Wunut merupakan salah satu desa yang secara administratif terletak di Kecamatan Tulung, Kabupaten Klaten, Provinsi Jawa Tengah, berbatasan langsung dengan Kabupaten Boyolali di sisi barat.</p>
                                 </div>
                                 <div id="profil-sejarah" class="profil-content">
                                     <h3>Sejarah Nama Wunut</h3>
-                                    <p>Nama "Wunut" berasal dari kesepakatan penggabungan dua pemerintahan desa pada masa lampau, yakni pemerintahan Bekel (Wunut) dan Demang (Dukuh).</p>
-                                    <p>Karena jumlah penduduk yang masih sedikit dan tidak sebanding dengan luas wilayah, kedua pemerintahan tersebut sepakat untuk bersatu. Pemenangnya adalah pihak Dukuh — namun berdasarkan perjanjian, nama yang digunakan justru adalah "Wunut", dan nama itulah yang dipakai hingga sekarang.</p>
+                                    <p>Berasal dari kesepakatan penggabungan dua pemerintahan desa pada masa lampau, yakni Bekel (Wunut) dan Demang (Dukuh) demi memperkuat sistem wilayah pada saat itu.</p>
                                 </div>
                                 <div id="profil-ekonomi" class="profil-content">
-                                    <h3>Perkembangan Ekonomi Desa</h3>
-                                    <p>Pada tahun 2016, Desa Wunut masih tergolong sebagai desa tertinggal dengan Pendapatan Asli Desa (PAD) yang hanya berkisar Rp30 juta hingga Rp50 juta per tahun.</p>
-                                    <p>Namun, melalui inovasi dan strategi yang tepat dalam memanfaatkan potensi sumber daya alam lokal, desa ini berhasil meningkatkan PAD secara drastis hingga mencapai Rp2,7 miliar pada tahun 2023.</p>
+                                    <h3>Perkembangan Ekonomi</h3>
+                                    <p>Melalui inovasi dan strategi yang tepat dalam memanfaatkan sumber daya alam lokal, PAD desa ini berhasil meningkat drastis hingga mencapai Rp2,7 miliar pada tahun 2023.</p>
                                 </div>
                                 <div id="profil-wisata" class="profil-content">
-                                    <h3>Potensi Wisata BUMDes</h3>
-                                    <p>Keberhasilan Desa Wunut tidak terlepas dari pengelolaan objek wisata Umbul Pelem yang dikelola oleh BUMDes Sumber Kamulyan. Fasilitas ini berhasil menarik 569.673 pengunjung sepanjang tahun 2022.</p>
-                                    <p>Sejak tahun 2016 hingga 2019, total dana desa yang dialokasikan untuk pengembangan wisata mencapai Rp1,6 miliar. Modal tersebut terbukti memberikan hasil yang signifikan untuk masa depan desa.</p>
-                                </div>
-                                <div id="profil-sejahtera" class="profil-content">
-                                    <h3>Program Kesejahteraan Warga</h3>
-                                    <p>Kepala Desa Wunut menginisiasi berbagai program kesejahteraan, di antaranya pembagian Tunjangan Hari Raya (THR) serta jaminan BPJS Ketenagakerjaan dan Kesehatan untuk warga.</p>
-                                    <p>Pendapatan wisata juga dimanfaatkan untuk membayar premi BPJS bagi warga tidak mampu, santunan kematian, dan santunan warga miskin.</p>
-                                </div>
-                                <div id="profil-status" class="profil-content">
-                                    <h3>Status Desa Mandiri</h3>
-                                    <p>Omzet BUMDes Sumber Kamulyan melonjak drastis: Rp30 juta (2018), Rp576 juta (2020), Rp915 juta (2022), hingga mencapai Rp3,1 miliar pada 2024.</p>
-                                    <p>Capaian tersebut menjadikan Desa Wunut resmi berstatus sebagai <b>Desa Mandiri</b> berdasarkan Indeks Desa Membangun (IDM) dari Kementerian Desa PDTT.</p>
+                                    <h3>Potensi Wisata</h3>
+                                    <p>Keberhasilan Desa Wunut tidak terlepas dari pengelolaan objek wisata Umbul Pelem oleh BUMDes Sumber Kamulyan yang berhasil menarik 569.673 pengunjung (2022).</p>
                                 </div>
                             </div>
                         </div>
@@ -329,71 +235,26 @@
                     <div id="sec-statistik" class="scroll-target">
                         <h2 class="section-title" data-aos="fade-up">Data Statistik</h2>
                         <div class="charts-grid">
-                            <div class="chart-card" data-aos="fade-right">
-                                <h3>Kelahiran & Kematian</h3>
-                                <div id="chart-dinamika"></div>
-                            </div>
-                            <div class="chart-card" data-aos="fade-left">
-                                <h3>Piramida Penduduk</h3>
-                                <div id="chart-piramida"></div>
-                            </div>
+                            <div class="chart-card" data-aos="fade-right"><h3>Kelahiran & Kematian</h3><div id="chart-dinamika"></div></div>
+                            <div class="chart-card" data-aos="fade-left"><h3>Piramida Penduduk</h3><div id="chart-piramida"></div></div>
                         </div>
                     </div>
 
                     <div id="sec-warta" class="scroll-target">
                         <h2 class="section-title" data-aos="fade-up">Warta Desa Wunut</h2>
                         <div class="news-grid">
-                            <div class="news-card" data-aos="fade-up" data-aos-delay="100">
-                                <div class="news-img"><img src="bpjs.jpg" alt="BPJS"></div>
-                                <div class="news-content">
-                                    <div class="news-date">Kesejahteraan Warga</div>
-                                    <h4 class="news-title">Wunut Jadi Desa Percontohan BPJS</h4>
-                                    <p class="news-desc">Berhasil menjadi desa percontohan dengan jumlah kepesertaan BPJS Ketenagakerjaan terbanyak.</p>
-                                    <a href="https://www.solotrust.com/berita/wunut-sebagai-peserta-bpjs-ketenagakerjaan-terbanyak-kini-jadi-desa-percontohan" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
-                                </div>
-                            </div>
-                            <div class="news-card" data-aos="fade-up" data-aos-delay="200">
-                                <div class="news-img"><img src="thr.jpg" alt="THR"></div>
-                                <div class="news-content">
-                                    <div class="news-date">BUMDes Kamulyan</div>
-                                    <h4 class="news-title">Pemerintah Desa Bagikan THR Warga</h4>
-                                    <p class="news-desc">Mengalokasikan dana ratusan juta rupiah dari BUMDes untuk Tunjangan Hari Raya secara merata.</p>
-                                    <a href="https://jateng.bpk.go.id/catatan-berita-desa-wunut-di-klaten-bagi-tunjangan-hari-raya-thr-untuk-warga-total-capai-rp585-juta/" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
-                                </div>
-                            </div>
-                            <div class="news-card" data-aos="fade-up" data-aos-delay="300">
-                                <div class="news-img"><img src="umbul.jpg" alt="Umbul"></div>
-                                <div class="news-content">
-                                    <div class="news-date">Pariwisata Desa</div>
-                                    <h4 class="news-title">Umbul Pelem Raup Laba Miliaran</h4>
-                                    <p class="news-desc">Pengelolaan kolam renang alami Umbul Pelem terbukti sukses memajukan ekonomi desa.</p>
-                                    <a href="https://banyumasekspres.id/wisata-umbul-pelem-di-klaten-untung-besar-sampai-miliaran/" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
-                                </div>
-                            </div>
+                            <div class="news-card" data-aos="fade-up"><div class="news-img"><img src="bpjs.jpg"></div><div class="news-content"><div class="news-date">Kabar Desa</div><h4 class="news-title">Desa Percontohan BPJS</h4><a href="https://www.solotrust.com/berita/wunut-sebagai-peserta-bpjs-ketenagakerjaan-terbanyak-kini-jadi-desa-percontohan" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a></div></div>
+                            <div class="news-card" data-aos="fade-up" data-aos-delay="100"><div class="news-img"><img src="thr.jpg"></div><div class="news-content"><div class="news-date">Kesejahteraan</div><h4 class="news-title">Pembagian THR Warga</h4><a href="https://jateng.bpk.go.id/catatan-berita-desa-wunut-di-klaten-bagi-tunjangan-hari-raya-thr-untuk-warga-total-capai-rp585-juta/" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a></div></div>
+                            <div class="news-card" data-aos="fade-up" data-aos-delay="200"><div class="news-img"><img src="umbul.jpg"></div><div class="news-content"><div class="news-date">Pariwisata</div><h4 class="news-title">Umbul Pelem Raup Laba Miliaran</h4><a href="https://banyumasekspres.id/wisata-umbul-pelem-di-klaten-untung-besar-sampai-miliaran/" target="_blank" class="news-link">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a></div></div>
                         </div>
                     </div>
 
                     <div id="sec-galeri" class="scroll-target">
                         <h2 class="section-title" data-aos="fade-up">Galeri Potensi</h2>
                         <div class="gallery-grid">
-                            <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100">
-                                <img src="umbul pelem.webp" alt="Umbul Pelem">
-                                <div class="gallery-overlay">
-                                    <h4>Umbul Pelem</h4><p>Fasilitas kolam renang alami jernih</p>
-                                </div>
-                            </div>
-                            <div class="gallery-item" data-aos="zoom-in" data-aos-delay="200">
-                                <img src="makanan khas.jpg" alt="Makanan Khas">
-                                <div class="gallery-overlay">
-                                    <h4>Kuliner Khas</h4><p>Cita rasa lokal Desa Wunut</p>
-                                </div>
-                            </div>
-                            <div class="gallery-item" data-aos="zoom-in" data-aos-delay="300">
-                                <img src="perikanan budidaya.png" alt="Perikanan Budidaya">
-                                <div class="gallery-overlay">
-                                    <h4>Perikanan Budidaya</h4><p>Sektor penggerak ekonomi warga</p>
-                                </div>
-                            </div>
+                            <div class="gallery-item" data-aos="zoom-in"><img src="umbul pelem.webp"><div class="gallery-overlay"><h4 style="color:var(--accent-gold); margin:0; font-family:'Playfair Display',serif;">Umbul Pelem</h4><p style="margin:0; font-size:12px;">Kolam renang alami jernih</p></div></div>
+                            <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100"><img src="makanan khas.jpg"><div class="gallery-overlay"><h4 style="color:var(--accent-gold); margin:0; font-family:'Playfair Display',serif;">Kuliner Khas</h4><p style="margin:0; font-size:12px;">Cita rasa lokal Desa Wunut</p></div></div>
+                            <div class="gallery-item" data-aos="zoom-in" data-aos-delay="200"><img src="perikanan budidaya.png"><div class="gallery-overlay"><h4 style="color:var(--accent-gold); margin:0; font-family:'Playfair Display',serif;">Perikanan</h4><p style="margin:0; font-size:12px;">Sektor penggerak ekonomi warga</p></div></div>
                         </div>
                     </div>
                 </div>
@@ -414,55 +275,35 @@
                             <div class="control-title"><i class="fa-solid fa-map"></i> Lapisan Data Spasial</div>
                             
                             <label class="control-label"><input type="checkbox" id="check-polaruang" checked onchange="toggleLayers()"> Pola Ruang (Sub Zona)</label>
-                            <div style="padding-left: 25px; margin-bottom: 10px;">
-                                <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;"><span>Transparansi</span><span id="val-op-pola">80%</span></div>
-                                <input type="range" id="opacity-polaruang" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityPolaRuang(this.value)">
-                            </div>
+                            <input type="range" id="opacity-polaruang" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacity('polaruang', this.value)">
                             
                             <label class="control-label"><input type="checkbox" id="check-bidangtanah" onchange="toggleLayers()"> Bidang Tanah (Status)</label>
-                            <div style="padding-left: 25px; margin-bottom: 10px;">
-                                <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;"><span>Transparansi</span><span id="val-op-bidang">80%</span></div>
-                                <input type="range" id="opacity-bidangtanah" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityBidangTanah(this.value)">
-                            </div>
+                            <input type="range" id="opacity-bidangtanah" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacity('bidangtanah', this.value)">
                             
                             <label class="control-label"><input type="checkbox" id="check-znt" onchange="toggleLayers()"> Zona Nilai Tanah (ZNT)</label>
-                            <div style="padding-left: 25px; margin-bottom: 10px;">
-                                <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;"><span>Transparansi</span><span id="val-op-znt">80%</span></div>
-                                <input type="range" id="opacity-znt" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityZnt(this.value)">
-                            </div>
+                            <input type="range" id="opacity-znt" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacity('znt', this.value)">
                             
                             <label class="control-label"><input type="checkbox" id="check-penggunaan" onchange="toggleLayers()"> Penggunaan Lahan</label>
-                            <div style="padding-left: 25px; margin-bottom: 10px;">
-                                <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;"><span>Transparansi</span><span id="val-op-penggunaan">80%</span></div>
-                                <input type="range" id="opacity-penggunaan" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityPenggunaan(this.value)">
-                            </div>
+                            <input type="range" id="opacity-penggunaan" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacity('penggunaan', this.value)">
                             
                             <label class="control-label"><input type="checkbox" id="check-kp2b" onchange="toggleLayers()"> KP2B</label>
-                            <div style="padding-left: 25px; margin-bottom: 10px;">
-                                <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;"><span>Transparansi</span><span id="val-op-kp2b">80%</span></div>
-                                <input type="range" id="opacity-kp2b" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityKp2b(this.value)">
-                            </div>
+                            <input type="range" id="opacity-kp2b" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacity('kp2b', this.value)">
                             
                             <label class="control-label"><input type="checkbox" id="check-lsd" onchange="toggleLayers()"> LSD</label>
-                            <div style="padding-left: 25px;">
-                                <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;"><span>Transparansi</span><span id="val-op-lsd">80%</span></div>
-                                <input type="range" id="opacity-lsd" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityLsd(this.value)">
-                            </div>
+                            <input type="range" id="opacity-lsd" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacity('lsd', this.value)">
                         </div>
 
                         <div class="control-group" style="background: rgba(10, 25, 47, 0.05); padding: 15px; border-radius: 8px; border: 1px dashed var(--accent-gold);">
                             <div class="control-title" style="color: var(--deep-navy);"><i class="fa-solid fa-pen-nib"></i> Studio Digitasi</div>
-                            <p style="font-size: 11px; line-height: 1.5; margin-bottom: 10px; color: var(--text-body);">Gunakan alat di pojok kanan bawah peta untuk menggambar poligon, garis, atau titik sesuai kebutuhan tata ruang.</p>
-                            <button class="btn-map-action" style="background: var(--accent-gold); color: var(--deep-navy);" onclick="downloadDigitasi()">
-                                <i class="fa-solid fa-file-arrow-down"></i> UNDUH HASIL DIGITASI
-                            </button>
+                            <p style="font-size: 11px; margin-bottom: 10px;">Gambar poligon/garis di peta menggunakan alat di kanan bawah.</p>
+                            <button class="btn-map-action" style="background: var(--accent-gold); color: var(--deep-navy);" onclick="downloadDigitasi()"><i class="fa-solid fa-file-arrow-down"></i> UNDUH HASIL DIGITASI</button>
                         </div>
 
                         <div class="control-group" style="margin-bottom: 0; padding-bottom: 0;">
                             <div class="control-title"><i class="fa-solid fa-toolbox"></i> Alat Analisis Eksternal</div>
                             <button class="btn-map-action" onclick="downloadData()"><i class="fa-solid fa-download"></i> UNDUH DATA SPASIAL</button>
-                            <label style="display: block; font-size: 11px; font-weight: 700; color: var(--terracotta); margin-top: 15px; margin-bottom: 5px;">UNGGAH FILE KML:</label>
-                            <input type="file" id="kml-upload" accept=".kml" style="width: 100%; font-size: 11px; padding: 5px; border: 1px solid #ccc; border-radius: 5px; background: white;" onchange="loadKML(event)">
+                            <label style="display: block; font-size: 11px; font-weight: 700; color: var(--terracotta); margin-top: 15px;">UNGGAH FILE KML:</label>
+                            <input type="file" id="kml-upload" accept=".kml" style="width: 100%; font-size: 11px; padding: 5px; border: 1px solid #ccc; background: white;" onchange="loadKML(event)">
                         </div>
                     </div>
 
@@ -475,8 +316,8 @@
                     </div>
 
                     <div class="right-controls">
-                        <button class="btn-icon" onclick="goHome()" title="Kembali ke Desa Wunut"><i class="fa-solid fa-house"></i></button>
-                        <button class="btn-icon" onclick="findLocation()" title="Lokasi Saya"><i class="fa-solid fa-location-crosshairs"></i></button>
+                        <button class="btn-icon" onclick="goHome()" title="Kembali"><i class="fa-solid fa-house"></i></button>
+                        <button class="btn-icon" onclick="findLocation()" title="Lokasi"><i class="fa-solid fa-location-crosshairs"></i></button>
                         <button class="btn-icon" onclick="toggleFullScreen()" title="Layar Penuh"><i class="fa-solid fa-expand"></i></button>
                     </div>
 
@@ -490,46 +331,140 @@
             <div id="profil" class="content-section">
                 <div class="container" style="text-align: center;">
                     <h2 class="section-title" data-aos="fade-up">Tentang SIPET Wunut</h2>
-                    <p style="font-size: 1.15rem; color: var(--text-body); max-width: 800px; margin: 0 auto 40px; line-height: 1.8;" data-aos="fade-up" data-aos-delay="100">
-                        <b>Sistem Informasi Peruntukan Tata Ruang (SIPET) Desa Wunut</b> merupakan inovasi pelayanan publik berbasis digital dan sistem informasi geografis (WebGIS). Sistem ini memetakan klasifikasi tata ruang dan informasi geospasial lainnya secara detail. 
-                    </p>
-                    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--deep-navy); margin-bottom: 30px;" data-aos="fade-up" data-aos-delay="200">Tim Penyusun</h3>
+                    <p style="font-size: 1.15rem; max-width: 800px; margin: 0 auto 40px; line-height: 1.8;" data-aos="fade-up"><b>Sistem Informasi Peruntukan Tata Ruang (SIPET) Desa Wunut</b> merupakan inovasi WebGIS modern untuk memetakan klasifikasi tata ruang.</p>
+                    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 30px;" data-aos="fade-up">Tim Penyusun</h3>
                     <div class="stats-grid" style="margin-top: 0;">
-                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="100" style="border-top-color: var(--terracotta);">
-                            <div style="width: 80px; height: 80px; background: var(--tirta-light); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items:center; justify-content:center; color: var(--deep-navy); font-size: 30px;"><i class="fa-solid fa-user-graduate"></i></div>
-                            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.3rem;">Maharani Quinn Qonita</h4>
-                            <p style="text-transform: none;">D4 - PTRP</p>
+                        <div class="stat-item" data-aos="zoom-in" style="border-top-color: var(--terracotta);">
+                            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.3rem;">Maharani Quinn Qonita</h4><p>D4 - PTRP</p>
                         </div>
-                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="200">
-                            <div style="width: 80px; height: 80px; background: var(--tirta-light); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items:center; justify-content:center; color: var(--deep-navy); font-size: 30px;"><i class="fa-solid fa-users"></i></div>
-                            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.3rem;">Kelompok C4</h4>
-                            <p style="text-transform: none;">Universitas Diponegoro</p>
+                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="100">
+                            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.3rem;">Kelompok C4</h4><p>Universitas Diponegoro</p>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
 
-        <footer>
-            <div class="footer-grid">
-                <div>
-                    <h3 class="footer-title">Lokasi Kampus</h3>
-                    <div class="footer-map-box" style="border-radius: 10px; overflow: hidden; height: 150px; margin-bottom: 15px;"><iframe src="https://maps.google.com/maps?q=Sekolah%20Vokasi%20Universitas%20Diponegoro%20Semarang&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe></div>
-                </div>
-                <div>
-                    <h3 class="footer-title">Hubungi Kami</h3>
-                    <p class="footer-text"><i class="fa-solid fa-location-dot"></i> Gedung Sekolah Vokasi, Kampus UNDIP, Tembalang, Semarang</p>
-                    <p class="footer-text"><i class="fa-solid fa-phone"></i> 0858-7765-3014</p>
-                    <p class="footer-text"><i class="fa-solid fa-envelope"></i> kelompokc4wnt@gmail.com</p>
-                </div>
-                <div>
-                    <h3 class="footer-title">Media Sosial</h3>
-                    <div class="social-links">
-                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                    </div>
-                    <p style="margin-top: 40px; font-size: 0.8rem; opacity: 0.6;">© 2024 Kelompok C4. All Rights Reserved.</p>
-                </div>
-            </div>
+        <footer style="background: var(--deep-navy); color: white; padding: 40px 5%; margin-top: 40px; text-align: center;">
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--accent-gold); margin-bottom: 10px;">SIPET WUNUT</h3>
+            <p style="font-size: 0.9rem; opacity: 0.7;">© 2024 Kelompok C4 Universitas Diponegoro. All Rights Reserved.</p>
         </footer>
     </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+        const app = initializeApp({ apiKey: "AIzaSyA9Wu4aZNC5ai-UovFyF4al9Prl04xPrFk", authDomain: "sipewunut.firebaseapp.com", projectId: "sipewunut", storageBucket: "sipewunut.firebasestorage.app", messagingSenderId: "404576970474", appId: "1:404576970474:web:99ff1412dc6adb581d9993" });
+        window.firebaseAuth = getAuth(app); window.signIn = signInWithEmailAndPassword; window.signUp = createUserWithEmailAndPassword; window.logOut = signOut; window.onAuthStateChanged = onAuthStateChanged;
+    </script>
+
+    <script>
+        AOS.init({ duration: 800, once: true });
+        function scrollToSection(e, id) { e.preventDefault(); const t = document.getElementById(id); if(t) { window.scrollTo({ top: t.getBoundingClientRect().top + window.pageYOffset - 80, behavior: "smooth" }); } }
+        function openProfilTab(e, id) { document.querySelectorAll('.profil-content').forEach(el=>{el.style.display='none';el.classList.remove('active-fade');}); document.querySelectorAll('.profil-tab').forEach(el=>el.classList.remove('active')); document.getElementById(id).style.display='block'; setTimeout(()=>document.getElementById(id).classList.add('active-fade'),10); e.currentTarget.classList.add('active'); }
+
+        let isLogged = false, mode = 'login';
+        setTimeout(() => { if(window.onAuthStateChanged) window.onAuthStateChanged(window.firebaseAuth, u => { isLogged=!!u; document.getElementById('nav-login-btn').style.display=u?'none':'inline-block'; document.getElementById('nav-logout-btn').style.display=u?'inline-block':'none'; }); }, 1500);
+        function openLogin() { document.getElementById('login-overlay').style.display = 'flex'; setTimeout(() => { document.getElementById('login-overlay').style.opacity = '1'; document.getElementById('login-box').classList.add('show'); }, 10); }
+        function closeLogin() { document.getElementById('login-overlay').style.opacity = '0'; document.getElementById('login-box').classList.remove('show'); setTimeout(() => document.getElementById('login-overlay').style.display='none', 400); }
+        function toggleAuthMode(e) { e.preventDefault(); mode=mode==='login'?'register':'login'; document.getElementById('auth-title').innerText=mode==='login'?'MASUK':'DAFTAR AKUN'; document.getElementById('auth-btn').innerText=mode==='login'?'MASUK SISTEM':'BUAT AKUN BARU'; document.getElementById('auth-btn').onclick=mode==='login'?prosesLoginAuth:prosesDaftarAuth; document.getElementById('auth-toggle-text').innerText=mode==='login'?'Belum punya akun?':'Sudah punya akun?'; e.target.innerText=mode==='login'?'Daftar di sini':'Masuk di sini'; document.getElementById('login-msg').style.display='none'; }
+        function msg(t, c='#ef4444') { const m=document.getElementById('login-msg'); m.innerText=t; m.style.color=c; m.style.display='block'; }
+        function prosesDaftarAuth() { const e=document.getElementById('login-user').value, p=document.getElementById('login-pass').value; if(!e||!p)return msg("Isi form!"); if(window.signUp){window.signUp(window.firebaseAuth,e,p).then(()=>{msg("Berhasil! Masuk ke peta...","#10b981");setTimeout(()=>{closeLogin();switchTab('peta');},1500)}).catch(err=>msg("Gagal mendaftar."));} }
+        function prosesLoginAuth() { const e=document.getElementById('login-user').value, p=document.getElementById('login-pass').value; if(!e||!p)return msg("Isi form!"); if(window.signIn){window.signIn(window.firebaseAuth,e,p).then(()=>{closeLogin();switchTab('peta');}).catch(err=>msg("Gagal masuk. Kredensial salah."));} }
+        function logoutAuth() { if(window.logOut) window.logOut(window.firebaseAuth).then(()=>location.reload()); }
+        function checkAksesPeta() { if(!isLogged){msg("Akses Peta dikunci. Silakan masuk.","#bc6c47");openLogin();}else{switchTab('peta');} }
+        function switchTab(id) { document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active-section')); document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active')); document.getElementById(id).classList.add('active-section'); document.getElementById('btn-'+id).classList.add('active'); window.scrollTo(0,0); if(id==='peta'){setTimeout(()=>map.invalidateSize(),100);setTimeout(()=>map.invalidateSize(),500);} AOS.refresh(); }
+
+        // Grafik
+        new ApexCharts(document.querySelector("#chart-dinamika"), { series:[{name:'Kelahiran',data:[20,16,7,17,24,10]},{name:'Kematian',data:[8,18,9,18,21,23]}], chart:{type:'area',height:300,toolbar:{show:false}}, colors:['#c5a059','#bc6c47'], dataLabels:{enabled:false}, stroke:{curve:'smooth',width:3}, xaxis:{categories:['2020','2021','2022','2023','2024','2025']} }).render();
+        new ApexCharts(document.querySelector("#chart-piramida"), { series:[{name:'Laki-laki',data:[-97,-74,-99,-78,-65,-107,-77,-67,-104,-79,-81,-70,-56,-32,-21,-25]},{name:'Perempuan',data:[81,86,86,91,77,82,76,84,90,78,82,66,58,48,24,49]}], chart:{type:'bar',stacked:true,height:300,toolbar:{show:false}}, colors:['#0a192f','#bc6c47'], plotOptions:{bar:{horizontal:true}}, dataLabels:{enabled:false}, tooltip:{y:{formatter:v=>Math.abs(v)+" Jiwa"}}, xaxis:{labels:{formatter:v=>Math.abs(Math.round(v))}} }).render();
+
+        // Peta
+        var map = L.map('map', {zoomControl:false}).setView([-7.5990, 110.6188], 15);
+        var osmMain = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        var satelitMain = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
+        L.control.zoom({position:'bottomright'}).addTo(map); L.control.scale({position:'bottomleft'}).addTo(map);
+        map.pm.addControls({position:'bottomright',drawCircle:false,drawCircleMarker:false,drawText:false,dragMode:false,cutPolygon:false});
+        map.pm.setPathOptions({color:'#c5a059',fillColor:'#c5a059',fillOpacity:0.4});
+        
+        function changeBase(v) { if(v==='osm'){map.addLayer(osmMain);map.removeLayer(satelitMain);}else{map.addLayer(satelitMain);map.removeLayer(osmMain);} }
+        function goHome() { map.setView([-7.5990, 110.6188], 15); }
+        function findLocation() { map.locate({setView:true, maxZoom:16}); }
+        function toggleFullScreen() { if(!document.fullscreenElement) document.getElementById("peta").requestFullscreen(); else document.exitFullscreen(); }
+
+        var layers = { polaruang:null, bidangtanah:null, znt:null, penggunaan:null, kp2b:null, lsd:null };
+        var rawData = { polaruang:null, bidangtanah:null, znt:null, penggunaan:null, kp2b:null, lsd:null };
+        const cSub = {'Badan Air':'#99D9EA','Badan Jalan':'#ED1C24','Kawasan Peruntukan Industri':'#6B0000','Pariwisata':'#FF9EED','Pemakaman':'#39FF14','Perdagangan dan Jasa Skala WP':'#FF6666','Perkantoran':'#999999','Perkebunan':'#A9B846','Ruang Terbuka Hijau':'#194D12','Rumah Kepadatan Sedang':'#FFED00','Rumah Kepadatan Tinggi':'#FFC000','Sempadan Sungai':'#E0FFFF','Sawah':'#9acd32','Taman Kelurahan':'#B84CB8','Tanaman Pangan':'#B9F74F'};
+        const cStat = {'Hak Guna Bangunan':'#387cc3','Hak Guna Usaha':'#df8c54','Hak Milik':'#f6d246','Hak Pakai':'#50c15d','Jaringan Jalan':'#cb1b1d','Kosong':'#a07f6e','Sungai':'#355cf8'};
+        const cZnt = {'100000-200000':'#ffe6cc','500000-1000000':'#c00000'};
+        const cGuna = {'Kampung':'#fa8072','Sawah':'#9acd32','Sungai':'#87cefa','Jalan':'#ff0000','Pendidikan Dasar':'#ffd700'};
+
+        function getProp(p, ...ks) { for(let k of ks){if(p[k]!==undefined)return p[k];for(let a in p){if(a.toLowerCase()===k.toLowerCase())return p[a];}} return '-'; }
+        function changeOpacity(id, v) { if(layers[id]) layers[id].setStyle({fillOpacity:v}); }
+        
+        function toggleLegendPanel() { const w=document.getElementById('slide-legend'),i=document.getElementById('legend-icon'); w.classList.toggle('open'); if(w.classList.contains('open'))i.className='fa-solid fa-chevron-right'; else i.className='fa-solid fa-chevron-left'; }
+        function renderLegend() {
+            let html = ''; let active = false;
+            if(document.getElementById('check-polaruang').checked) { active=true; html+=`<div style="font-size:10px;font-weight:700;margin:10px 0 5px;">POLA RUANG</div>`; for(let k in cSub) html+=`<div class="legend-item"><div class="color-box" style="background:${cSub[k]}"></div>${k}</div>`; }
+            if(document.getElementById('check-bidangtanah').checked) { active=true; html+=`<div style="font-size:10px;font-weight:700;margin:15px 0 5px;">BIDANG TANAH</div>`; for(let k in cStat) html+=`<div class="legend-item"><div class="color-box" style="background:${cStat[k]}"></div>${k}</div>`; }
+            if(document.getElementById('check-znt').checked) { active=true; html+=`<div style="font-size:10px;font-weight:700;margin:15px 0 5px;">ZNT</div>`; for(let k in cZnt) html+=`<div class="legend-item"><div class="color-box" style="background:${cZnt[k]}"></div>${k}</div>`; }
+            if(document.getElementById('check-penggunaan').checked) { active=true; html+=`<div style="font-size:10px;font-weight:700;margin:15px 0 5px;">PENGGUNAAN LAHAN</div>`; for(let k in cGuna) html+=`<div class="legend-item"><div class="color-box" style="background:${cGuna[k]}"></div>${k}</div>`; }
+            if(document.getElementById('check-kp2b').checked) { active=true; html+=`<div style="font-size:10px;font-weight:700;margin:15px 0 5px;">KP2B</div><div class="legend-item"><div class="color-box" style="background:#4b5320"></div>Kawasan Pertanian</div>`; }
+            if(document.getElementById('check-lsd').checked) { active=true; html+=`<div style="font-size:10px;font-weight:700;margin:15px 0 5px;">LSD</div><div class="legend-item"><div class="color-box" style="background:#90ee90"></div>Lahan Sawah Dilindungi</div>`; }
+            
+            document.getElementById('legend-list-content').innerHTML = html || `<div style="font-size:11px; color:#888;">Tidak ada layer aktif.</div>`;
+            const w = document.getElementById('slide-legend');
+            if(!active) { w.classList.remove('open'); document.getElementById('legend-icon').className='fa-solid fa-chevron-left'; } else { w.classList.add('open'); document.getElementById('legend-icon').className='fa-solid fa-chevron-right'; }
+        }
+
+        function toggleLayers() {
+            const checks = ['polaruang','bidangtanah','znt','penggunaan','kp2b','lsd'];
+            checks.forEach(id => {
+                if(document.getElementById('check-'+id).checked && layers[id]) { if(!map.hasLayer(layers[id])) map.addLayer(layers[id]); }
+                else if(layers[id]) map.removeLayer(layers[id]);
+            });
+            renderLegend();
+        }
+
+        function loadLayer(url, id, styleFn, popFn) {
+            fetch(url).then(r=>r.json()).then(d=>{
+                rawData[id]=d; layers[id]=L.geoJSON(d,{style:styleFn, onEachFeature:(f,l)=>{l.bindPopup(popFn(f)); l.on('mouseover',e=>e.target.setStyle({fillOpacity:1,weight:3,color:'#000'})); l.on('mouseout',e=>layers[id].resetStyle(e.target));}});
+                if(document.getElementById('check-'+id).checked) map.addLayer(layers[id]); renderLegend();
+            }).catch(e=>console.log("Error loading "+id));
+        }
+
+        // Load 6 Layers
+        loadLayer('polaruangwunutbaru.geojson','polaruang', f=>({fillColor:cSub[getProp(f.properties,'SUB_ZONA','sub_zona')]||'#ddd',weight:1.2,color:'#fff',fillOpacity:document.getElementById('opacity-polaruang').value}), f=>`<b>Pola Ruang:</b> ${getProp(f.properties,'SUB_ZONA','sub_zona')}`);
+        loadLayer('bidangtanahwunut.geojson','bidangtanah', f=>({fillColor:cStat[getProp(f.properties,'STATUS','status')]||'#ccc',weight:1.2,color:'#444',fillOpacity:document.getElementById('opacity-bidangtanah').value}), f=>`<b>Status:</b> ${getProp(f.properties,'STATUS','status')}<br><b>Luas:</b> ${getProp(f.properties,'LUAS','luas')} m²`);
+        loadLayer('zntwunut.geojson','znt', f=>({fillColor:cZnt[getProp(f.properties,'HARGA','harga')]||'#ddd',weight:1.2,color:'#444',fillOpacity:document.getElementById('opacity-znt').value}), f=>`<b>Harga ZNT:</b> Rp ${getProp(f.properties,'HARGA','harga')}`);
+        loadLayer('penggunaanlahan.geojson','penggunaan', f=>({fillColor:cGuna[getProp(f.properties,'PENGGUNAAN','penggunaan')]||'#ddd',weight:1.2,color:'#444',fillOpacity:document.getElementById('opacity-penggunaan').value}), f=>`<b>Penggunaan:</b> ${getProp(f.properties,'PENGGUNAAN','penggunaan')}`);
+        loadLayer('kp2bwunut.geojson','kp2b', f=>({fillColor:'#4b5320',weight:1.2,color:'#fff',fillOpacity:document.getElementById('opacity-kp2b').value}), f=>`<b>KP2B:</b> Kawasan Pertanian Pangan Berkelanjutan`);
+        loadLayer('lsdwunut.geojson','lsd', f=>({fillColor:'#90ee90',weight:1.2,color:'#fff',fillOpacity:document.getElementById('opacity-lsd').value}), f=>`<b>LSD:</b> Lahan Sawah Dilindungi`);
+
+        // Download ZIP / GeoJSON Pintar
+        function downloadData() {
+            let toDl = [];
+            ['polaruang','bidangtanah','znt','penggunaan','kp2b','lsd'].forEach(id => {
+                if(document.getElementById('check-'+id).checked && rawData[id]) toDl.push({n:id+"_wunut.geojson", d:rawData[id]});
+            });
+            if(toDl.length===0) return alert("Pilih minimal satu Lapisan Data Spasial yang ingin diunduh.");
+            if(toDl.length===1) {
+                const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(toDl[0].d)); a.download=toDl[0].n; a.click();
+            } else {
+                alert(`Menyiapkan file ZIP berisi ${toDl.length} data...`);
+                let zip = new JSZip(); toDl.forEach(l => zip.file(l.n, JSON.stringify(l.d)));
+                zip.generateAsync({type:"blob"}).then(c => saveAs(c, "Data_Spasial_Wunut.zip"));
+            }
+        }
+
+        function downloadDigitasi() {
+            let d = map.pm.getGeomanLayers(); if(d.length===0)return alert("Belum ada objek yang digambar.");
+            let a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(L.featureGroup(d).toGeoJSON())); a.download="Digitasi_Wunut.geojson"; a.click();
+        }
+
+        function loadKML(e) {
+            if(!e.target.files[0])return; let r=new FileReader(); r.onload=function(ev){ try{ let c=omnivore.kml.parse(ev.target.result); c.setStyle({color:'#c5a059',weight:3,fillOpacity:0.5}); c.addTo(map); map.fitBounds(c.getBounds()); alert("KML Berhasil ditambahkan!"); }catch(err){alert("Format KML tidak valid.");} }; r.readAsText(e.target.files[0]);
+        }
+    </script>
+</body>
+</html>
