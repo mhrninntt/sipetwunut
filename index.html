@@ -12,6 +12,15 @@
     <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
+    <script src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
     <style>
         :root {
             /* Tema Banyu-Nusantara */
@@ -30,10 +39,13 @@
         body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--soft-sand); color: var(--deep-navy); overflow-x: hidden; }
 
         .logo-wrapper { display: flex; align-items: center; justify-content: center; }
+        
         .water-drop-logo {
             width: 24px; height: 24px;
-            background: linear-gradient(135deg, #e0f2fe, var(--deep-navy));
-            border-radius: 50% 50% 50% 0; transform: rotate(-45deg); margin-right: 12px;
+            background: linear-gradient(135deg, var(--tirta-light, #e0f2fe), var(--deep-navy));
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            margin-right: 12px;
             box-shadow: 0 5px 15px rgba(2, 132, 199, 0.4);
             animation: pulseDrop 2.5s infinite ease-in-out;
         }
@@ -43,7 +55,7 @@
             100% { transform: rotate(-45deg) scale(1); }
         }
 
-        /* --- LOGIN MODAL --- */
+        /* Login Screen */
         #login-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
             background: rgba(10, 25, 47, 0.85); backdrop-filter: blur(8px);
@@ -67,7 +79,7 @@
         .close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 20px; color: var(--text-body); cursor: pointer; transition: var(--transition); }
         .close-btn:hover { color: #ef4444; transform: rotate(90deg); }
 
-        /* --- HEADER NAVIGATION --- */
+        /* Navigation */
         #main-content { display: block; }
         header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; top: 0; z-index: 2000; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
         .logo-box h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0; color: var(--deep-navy); }
@@ -77,9 +89,8 @@
         nav a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 0; background: var(--accent-gold); transition: var(--transition); }
         nav a:hover::after, nav a.active::after { width: 100%; }
 
-        /* --- SECTIONS --- */
         .content-section { display: none; padding-top: 70px; }
-        .active-section { display: block; animation: fadeIn 0.8s ease; }
+        .active-section { display: block; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* --- DASHBOARD BERANDA --- */
@@ -94,6 +105,7 @@
         .section-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--deep-navy); text-align: center; margin-bottom: 40px; position: relative; }
         .section-title::after { content: ''; display: block; width: 80px; height: 3px; background: var(--terracotta); margin: 15px auto 0; }
 
+        /* Stats Grid */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: -80px; position: relative; z-index: 10; margin-bottom: 40px; }
         .stat-item { background: var(--white); padding: 40px 20px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.05); border-top: 4px solid var(--accent-gold); transition: var(--transition); border-radius: 8px; }
         .stat-item:hover { transform: translateY(-15px); box-shadow: 0 20px 40px rgba(10, 25, 47, 0.1); }
@@ -101,13 +113,12 @@
         .stat-item h3 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin: 0 0 5px; color: var(--deep-navy); }
         .stat-item p { margin: 0; font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
 
+        /* SHORTCUT DASHBOARD */
         .dashboard-shortcuts { display: flex; justify-content: center; gap: 15px; margin-bottom: 60px; flex-wrap: wrap; position: relative; z-index: 10; }
         .shortcut-btn { background: var(--white); color: var(--deep-navy); padding: 12px 25px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid var(--accent-gold); transition: var(--transition); display: flex; align-items: center; gap: 8px; cursor: pointer; }
         .shortcut-btn:hover { background: var(--deep-navy); color: var(--accent-gold); transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0,0,0,0.1); }
 
-        .scroll-target { scroll-margin-top: 100px; padding-top: 20px; }
-
-        /* Profil Desa Interaktif */
+        /* Profil Desa Wunut */
         .profil-container { display: flex; flex-wrap: wrap; background: var(--white); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 60px; border-left: 6px solid var(--accent-gold); }
         .profil-tabs { flex: 0 0 260px; background: var(--deep-navy); display: flex; flex-direction: column; padding: 20px 0; }
         .profil-tab { background: transparent; color: rgba(255,255,255,0.6); border: none; text-align: left; padding: 18px 25px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition); border-left: 4px solid transparent; display: flex; align-items: center; gap: 12px; }
@@ -126,7 +137,7 @@
         .chart-card:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.08); transform: translateY(-5px); }
         .chart-card h3 { font-family: 'Playfair Display', serif; color: var(--deep-navy); font-size: 1.5rem; margin-top: 0; margin-bottom: 20px; text-align: center; }
 
-        /* News & Gallery */
+        /* News */
         .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 60px; }
         .news-card { background: var(--white); box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: var(--transition); overflow: hidden; display: flex; flex-direction: column; border-radius: 15px; }
         .news-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
@@ -140,6 +151,7 @@
         .news-link { color: var(--accent-gold); font-weight: 700; text-decoration: none; font-size: 0.9rem; transition: var(--transition); }
         .news-link:hover { color: var(--deep-navy); }
 
+        /* Gallery */
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .gallery-item { height: 300px; position: relative; cursor: pointer; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-radius: 15px; }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; }
@@ -149,13 +161,16 @@
         .gallery-overlay h4 { font-family: 'Playfair Display', serif; margin: 0 0 5px; font-size: 1.3rem; color: var(--accent-gold); }
         .gallery-overlay p { margin: 0; font-size: 0.85rem; }
 
+        /* Target Scroll Margin */
+        .scroll-target { scroll-margin-top: 100px; padding-top: 20px; }
+
         /* --- WEBGIS PETA --- */
         #peta { padding-top: 70px; height: 100vh; overflow: hidden; }
         .map-wrapper { position: relative; width: 100%; height: calc(100vh - 70px); }
         #map { width: 100%; height: 100%; z-index: 1; }
         
         .floating-sidebar {
-            position: absolute; top: 20px; left: 20px; z-index: 1000; width: 340px; 
+            position: absolute; top: 20px; left: 20px; z-index: 1000; width: 320px; 
             max-height: calc(100vh - 110px); background: var(--glass-bg); backdrop-filter: blur(15px); 
             border: 1px solid rgba(255,255,255,0.5); padding: 25px 20px; border-radius: 12px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow-y: auto;
@@ -163,10 +178,10 @@
         .floating-sidebar::-webkit-scrollbar { width: 5px; }
         .floating-sidebar::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 10px; }
 
-        .control-group { margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 15px; }
+        .control-group { margin-bottom: 20px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 15px; }
         .control-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .control-title { font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; color: var(--terracotta); text-transform: uppercase; letter-spacing: 1px; }
-        .control-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--deep-navy); margin-bottom: 2px; cursor: pointer; }
+        .control-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--deep-navy); margin-bottom: 5px; cursor: pointer; }
         
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; margin-bottom: 10px; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: var(--terracotta); cursor: pointer; margin-top: -4px; }
@@ -175,22 +190,40 @@
         .btn-map-action { width: 100%; padding: 10px; background: var(--deep-navy); color: var(--accent-gold); border: none; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; transition: var(--transition); letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
         .btn-map-action:hover { background: var(--terracotta); color: white; }
 
+        /* Map Controls Kanan */
         .right-controls { position: absolute; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
         .btn-icon { width: 40px; height: 40px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; color: var(--deep-navy); font-size: 16px; transition: var(--transition); display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .btn-icon:hover { background: var(--accent-gold); color: white; border-color: var(--accent-gold); }
         
-        .north-arrow { position: absolute; top: 20px; left: 380px; z-index: 1000; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); pointer-events: none; }
+        .north-arrow { position: absolute; top: 20px; left: 360px; z-index: 1000; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); pointer-events: none; }
 
-        /* --- LEGENDA SLIDER --- */
-        .legend-slider-wrapper { position: absolute; top: 120px; right: 0; z-index: 1000; transform: translateX(280px); transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); display: flex; align-items: flex-start; }
+        /* --- LEGENDA SLIDER KANAN (PERBAIKAN BUG HILANG) --- */
+        .legend-slider-wrapper { 
+            position: absolute; top: 120px; right: 0; z-index: 1000; 
+            /* Diganti menjadi 280px agar tombol tetap tersisa di layar */
+            transform: translateX(280px); 
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+            display: flex; align-items: flex-start; 
+        }
         .legend-slider-wrapper.open { transform: translateX(0); }
-        .legend-toggle-btn { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5); border-right: none; padding: 12px 15px; border-radius: 10px 0 0 10px; cursor: pointer; box-shadow: -4px 4px 10px rgba(0,0,0,0.05); color: var(--deep-navy); font-weight: 700; display: flex; align-items: center; gap: 8px; font-size: 12px; }
-        .legend-content { background: var(--glass-bg); backdrop-filter: blur(10px); padding: 20px; border-radius: 0 0 0 15px; border: 1px solid rgba(255,255,255,0.5); border-right: none; width: 280px; max-height: 60vh; overflow-y: auto; box-shadow: -5px 5px 20px rgba(0,0,0,0.08); }
+        .legend-toggle-btn { 
+            background: var(--glass-bg); backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255,255,255,0.5); border-right: none; 
+            padding: 12px 15px; border-radius: 10px 0 0 10px; cursor: pointer; 
+            box-shadow: -4px 4px 10px rgba(0,0,0,0.05); color: var(--deep-navy); 
+            font-weight: 700; display: flex; align-items: center; gap: 8px; font-size: 12px; 
+        }
+        .legend-content { 
+            background: var(--glass-bg); backdrop-filter: blur(10px); padding: 20px; 
+            border-radius: 0 0 0 15px; border: 1px solid rgba(255,255,255,0.5); 
+            border-right: none; width: 280px; max-height: 60vh; overflow-y: auto; 
+            box-shadow: -5px 5px 20px rgba(0,0,0,0.08); 
+        }
         .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 11px; font-weight: 600; color: var(--deep-navy); }
         .color-box { width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.2); flex-shrink: 0; }
 
         /* Footer */
-        footer { background: var(--deep-navy); color: white; padding: 60px 5%; margin-top: 0; }
+        footer { background: var(--deep-navy); color: white; padding: 60px 5%; }
         .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto; }
         .footer-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--accent-gold); margin-bottom: 20px; }
         .footer-text { font-size: 0.9rem; color: #cbd5e1; line-height: 1.8; margin-bottom: 10px; }
@@ -204,12 +237,16 @@
     <div id="login-overlay">
         <div class="login-card" id="login-box">
             <button class="close-btn" onclick="closeLogin()"><i class="fa-solid fa-xmark"></i></button>
-            <div class="logo-wrapper"><div class="water-drop-logo"></div></div>
+            <div class="logo-wrapper">
+                <div class="water-drop-logo"></div>
+            </div>
             <h2 id="auth-title">MASUK</h2>
             <p id="auth-subtitle">Sistem Informasi Tata Ruang</p>
+            
             <input type="email" id="login-user" class="login-input" placeholder="Alamat Email">
             <input type="password" id="login-pass" class="login-input" placeholder="Kata Sandi (Min 6 Karakter)">
             <button class="login-btn" id="auth-btn" onclick="prosesLoginAuth()">MASUK SISTEM</button>
+            
             <div style="margin-top: 25px; font-size: 13px; color: var(--text-body);">
                 <span id="auth-toggle-text">Belum punya akun?</span> 
                 <a href="#" style="color: var(--terracotta); font-weight: 700; text-decoration: none;" onclick="toggleAuthMode(event)">Daftar di sini</a>
@@ -246,13 +283,19 @@
                 <div class="container">
                     <div class="stats-grid">
                         <div class="stat-item" data-aos="fade-up" data-aos-delay="100">
-                            <i class="fa-solid fa-map-location-dot"></i><h3>720</h3><p>Luas Wilayah (Ha)</p>
+                            <i class="fa-solid fa-map-location-dot"></i>
+                            <h3>720</h3>
+                            <p>Luas Wilayah (Ha)</p>
                         </div>
                         <div class="stat-item" data-aos="fade-up" data-aos-delay="200">
-                            <i class="fa-solid fa-people-group"></i><h3>2.290</h3><p>Total Penduduk</p>
+                            <i class="fa-solid fa-people-group"></i>
+                            <h3>2.290</h3>
+                            <p>Total Penduduk</p>
                         </div>
                         <div class="stat-item" data-aos="fade-up" data-aos-delay="300">
-                            <i class="fa-solid fa-droplet"></i><h3>15</h3><p>Titik Mata Air</p>
+                            <i class="fa-solid fa-droplet"></i>
+                            <h3>15</h3>
+                            <p>Titik Mata Air</p>
                         </div>
                     </div>
 
@@ -399,37 +442,31 @@
 
                         <div class="control-group">
                             <div class="control-title"><i class="fa-solid fa-map"></i> Lapisan Data Spasial</div>
-                            
                             <label class="control-label"><input type="checkbox" id="check-polaruang" checked onchange="toggleLayers()"> Pola Ruang (Sub Zona)</label>
-                            <div style="padding-left: 25px; margin-bottom: 5px;">
+                            <div style="padding-left: 25px; margin-bottom: 10px;">
                                 <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;"><span>Transparansi</span><span id="val-op-pola">80%</span></div>
                                 <input type="range" id="opacity-polaruang" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityPolaRuang(this.value)">
                             </div>
-                            
                             <label class="control-label"><input type="checkbox" id="check-bidangtanah" onchange="toggleLayers()"> Bidang Tanah (Status)</label>
-                            <div style="padding-left: 25px; margin-bottom: 5px;">
+                            <div style="padding-left: 25px; margin-bottom: 10px;">
                                 <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;"><span>Transparansi</span><span id="val-op-bidang">80%</span></div>
                                 <input type="range" id="opacity-bidangtanah" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityBidangTanah(this.value)">
                             </div>
-                            
                             <label class="control-label"><input type="checkbox" id="check-znt" onchange="toggleLayers()"> Zona Nilai Tanah (ZNT)</label>
-                            <div style="padding-left: 25px; margin-bottom: 5px;">
+                            <div style="padding-left: 25px; margin-bottom: 10px;">
                                 <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;"><span>Transparansi</span><span id="val-op-znt">80%</span></div>
                                 <input type="range" id="opacity-znt" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityZnt(this.value)">
                             </div>
-                            
                             <label class="control-label"><input type="checkbox" id="check-penggunaan" onchange="toggleLayers()"> Penggunaan Lahan</label>
-                            <div style="padding-left: 25px; margin-bottom: 5px;">
+                            <div style="padding-left: 25px; margin-bottom: 10px;">
                                 <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;"><span>Transparansi</span><span id="val-op-penggunaan">80%</span></div>
                                 <input type="range" id="opacity-penggunaan" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityPenggunaan(this.value)">
                             </div>
-                            
                             <label class="control-label"><input type="checkbox" id="check-kp2b" onchange="toggleLayers()"> KP2B</label>
-                            <div style="padding-left: 25px; margin-bottom: 5px;">
+                            <div style="padding-left: 25px; margin-bottom: 10px;">
                                 <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;"><span>Transparansi</span><span id="val-op-kp2b">80%</span></div>
                                 <input type="range" id="opacity-kp2b" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacityKp2b(this.value)">
                             </div>
-                            
                             <label class="control-label"><input type="checkbox" id="check-lsd" onchange="toggleLayers()"> LSD</label>
                             <div style="padding-left: 25px;">
                                 <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-body); font-weight:700;"><span>Transparansi</span><span id="val-op-lsd">80%</span></div>
@@ -437,14 +474,8 @@
                             </div>
                         </div>
 
-                        <div class="control-group" style="background: rgba(10, 25, 47, 0.05); padding: 15px; border-radius: 8px; border: 1px dashed var(--accent-gold);">
-                            <div class="control-title" style="color: var(--deep-navy);"><i class="fa-solid fa-pen-nib"></i> Studio Digitasi</div>
-                            <p style="font-size: 11px; margin-bottom: 10px;">Gunakan alat di pojok kanan bawah peta untuk menggambar area.</p>
-                            <button class="btn-map-action" style="background: var(--accent-gold); color: var(--deep-navy);" onclick="downloadDigitasi()"><i class="fa-solid fa-file-arrow-down"></i> UNDUH HASIL DIGITASI</button>
-                        </div>
-
-                        <div class="control-group" style="margin-bottom: 0; padding-bottom: 0;">
-                            <div class="control-title"><i class="fa-solid fa-toolbox"></i> Alat Analisis Eksternal</div>
+                        <div class="control-group">
+                            <div class="control-title"><i class="fa-solid fa-toolbox"></i> Alat Analisis</div>
                             <button class="btn-map-action" onclick="downloadData()"><i class="fa-solid fa-download"></i> UNDUH DATA SPASIAL</button>
                             <label style="display: block; font-size: 11px; font-weight: 700; color: var(--terracotta); margin-top: 15px; margin-bottom: 5px;">UNGGAH FILE KML:</label>
                             <input type="file" id="kml-upload" accept=".kml" style="width: 100%; font-size: 11px; padding: 5px; border: 1px solid #ccc; border-radius: 5px; background: white;" onchange="loadKML(event)">
@@ -518,6 +549,7 @@
             </div>
         </footer>
     </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } 
@@ -573,7 +605,7 @@
             evt.currentTarget.className += " active";
         }
 
-        // 4. Logika Authentication & State
+        // 4. Logika Authentication & State (Peta Terkunci)
         let isUserLoggedIn = false;
         let authMode = 'login'; 
 
@@ -659,6 +691,7 @@
 
         function logoutAuth() { if(window.logOut) { window.logOut(window.firebaseAuth).then(() => { location.reload(); }); } }
 
+        // 5. Fungsi Switch Tab & Keamanan Akses Peta
         function checkAksesPeta() {
             if (!isUserLoggedIn) {
                 tampilkanPesan("Akses Peta Spasial dikunci. Silakan masuk terlebih dahulu.", "var(--terracotta)");
@@ -668,7 +701,6 @@
             }
         }
 
-        // 5. Switch Tab
         function switchTab(id) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
@@ -706,7 +738,7 @@
         };
         new ApexCharts(document.querySelector("#chart-piramida"), optionsPiramida).render();
 
-        // 7. LOGIKA WEBGIS (LEAFLET + DATA)
+        // 7. LOGIKA FULL WEBGIS
         var polaRuangLayer; var bidangTanahLayer; var zntLayer; var penggunaanLayer; var kp2bLayer; var lsdLayer;
         var userMarker; 
         var rawPolaRuangData = null; var rawBidangTanahData = null; var rawZntData = null; var rawPenggunaanData = null; var rawKp2bData = null; var rawLsdData = null;
@@ -743,6 +775,7 @@
         const colorKp2b = '#4b5320'; 
         const colorLsd = '#90ee90'; 
 
+        // --- Legenda Slider Pintar (FIXED BUG) ---
         function toggleLegendPanel() {
             const wrapper = document.getElementById('slide-legend'); const icon = document.getElementById('legend-icon'); wrapper.classList.toggle('open');
             if (wrapper.classList.contains('open')) { icon.classList.replace('fa-chevron-left', 'fa-chevron-right'); } else { icon.classList.replace('fa-chevron-right', 'fa-chevron-left'); }
@@ -769,6 +802,7 @@
             if (checks.kp2b) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:15px; margin-bottom:5px; font-weight:700;">KP2B</div><div class="legend-item"><div class="color-box" style="background:${colorKp2b}"></div>Kawasan Pertanian Pangan Berkelanjutan</div>`; }
             if (checks.lsd) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:15px; margin-bottom:5px; font-weight:700;">LSD</div><div class="legend-item"><div class="color-box" style="background:${colorLsd}"></div>Lahan Sawah Dilindungi</div>`; }
             
+            // Perbaikan: Slider akan menutup otomatis jika tidak ada layer dicentang
             if (!Object.values(checks).includes(true)) { 
                 legDiv.innerHTML = `<div style="font-size:11px; color:#888; margin-top:10px;">Tidak ada layer aktif.</div>`;
                 legWrapper.classList.remove('open');
@@ -835,7 +869,7 @@
             if (document.getElementById('check-lsd').checked) map.addLayer(lsdLayer); renderLegend();
         }).catch(e => console.log("Data LSD belum tersedia."));
 
-        // 8. FUNGSI UNDUH (DOWNLOAD ZIP / DIGITASI)
+        // Download GeoJSON / ZIP 
         function downloadData() {
             const layersToDownload = [];
             if (document.getElementById('check-polaruang').checked && rawPolaRuangData) layersToDownload.push({name: "Pola_Ruang_Wunut.geojson", data: rawPolaRuangData});
@@ -845,7 +879,7 @@
             if (document.getElementById('check-kp2b').checked && rawKp2bData) layersToDownload.push({name: "KP2B_Wunut.geojson", data: rawKp2bData});
             if (document.getElementById('check-lsd').checked && rawLsdData) layersToDownload.push({name: "LSD_Wunut.geojson", data: rawLsdData});
 
-            if (layersToDownload.length === 0) { alert("Pilih minimal satu Lapisan Data Spasial yang ingin diunduh."); return; }
+            if (layersToDownload.length === 0) { alert("Pilih minimal satu Lapisan Data (centang di panel kiri) yang ingin diunduh."); return; }
 
             if (layersToDownload.length === 1) {
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(layersToDownload[0].data));
@@ -859,22 +893,7 @@
             }
         }
 
-        function downloadDigitasi() {
-            const drawnItems = map.pm.getGeomanLayers();
-            if (drawnItems.length === 0) {
-                alert("Belum ada objek spasial yang didigitasi. Gunakan alat di pojok kanan bawah peta untuk menggambar.");
-                return;
-            }
-            const featureGroup = L.featureGroup(drawnItems);
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(featureGroup.toGeoJSON()));
-            const dl = document.createElement('a');
-            dl.href = dataStr;
-            dl.download = "Hasil_Digitasi_Wunut.geojson";
-            document.body.appendChild(dl);
-            dl.click();
-            dl.remove();
-        }
-
+        // Upload KML
         function loadKML(event) {
             const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
