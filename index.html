@@ -610,7 +610,7 @@
                             <div id="s-search" class="s-panel">
                                 <div class="control-group">
                                     <div class="control-title">Pencarian Data Spasial</div>
-                                    <p style="font-size: 11px; color: var(--text-body); margin-top: 0;">Pilih lapisan data yang relevan dan masukkan kata kunci (misal: "Hak Milik", "Sawah", "Pariwisata" atau variabel luasan).</p>
+                                    <p style="font-size: 11px; color: var(--text-body); margin-top: 0;">Gunakan kata kunci atau rentang luasan area untuk mencari objek spasial spesifik.</p>
                                     
                                     <label style="font-size: 11px; font-weight: 700; color: var(--deep-navy);">PILIH LAPISAN DATA (LAYER):</label>
                                     <select id="search-layer" class="sidebar-input">
@@ -623,9 +623,15 @@
                                     </select>
 
                                     <label style="font-size: 11px; font-weight: 700; color: var(--deep-navy);">KATA KUNCI / VARIABEL:</label>
-                                    <input type="text" id="search-keyword" class="sidebar-input" placeholder="Contoh: 450, Sawah, Hak Milik...">
+                                    <input type="text" id="search-keyword" class="sidebar-input" placeholder="Contoh: Sawah, Hak Milik...">
 
-                                    <button class="btn-map-action" onclick="performSearch()"><i class="fa-solid fa-search"></i> LAKUKAN PENCARIAN</button>
+                                    <label style="font-size: 11px; font-weight: 700; color: var(--deep-navy); margin-top: 10px;">RENTANG LUASAN AREA (m²):</label>
+                                    <div style="display: flex; gap: 10px;">
+                                        <input type="number" id="search-area-min" class="sidebar-input" placeholder="Min Luas" min="0">
+                                        <input type="number" id="search-area-max" class="sidebar-input" placeholder="Max Luas" min="0">
+                                    </div>
+
+                                    <button class="btn-map-action" onclick="performSearch()" style="margin-top: 10px;"><i class="fa-solid fa-search"></i> LAKUKAN PENCARIAN</button>
                                     <button class="btn-map-action" style="background: #cbd5e1; color: var(--deep-navy);" onclick="resetSearch()"><i class="fa-solid fa-rotate-right"></i> ATUR ULANG PENCARIAN</button>
                                 </div>
                             </div>
@@ -1125,7 +1131,15 @@
             
             const targetId = document.getElementById('search-layer').value;
             const keyword = document.getElementById('search-keyword').value.toLowerCase().trim();
-            if (!keyword) return alert("Mohon lengkapi kata kunci pencarian yang Anda tuju (Contoh: Sawah, Hak Milik, 450).");
+            const minAreaRaw = document.getElementById('search-area-min').value;
+            const maxAreaRaw = document.getElementById('search-area-max').value;
+            
+            const minArea = minAreaRaw !== '' ? parseFloat(minAreaRaw) : null;
+            const maxArea = maxAreaRaw !== '' ? parseFloat(maxAreaRaw) : null;
+
+            if (!keyword && minArea === null && maxArea === null) {
+                return alert("Mohon lengkapi kata kunci pencarian atau rentang luasan area yang Anda tuju.");
+            }
 
             let targetLayer;
             if(targetId === 'pola' && polaRuangLayer) targetLayer = polaRuangLayer;
@@ -1139,7 +1153,8 @@
             
             if (!map.hasLayer(targetLayer)) {
                 let checkId = targetId === 'bidang' ? 'check-bidangtanah' : (targetId === 'pola' ? 'check-polaruang' : 'check-' + targetId);
-                document.getElementById(checkId).checked = true;
+                const checkElement = document.getElementById(checkId);
+                if (checkElement) checkElement.checked = true;
                 toggleLayers();
             }
 
@@ -1148,26 +1163,50 @@
 
             targetLayer.eachLayer(l => {
                 let props = l.feature.properties;
-                let match = false;
+                let matchKeyword = keyword === ''; 
+                let matchArea = (minArea === null && maxArea === null); 
                 
-                for (let key in props) {
-                    if (String(props[key]).toLowerCase().includes(keyword)) {
-                        match = true; break;
+                // Evaluasi Kata Kunci
+                if (keyword) {
+                    for (let key in props) {
+                        if (String(props[key]).toLowerCase().includes(keyword)) {
+                            matchKeyword = true; break;
+                        }
                     }
                 }
                 
-                if (match) {
+                // Evaluasi Nilai Area / Luasan
+                if (minArea !== null || maxArea !== null) {
+                    let areaVal = null;
+                    const areaKeys = ['luas', 'luasan', 'area', 'shape_area', 'shape_length'];
+                    for (let key in props) {
+                        if (areaKeys.includes(key.toLowerCase())) {
+                            areaVal = parseFloat(props[key]);
+                            break;
+                        }
+                    }
+                    
+                    if (areaVal !== null && !isNaN(areaVal)) {
+                        let passMin = (minArea === null) || (areaVal >= minArea);
+                        let passMax = (maxArea === null) || (areaVal <= maxArea);
+                        if (passMin && passMax) {
+                            matchArea = true;
+                        }
+                    }
+                }
+
+                if (matchKeyword && matchArea && (!keyword || matchKeyword) && (!(minArea !== null || maxArea !== null) || matchArea)) {
                     l.setStyle({ color: '#ff0000', weight: 4, fillOpacity: 0.8, fillColor: '#ffff00' });
                     bounds.extend(l.getBounds());
                     found = true;
-                    l.bringToFront();
+                    if(l.bringToFront) l.bringToFront();
                 } else {
                     l.setStyle({ opacity: 0.1, fillOpacity: 0.05 }); 
                 }
             });
 
             if (found) { map.fitBounds(bounds, {padding: [50,50]}); } 
-            else { alert("Tidak ditemukan elemen spasial yang sesuai dengan kriteria atribut tersebut."); resetSearchStyle(); }
+            else { alert("Tidak ditemukan elemen spasial yang sesuai dengan kriteria pencarian tersebut."); resetSearchStyle(); }
         }
 
         function resetSearchStyle() {
@@ -1181,6 +1220,8 @@
 
         function resetSearch() {
             document.getElementById('search-keyword').value = '';
+            document.getElementById('search-area-min').value = '';
+            document.getElementById('search-area-max').value = '';
             resetSearchStyle();
             goHome();
         }
