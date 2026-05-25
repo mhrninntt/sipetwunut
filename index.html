@@ -54,7 +54,7 @@
             100% { transform: rotate(-45deg) scale(1); }
         }
 
-        /* Tampilan Layar Masuk */
+        /* Tampilan Layar Masuk (Login) */
         #login-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
             background: rgba(10, 25, 47, 0.85); backdrop-filter: blur(8px);
@@ -78,7 +78,7 @@
         .close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 20px; color: var(--text-body); cursor: pointer; transition: var(--transition); }
         .close-btn:hover { color: #ef4444; transform: rotate(90deg); }
 
-        /* Navigasi */
+        /* Navigasi Utama */
         #main-content { display: block; }
         header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; top: 0; z-index: 2000; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
         .logo-box h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0; color: var(--deep-navy); }
@@ -204,7 +204,7 @@
         .sidebar-input { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 12px; outline: none; background: white; }
         .sidebar-input:focus { border-color: var(--terracotta); }
 
-        /* KONTROL KANAN PETA - POSISI AMAN */
+        /* KONTROL KANAN PETA */
         .right-controls { 
             position: absolute; top: 250px; right: 10px; z-index: 1000; 
             display: flex; flex-direction: column; gap: 10px; 
@@ -213,7 +213,7 @@
         .btn-icon { width: 40px; height: 40px; background: white; border: 2px solid rgba(0,0,0,0.2); border-radius: 5px; cursor: pointer; color: var(--deep-navy); font-size: 16px; transition: var(--transition); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .btn-icon:hover { background: #f4f4f4; color: var(--terracotta); }
         
-        /* Arah Mata Angin - Di Kiri Bawah agar aman */
+        /* Arah Mata Angin */
         .north-arrow { 
             position: absolute; bottom: 30px; left: 20px; z-index: 1000; 
             background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 8px; 
@@ -263,7 +263,6 @@
                 bottom: 10px; 
                 max-height: 55vh; 
             }
-            /* Menyesuaikan tombol navigasi agar tidak tertutup panel bawah */
             .right-controls {
                 top: auto;
                 bottom: calc(55vh + 15px); 
@@ -279,6 +278,58 @@
                 left: 10px;
             }
         }
+
+        /* --- TENTANG KAMI (TIM PENYUSUN) --- */
+        .team-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            gap: 30px; margin-top: 20px; 
+        }
+        .team-card { 
+            background: var(--white); border-radius: 15px; padding: 30px 20px; 
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            cursor: pointer; transition: var(--transition); 
+            border-bottom: 4px solid var(--accent-gold); 
+        }
+        .team-card:hover { 
+            transform: translateY(-10px); box-shadow: 0 15px 40px rgba(10, 25, 47, 0.1); 
+        }
+        .team-img-wrapper { 
+            width: 120px; height: 120px; margin: 0 auto 15px; 
+            border-radius: 50%; overflow: hidden; border: 4px solid var(--soft-sand); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+        }
+        .team-img { width: 100%; height: 100%; object-fit: cover; }
+        .team-card h4 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--deep-navy); margin: 0 0 5px; }
+        .team-card p { font-size: 0.9rem; color: var(--text-body); margin: 0; font-weight: 600; }
+
+        /* Lightbox Foto (Pop-up Gambar) */
+        #lightbox-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
+            background: rgba(10, 25, 47, 0.9); z-index: 10000; 
+            display: none; align-items: center; justify-content: center; 
+            opacity: 0; transition: opacity 0.3s ease; 
+        }
+        #lightbox-overlay.show { opacity: 1; }
+        .lightbox-content { 
+            background: var(--white); padding: 30px; border-radius: 15px; 
+            text-align: center; position: relative; max-width: 90%; max-height: 90vh; 
+            display: flex; flex-direction: column; align-items: center; 
+            transform: scale(0.9); transition: transform 0.3s ease; 
+        }
+        #lightbox-overlay.show .lightbox-content { transform: scale(1); }
+        .lightbox-content img { 
+            max-width: 100%; max-height: 60vh; border-radius: 10px; 
+            object-fit: contain; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .lightbox-content h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--deep-navy); margin: 0 0 10px; }
+        .lightbox-content p { font-size: 1.1rem; color: var(--terracotta); font-weight: 700; margin: 0; letter-spacing: 1px; }
+        .lightbox-close { 
+            position: absolute; top: -15px; right: -15px; background: #ef4444; color: white; 
+            border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: var(--transition); 
+        }
+        .lightbox-close:hover { background: #b91c1c; transform: scale(1.1); }
 
         /* Footer */
         footer { background: var(--deep-navy); color: white; padding: 60px 5%; }
@@ -313,6 +364,15 @@
         </div>
     </div>
 
+    <div id="lightbox-overlay" onclick="closeLightbox(event)">
+        <div class="lightbox-content">
+            <button class="lightbox-close" onclick="closeLightbox(event)"><i class="fa-solid fa-xmark"></i></button>
+            <img id="lightbox-img" src="" alt="Foto Profil Tim">
+            <h3 id="lightbox-name">Nama Anggota</h3>
+            <p id="lightbox-nim">NIM</p>
+        </div>
+    </div>
+
     <div id="main-content">
         <header>
             <div class="logo-box logo-wrapper">
@@ -322,7 +382,7 @@
             <nav>
                 <a href="#" onclick="switchTab('beranda')" id="btn-beranda" class="active">Beranda</a>
                 <a href="#" onclick="checkAksesPeta()" id="btn-peta">Peta Spasial</a>
-                <a href="#" onclick="switchTab('profil')" id="btn-profil">Profil Desa</a>
+                <a href="#" onclick="switchTab('profil')" id="btn-profil">Tentang Kami</a>
                 <a href="#" id="nav-login-btn" onclick="openLogin()"><i class="fa-solid fa-right-to-bracket"></i> MASUK</a>
                 <a href="#" id="nav-logout-btn" onclick="logoutAuth()" style="display:none; color: var(--terracotta);"><i class="fa-solid fa-power-off"></i> KELUAR</a>
             </nav>
@@ -579,7 +639,7 @@
                                     
                                     <div id="digitized-list-container" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px; display: none;">
                                         <div style="font-size: 11px; font-weight: 700; color: var(--deep-navy); margin-bottom: 10px;">DAFTAR HASIL DIGITASI:</div>
-                                        <ul id="digitized-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px;"></ul>
+                                        <ul id="digitized-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px; max-height: 150px; overflow-y: auto;"></ul>
                                         
                                         <button class="btn-map-action" onclick="downloadAllDrawnData()" style="margin-top: 10px; background: #0284c7;"><i class="fa-solid fa-download"></i> UNDUH SELURUH DIGITASI</button>
                                     </div>
@@ -616,22 +676,70 @@
             </div>
 
             <div id="profil" class="content-section">
-                <div class="container" style="text-align: center;">
-                    <h2 class="section-title" data-aos="fade-up">Tentang SIPET Wunut</h2>
-                    <p style="font-size: 1.15rem; color: var(--text-body); max-width: 800px; margin: 0 auto 40px; line-height: 1.8;" data-aos="fade-up" data-aos-delay="100">
-                        <b>Sistem Informasi Peruntukan Tata Ruang (SIPET) Desa Wunut</b> merupakan inovasi pelayanan publik berbasis digital dan sistem informasi geografis (WebGIS). Sistem ini memetakan klasifikasi tata ruang dan informasi geospasial lainnya secara spesifik dan mendetail. 
+                <div class="container">
+                    <h2 class="section-title" data-aos="fade-up" style="margin-bottom: 20px;">Tentang Kami</h2>
+                    <p style="text-align: center; font-size: 1.15rem; color: var(--text-body); max-width: 800px; margin: 0 auto 50px; line-height: 1.8;" data-aos="fade-up" data-aos-delay="100">
+                        <b>Sistem Informasi Peruntukan Tata Ruang (SIPET) Desa Wunut</b> merupakan inovasi pelayanan publik berbasis digital dan sistem informasi geografis (WebGIS). Sistem ini dirancang untuk memetakan klasifikasi tata ruang dan informasi geospasial lainnya secara spesifik dan mendetail. 
                     </p>
-                    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--deep-navy); margin-bottom: 30px;" data-aos="fade-up" data-aos-delay="200">Tim Penyusun</h3>
-                    <div class="stats-grid" style="margin-top: 0;">
-                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="100" style="border-top-color: var(--terracotta);">
-                            <div style="width: 80px; height: 80px; background: var(--tirta-light); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items:center; justify-content:center; color: var(--deep-navy); font-size: 30px;"><i class="fa-solid fa-user-graduate"></i></div>
-                            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.3rem;">Maharani Quinn Qonita</h4>
-                            <p style="text-transform: none;">D4 - PTRP</p>
+                    
+                    <h3 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--deep-navy); margin-bottom: 10px; text-align: center;" data-aos="fade-up" data-aos-delay="200">Tim Penyusun</h3>
+                    <p style="text-align: center; color: var(--terracotta); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 40px;" data-aos="fade-up" data-aos-delay="300">Universitas Diponegoro</p>
+                    
+                    <div class="team-grid" data-aos="fade-up" data-aos-delay="400">
+                        <div class="team-card" onclick="openLightbox('quinn.jpeg', 'Maharani Quinn Qonita', '40030623620004')">
+                            <div class="team-img-wrapper">
+                                <img src="quinn.jpeg" alt="Maharani Quinn Qonita" class="team-img" onerror="this.src='https://via.placeholder.com/150?text=Foto'">
+                            </div>
+                            <h4>Maharani Quinn Qonita</h4>
+                            <p>40030623620004</p>
                         </div>
-                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="200">
-                            <div style="width: 80px; height: 80px; background: var(--tirta-light); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items:center; justify-content:center; color: var(--deep-navy); font-size: 30px;"><i class="fa-solid fa-users"></i></div>
-                            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.3rem;">Kelompok C4</h4>
-                            <p style="text-transform: none;">Universitas Diponegoro</p>
+
+                        <div class="team-card" onclick="openLightbox('wahyu.jpeg', 'Wahyu Sri Utomo', '40030623620012')">
+                            <div class="team-img-wrapper">
+                                <img src="wahyu.jpeg" alt="Wahyu Sri Utomo" class="team-img" onerror="this.src='https://via.placeholder.com/150?text=Foto'">
+                            </div>
+                            <h4>Wahyu Sri Utomo</h4>
+                            <p>40030623620012</p>
+                        </div>
+
+                        <div class="team-card" onclick="openLightbox('melda.jpeg', 'Dayinta Melda Alvia Putri', '40030623620022')">
+                            <div class="team-img-wrapper">
+                                <img src="melda.jpeg" alt="Dayinta Melda Alvia Putri" class="team-img" onerror="this.src='https://via.placeholder.com/150?text=Foto'">
+                            </div>
+                            <h4>Dayinta Melda Alvia P.</h4>
+                            <p>40030623620022</p>
+                        </div>
+
+                        <div class="team-card" onclick="openLightbox('deden.jpeg', 'Deden Agung Prassetya Nugraha', '40030623650129')">
+                            <div class="team-img-wrapper">
+                                <img src="deden.jpeg" alt="Deden Agung Prassetya Nugraha" class="team-img" onerror="this.src='https://via.placeholder.com/150?text=Foto'">
+                            </div>
+                            <h4>Deden Agung P. N.</h4>
+                            <p>40030623650129</p>
+                        </div>
+
+                        <div class="team-card" onclick="openLightbox('ridho.jpeg', 'Galih Ridho Prasetyo', '40030623650090')">
+                            <div class="team-img-wrapper">
+                                <img src="ridho.jpeg" alt="Galih Ridho Prasetyo" class="team-img" onerror="this.src='https://via.placeholder.com/150?text=Foto'">
+                            </div>
+                            <h4>Galih Ridho Prasetyo</h4>
+                            <p>40030623650090</p>
+                        </div>
+
+                        <div class="team-card" onclick="openLightbox('sheila.jpeg', 'Destianing Sheila Narotama', '40030623630077')">
+                            <div class="team-img-wrapper">
+                                <img src="sheila.jpeg" alt="Destianing Sheila Narotama" class="team-img" onerror="this.src='https://via.placeholder.com/150?text=Foto'">
+                            </div>
+                            <h4>Destianing Sheila N.</h4>
+                            <p>40030623630077</p>
+                        </div>
+
+                        <div class="team-card" onclick="openLightbox('fela.jpeg', 'Fela Azzahra', '40030623650141')">
+                            <div class="team-img-wrapper">
+                                <img src="fela.jpeg" alt="Fela Azzahra" class="team-img" onerror="this.src='https://via.placeholder.com/150?text=Foto'">
+                            </div>
+                            <h4>Fela Azzahra</h4>
+                            <p>40030623650141</p>
                         </div>
                     </div>
                 </div>
@@ -715,6 +823,23 @@
             document.getElementById(tabName).style.display = "block";
             setTimeout(() => { document.getElementById(tabName).classList.add("active-fade"); }, 10);
             evt.currentTarget.className += " active";
+        }
+
+        // Pengendali Sistem Lightbox
+        function openLightbox(src, name, nim) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-name').innerText = name;
+            document.getElementById('lightbox-nim').innerText = 'NIM: ' + nim;
+            const overlay = document.getElementById('lightbox-overlay');
+            overlay.style.display = 'flex';
+            setTimeout(() => overlay.classList.add('show'), 10);
+        }
+        function closeLightbox(e) {
+            if(e.target.id === 'lightbox-overlay' || e.target.closest('.lightbox-close')) {
+                const overlay = document.getElementById('lightbox-overlay');
+                overlay.classList.remove('show');
+                setTimeout(() => overlay.style.display = 'none', 300);
+            }
         }
 
         // Pengendali Autentikasi Pengguna
@@ -1052,6 +1177,7 @@
         var drawnItems = L.featureGroup().addTo(map);
         var selectedDrawnLayer = null;
 
+        // Pembaruan UI Daftar Hasil Digitasi
         function updateDigitizedList() {
             const listContainer = document.getElementById('digitized-list-container');
             const listUl = document.getElementById('digitized-list');
@@ -1065,17 +1191,17 @@
             
             listContainer.style.display = 'block';
             layers.forEach(layer => {
-                const id = layer._leaflet_id;
-                const nama = layer.feature?.properties?.nama || 'Objek Belum Diidentifikasi';
+                const id = drawnItems.getLayerId(layer);
+                const nama = layer.feature?.properties?.nama || 'Area Belum Teridentifikasi';
                 
                 const li = document.createElement('li');
                 li.style.cssText = 'display: flex; justify-content: space-between; align-items: center; background: white; padding: 8px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #cbd5e1; transition: var(--transition);';
                 
                 li.innerHTML = `
                     <span style="flex:1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--deep-navy); font-weight: 600; cursor:pointer;" onclick="focusDrawnLayer(${id})">${nama}</span>
-                    <div>
-                        <button onclick="downloadSingleDrawnData(${id})" style="background: var(--terracotta); color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 10px;" title="Unduh Spesifik"><i class="fa-solid fa-download"></i></button>
-                        <button onclick="deleteSingleDrawnData(${id})" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 10px; margin-left: 5px;" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                    <div style="display:flex; gap:5px;">
+                        <button onclick="downloadSingleDrawnData(${id})" style="background: var(--terracotta); color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 10px;" title="Unduh Objek Spesifik"><i class="fa-solid fa-download"></i></button>
+                        <button onclick="deleteSingleDrawnData(${id})" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 10px;" title="Hapus Objek"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
                 listUl.appendChild(li);
@@ -1110,7 +1236,11 @@
             layer.fire('click'); 
         });
 
-        map.on('pm:remove', function(e) { updateDigitizedList(); });
+        // Deteksi penghapusan objek via panel alat Leaflet-Geoman
+        map.on('pm:remove', function(e) { 
+            drawnItems.removeLayer(e.layer);
+            updateDigitizedList(); 
+        });
 
         function enableDrawPolygon() { map.pm.enableDraw('Polygon'); }
 
@@ -1131,7 +1261,7 @@
             alert("Data atribut telah sukses didaftarkan pada elemen spasial tersebut.");
         }
 
-        // Pengunduhan Objek Tunggal
+        // Pengunduhan Objek Spasial Tunggal
         function downloadSingleDrawnData(id) {
             const layer = drawnItems.getLayer(id);
             if (!layer) return;
@@ -1144,7 +1274,7 @@
             document.body.appendChild(dl); dl.click(); dl.remove();
         }
 
-        // Penghapusan Objek Tunggal
+        // Penghapusan Objek Spasial Tunggal
         function deleteSingleDrawnData(id) {
             const layer = drawnItems.getLayer(id);
             if (!layer) return;
