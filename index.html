@@ -280,10 +280,20 @@
         }
 
         /* --- TENTANG KAMI (TIM PENYUSUN) --- */
+        .team-leader-wrapper {
+            display: flex; justify-content: center; margin-bottom: 30px;
+        }
+        .team-leader-card {
+            width: 100%; max-width: 280px;
+        }
         .team-grid { 
             display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
-            gap: 30px; margin-top: 20px; 
+            gap: 30px; 
         }
+        @media (min-width: 992px) {
+            .team-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
         .team-card { 
             background: var(--white); border-radius: 15px; padding: 30px 20px; 
             text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
@@ -685,15 +695,17 @@
                     <h3 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--deep-navy); margin-bottom: 10px; text-align: center;" data-aos="fade-up" data-aos-delay="200">Tim Penyusun</h3>
                     <p style="text-align: center; color: var(--terracotta); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 40px;" data-aos="fade-up" data-aos-delay="300">Universitas Diponegoro</p>
                     
-                    <div class="team-grid" data-aos="fade-up" data-aos-delay="400">
-                        <div class="team-card" onclick="openLightbox('quinn.jpeg', 'Maharani Quinn Qonita', '40030623620004')">
+                    <div class="team-leader-wrapper" data-aos="fade-up" data-aos-delay="400">
+                        <div class="team-card team-leader-card" onclick="openLightbox('quinn.jpeg', 'Maharani Quinn Qonita', '40030623620004')">
                             <div class="team-img-wrapper">
                                 <img src="quinn.jpeg" alt="Maharani Quinn Qonita" class="team-img" onerror="this.src='https://via.placeholder.com/150?text=Foto'">
                             </div>
                             <h4>Maharani Quinn Qonita</h4>
                             <p>40030623620004</p>
                         </div>
+                    </div>
 
+                    <div class="team-grid" data-aos="fade-up" data-aos-delay="500">
                         <div class="team-card" onclick="openLightbox('wahyu.jpeg', 'Wahyu Sri Utomo', '40030623620012')">
                             <div class="team-img-wrapper">
                                 <img src="wahyu.jpeg" alt="Wahyu Sri Utomo" class="team-img" onerror="this.src='https://via.placeholder.com/150?text=Foto'">
