@@ -41,8 +41,13 @@
         html { scroll-behavior: smooth; }
         body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--soft-sand); color: var(--deep-navy); overflow-x: hidden; }
 
-        /* PERBAIKAN Z-INDEX NOTIFIKASI */
+        /* PERBAIKAN Z-INDEX DAN GAYA NOTIFIKASI ELEGAN */
         .swal2-container { z-index: 9999999 !important; }
+        .custom-toast { 
+            border-left: 4px solid var(--accent-gold) !important; 
+            border-radius: 8px !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3) !important;
+        }
 
         .logo-wrapper { display: flex; align-items: center; justify-content: center; }
         
@@ -262,8 +267,21 @@
         .legend-content::-webkit-scrollbar { width: 4px; }
         .legend-content::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 4px; }
 
-        /* Menyembunyikan Itinerary Label Routing Leaflet by default */
-        .leaflet-routing-container { background: var(--glass-bg); padding: 10px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); max-height: 40vh; overflow-y: auto;}
+        /* Panel Itinerary Routing (Didesain Elegan) */
+        .leaflet-routing-container { 
+            background: var(--glass-bg) !important; 
+            padding: 15px !important; 
+            border-radius: 12px !important; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important; 
+            max-height: 45vh !important; 
+            overflow-y: auto !important;
+            font-family: 'Inter', sans-serif !important;
+            color: var(--deep-navy) !important;
+            border: 1px solid rgba(255,255,255,0.5) !important;
+        }
+        .leaflet-routing-container h2, .leaflet-routing-container h3 {
+            color: var(--terracotta) !important;
+        }
         
         /* ======== TATA LETAK PERANGKAT SELULER (RESPONSIF) ======== */
         @media (max-width: 768px) {
@@ -855,13 +873,15 @@
     </script>
 
     <script>
-        // Pustaka Notifikasi Elegan (Override Z-Index via inline JS configuration)
+        // Pustaka Notifikasi Elegan (Override Z-Index dan Tema Custom)
         function showToast(message, iconType = 'success') {
             Swal.fire({
                 toast: true, position: 'top-end',
                 icon: iconType, title: message,
-                showConfirmButton: false, timer: 3000, timerProgressBar: true,
-                customClass: { container: 'swal2-container' }
+                showConfirmButton: false, timer: 4000, timerProgressBar: true,
+                background: 'var(--deep-navy)', color: 'var(--sand)',
+                iconColor: 'var(--gold)',
+                customClass: { popup: 'swal2-container custom-toast' }
             });
         }
 
@@ -1238,7 +1258,6 @@
 
                             const geojson = JSON.parse(upload.data);
                             const layer = L.geoJSON(geojson, { style: { color: '#8b5cf6', weight: 3, fillOpacity: 0.3 } }).addTo(map);
-                            layer.bindPopup(`<b>Data Referensi Cloud</b><br>${upload.fileName}`);
                             addLayerToManagement(layer, upload.fileName, true);
                         });
                         showToast(`Data spasial personal Anda dimuat dari Cloud.`, "info");
@@ -1283,6 +1302,7 @@
                 // PERBAIKAN BUG OMNIVORE KML
                 reader.onload = function(e) {
                     try {
+                        // Membaca XML string menjadi Leaflet layer menggunakan Omnivore secara sinkronus
                         const customLayer = omnivore.kml.parse(e.target.result);
                         customLayer.setStyle({ color: '#38bdf8', weight: 3, fillOpacity: 0.3 });
                         customLayer.addTo(map); 
@@ -1383,7 +1403,7 @@
             showToast("Pencarian diatur ulang.", "info");
         }
 
-        // --- SISTEM RUTE PERJALANAN ---
+        // --- SISTEM RUTE PERJALANAN (DIPERBAIKI) ---
         var routingControl = null;
         var routeStart = null; var routeEnd = null;
         var isSettingStart = false; var isSettingEnd = false;
@@ -1392,6 +1412,17 @@
         function startSetRoute(type) {
             if(type === 'start') { isSettingStart = true; isSettingEnd = false; showToast('Klik lokasi pada peta untuk menetapkan Titik Awal', 'info'); }
             if(type === 'end') { isSettingEnd = true; isSettingStart = false; showToast('Klik lokasi pada peta untuk menetapkan Titik Akhir', 'info'); }
+        }
+
+        // Fungsi khusus agar objek digitasi dapat diruting langsung
+        function setRouteDestFromPopup(lat, lng) {
+            routeEnd = L.latLng(lat, lng);
+            if(markerEnd) map.removeLayer(markerEnd);
+            markerEnd = L.marker(routeEnd).addTo(map).bindPopup("Titik Akhir (Objek)").openPopup();
+            showToast('Titik Akhir diarahkan ke objek ini.', 'success');
+            
+            if(routeStart) { updateRoute(); } 
+            else { showToast('Silakan tetapkan Titik Awal pada peta.', 'info'); isSettingStart = true; }
         }
 
         map.on('click', function(e) {
@@ -1413,7 +1444,7 @@
         function updateRoute() {
             if(routeStart && routeEnd) {
                 if(routingControl) map.removeControl(routingControl);
-                showToast('Sedang mengkalkulasi rute...', 'info');
+                showToast('Sedang mengkalkulasi rute melalui jalan terdekat...', 'info');
                 routingControl = L.Routing.control({
                     waypoints: [routeStart, routeEnd],
                     routeWhileDragging: true,
@@ -1423,12 +1454,12 @@
                     createMarker: function() { return null; }, 
                     lineOptions: { styles: [{color: '#e11d48', weight: 6, opacity: 0.8 }] },
                     router: L.Routing.osrmv1({
-                        serviceUrl: 'https://router.project-osrm.org/route/v1'
+                        serviceUrl: 'https://router.project-osrm.org/route/v1' // Penggunaan Peladen OSRM Publik
                     })
                 }).on('routesfound', function(e) {
                     showToast('Rute optimal berhasil ditemukan.', 'success');
                 }).on('routingerror', function(err) {
-                    showToast('Gagal memproses rute. Pastikan titik berada di dekat area jalan raya.', 'error');
+                    showToast('Gagal memproses rute. Pastikan titik berada di area jalan umum.', 'error');
                 }).addTo(map);
             }
         }
@@ -1439,6 +1470,153 @@
             if(markerEnd) { map.removeLayer(markerEnd); markerEnd = null; }
             routeStart = null; routeEnd = null; isSettingStart = false; isSettingEnd = false;
             showToast('Rute telah dibersihkan dari layar peta.', 'success');
+        }
+
+        // --- SISTEM DIGITASI DAN PENYIMPANAN ATRIBUT ---
+        var drawnItems = L.featureGroup().addTo(map);
+        var selectedDrawnLayer = null;
+
+        // Pembaruan UI Daftar Hasil Digitasi
+        function updateDigitizedList() {
+            const listContainer = document.getElementById('digitized-list-container');
+            const listUl = document.getElementById('digitized-list');
+            listUl.innerHTML = '';
+            
+            const layers = drawnItems.getLayers();
+            if (layers.length === 0) {
+                listContainer.style.display = 'none';
+                return;
+            }
+            
+            listContainer.style.display = 'block';
+            layers.forEach(layer => {
+                const id = drawnItems.getLayerId(layer);
+                const nama = layer.feature?.properties?.nama || 'Area Belum Teridentifikasi';
+                
+                const li = document.createElement('li');
+                li.style.cssText = 'display: flex; justify-content: space-between; align-items: center; background: white; padding: 8px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #cbd5e1; transition: var(--transition);';
+                
+                li.innerHTML = `
+                    <span style="flex:1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--deep-navy); font-weight: 600; cursor:pointer;" onclick="focusDrawnLayer(${id})">${nama}</span>
+                    <div style="display:flex; gap:5px;">
+                        <button onclick="downloadSingleDrawnData(${id})" style="background: var(--terracotta); color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 10px;" title="Unduh Objek Spesifik"><i class="fa-solid fa-download"></i></button>
+                        <button onclick="deleteSingleDrawnData(${id})" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 10px;" title="Hapus Objek"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                listUl.appendChild(li);
+            });
+        }
+
+        function focusDrawnLayer(id) {
+            const layer = drawnItems.getLayer(id);
+            if (layer) {
+                map.fitBounds(layer.getBounds(), { padding: [30, 30] });
+                layer.fire('click');
+            }
+        }
+
+        map.on('pm:create', function(e) {
+            var layer = e.layer;
+            layer.feature = layer.feature || { type: 'Feature', properties: {} };
+            drawnItems.addLayer(layer);
+            
+            layer.on('click', function(evt) {
+                selectedDrawnLayer = evt.target;
+                document.getElementById('digi-nama').value = layer.feature.properties.nama || '';
+                document.getElementById('digi-ket').value = layer.feature.properties.keterangan || '';
+                
+                drawnItems.eachLayer(l => l.setStyle({ color: '#c5a059', weight: 3, fillColor: '#c5a059' }));
+                layer.setStyle({ color: '#ff0000', weight: 4, fillColor: '#ff0000' });
+                
+                openSidebarTab('s-digitize', document.querySelectorAll('.s-tab')[3]);
+            });
+            
+            updateDigitizedList();
+            layer.fire('click'); 
+            showToast("Area selesai disketsa. Silakan isi form atribut di panel Analisis.", "info");
+        });
+
+        map.on('pm:remove', function(e) { 
+            drawnItems.removeLayer(e.layer);
+            updateDigitizedList(); 
+        });
+
+        function enableDrawPolygon() { map.pm.enableDraw('Polygon'); showToast("Silakan klik di area peta untuk mulai menggambar poligon.", "info"); }
+
+        function saveAttributes() {
+            if (!selectedDrawnLayer) return showToast("Pemilihan area diperlukan. Silakan klik pada poligon hasil digitasi di peta terlebih dahulu.", "warning");
+            
+            const nama = document.getElementById('digi-nama').value;
+            const ket = document.getElementById('digi-ket').value;
+            const center = selectedDrawnLayer.getBounds().getCenter();
+            
+            selectedDrawnLayer.feature.properties.nama = nama;
+            selectedDrawnLayer.feature.properties.keterangan = ket;
+            
+            // Pop-up dilengkapi tombol Rute Otomatis
+            selectedDrawnLayer.bindPopup(`
+                <div style="font-family:'Inter', sans-serif;">
+                    <b style="color:var(--deep-navy); font-size:14px;">${nama}</b>
+                    <hr style="border:0; border-top:1px solid #ccc; margin:5px 0;">
+                    <div style="font-size:12px; margin-bottom: 10px;">${ket}</div>
+                    <button onclick="setRouteDestFromPopup(${center.lat}, ${center.lng})" style="background:var(--terracotta); color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:10px; width:100%; font-weight:700;"><i class="fa-solid fa-route"></i> Rute ke Objek Ini</button>
+                </div>
+            `);
+            
+            selectedDrawnLayer.setStyle({ color: '#c5a059', weight: 3, fillColor: '#c5a059' }); 
+            selectedDrawnLayer = null;
+            document.getElementById('digi-nama').value = '';
+            document.getElementById('digi-ket').value = '';
+            
+            updateDigitizedList();
+            showToast("Data atribut telah sukses didaftarkan pada elemen spasial tersebut.", "success");
+        }
+
+        function downloadSingleDrawnData(id) {
+            const layer = drawnItems.getLayer(id);
+            if (!layer) return;
+            const data = layer.toGeoJSON();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+            const dl = document.createElement('a');
+            dl.href = dataStr;
+            let fileName = layer.feature?.properties?.nama ? layer.feature.properties.nama.replace(/\s+/g, '_') : 'Objek';
+            dl.download = `Digitasi_SIPET_${fileName}.geojson`;
+            document.body.appendChild(dl); dl.click(); dl.remove();
+            showToast(`Sedang mengunduh file ${fileName}...`, "info");
+        }
+
+        function deleteSingleDrawnData(id) {
+            const layer = drawnItems.getLayer(id);
+            if (!layer) return;
+            
+            Swal.fire({
+                title: 'Hapus elemen ini?', text: "Tindakan penghapusan ini bersifat permanen!", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#cbd5e1',
+                confirmButtonText: 'Ya, hapus!', cancelButtonText: 'Batal', customClass: { container: 'swal2-container' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    drawnItems.removeLayer(layer);
+                    map.removeLayer(layer);
+                    if (selectedDrawnLayer === layer) {
+                        selectedDrawnLayer = null;
+                        document.getElementById('digi-nama').value = '';
+                        document.getElementById('digi-ket').value = '';
+                    }
+                    updateDigitizedList();
+                    showToast("Elemen berhasil dihapus.", "success");
+                }
+            });
+        }
+
+        function downloadAllDrawnData() {
+            if (drawnItems.getLayers().length === 0) return showToast("Sistem mendeteksi belum adanya proses digitasi data pada kanvas peta.", "warning");
+            var data = drawnItems.toGeoJSON();
+            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+            var dl = document.createElement('a');
+            dl.href = dataStr;
+            dl.download = "Kompilasi_Digitasi_SIPET.geojson";
+            document.body.appendChild(dl); dl.click(); dl.remove();
+            showToast("Sedang mengunduh seluruh data kolektif digitasi.", "success");
         }
 
     </script>
