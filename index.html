@@ -23,7 +23,9 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
         :root {
             --deep-navy: #0a192f;
             --soft-sand: #fdf6e3;
@@ -39,8 +41,8 @@
         html { scroll-behavior: smooth; }
         body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--soft-sand); color: var(--deep-navy); overflow-x: hidden; }
 
-        /* PERBAIKAN BUG NOTIFIKASI TERTUTUP PETA */
-        .swal2-container { z-index: 99999 !important; }
+        /* PERBAIKAN Z-INDEX NOTIFIKASI */
+        .swal2-container { z-index: 9999999 !important; }
 
         .logo-wrapper { display: flex; align-items: center; justify-content: center; }
         
@@ -59,7 +61,7 @@
             100% { transform: rotate(-45deg) scale(1); }
         }
 
-        /* Tampilan Layar Masuk (Login) */
+        /* Layar Masuk (Login) */
         #login-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
             background: rgba(10, 25, 47, 0.85); backdrop-filter: blur(8px);
@@ -98,7 +100,7 @@
         .active-section { display: block; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- DASHBOARD BERANDA --- */
+        /* Dashboard Beranda */
         .hero { height: 75vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
         .hero-img { position: absolute; width: 100%; height: 100%; background: url('header.jpg') center/cover; filter: brightness(0.4); z-index: 0; transform: scale(1.05); transition: transform 10s ease-out; }
         .hero:hover .hero-img { transform: scale(1); }
@@ -317,7 +319,7 @@
         /* Lightbox Foto (Pop-up Gambar) */
         #lightbox-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
-            background: rgba(10, 25, 47, 0.9); z-index: 10000; 
+            background: rgba(10, 25, 47, 0.9); z-index: 100000; 
             display: none; align-items: center; justify-content: center; 
             opacity: 0; transition: opacity 0.3s ease; 
         }
@@ -616,6 +618,22 @@
                                         <input type="range" id="opacity-lsd" min="0" max="1" step="0.1" value="0.8" oninput="changeOpacity(lsdLayer, this.value, 'val-op-lsd')">
                                     </div>
                                 </div>
+
+                                <div class="control-group">
+                                    <hr style="border-top:1px solid rgba(0,0,0,0.1); margin:15px 0;">
+                                    <div class="control-title"><i class="fa-solid fa-cloud-arrow-up"></i> Data Referensi Eksternal (Unggahan)</div>
+                                    
+                                    <div class="upload-zone" onclick="document.getElementById('spatial-upload').click()">
+                                        <i class="fa-solid fa-file-import"></i>
+                                        <p>Klik di sini untuk menambahkan berkas spasial eksternal (.zip SHP, .kml, .geojson)</p>
+                                    </div>
+                                    <input type="file" id="spatial-upload" accept=".kml,.geojson,.zip" style="display: none;" onchange="loadSpatialData(event)">
+                                    
+                                    <div id="uploaded-layers-container" style="margin-top: 15px; display: none;">
+                                        <div style="font-size: 11px; font-weight: 700; color: var(--deep-navy); margin-bottom: 10px;">DAFTAR LAYER REFERENSI AKTIF:</div>
+                                        <ul id="uploaded-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px; max-height: 200px; overflow-y: auto;"></ul>
+                                    </div>
+                                </div>
                             </div>
 
                             <div id="s-search" class="s-panel">
@@ -687,22 +705,8 @@
                                     </div>
                                 </div>
                                 <div class="control-group">
-                                    <div class="control-title">Manajemen Berkas Spasial Cloud</div>
+                                    <div class="control-title">Manajemen Unduhan Kolektif</div>
                                     <button class="btn-map-action" onclick="downloadData()" style="background: var(--deep-navy);"><i class="fa-solid fa-file-zipper"></i> UNDUH DATA LAYER UTAMA (ZIP)</button>
-                                    
-                                    <div style="margin-top: 15px;">
-                                        <div class="upload-zone" onclick="document.getElementById('spatial-upload').click()">
-                                            <i class="fa-solid fa-cloud-arrow-up"></i>
-                                            <p>Klik di sini untuk mengunggah berkas spasial eksternal<br>(Mendukung format .zip SHP, .kml, .geojson)</p>
-                                            <p style="font-size: 9px; color: var(--terracotta); margin-top:5px;">*Data akan tersimpan ke cloud akun Anda secara permanen.</p>
-                                        </div>
-                                        <input type="file" id="spatial-upload" accept=".kml,.geojson,.zip" style="display: none;" onchange="loadSpatialData(event)">
-                                    </div>
-                                    
-                                    <div id="uploaded-layers-container" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px; display: none;">
-                                        <div style="font-size: 11px; font-weight: 700; color: var(--deep-navy); margin-bottom: 10px;">DAFTAR DATA REFERENSI UNGGAHAN:</div>
-                                        <ul id="uploaded-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px; max-height: 150px; overflow-y: auto;"></ul>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -851,13 +855,13 @@
     </script>
 
     <script>
-        // Pustaka Notifikasi Elegan
+        // Pustaka Notifikasi Elegan (Override Z-Index via inline JS configuration)
         function showToast(message, iconType = 'success') {
             Swal.fire({
                 toast: true, position: 'top-end',
                 icon: iconType, title: message,
                 showConfirmButton: false, timer: 3000, timerProgressBar: true,
-                customClass: { popup: 'swal2-container' }
+                customClass: { container: 'swal2-container' }
             });
         }
 
@@ -908,7 +912,6 @@
                         isUserLoggedIn = true;
                         document.getElementById('nav-login-btn').style.display = 'none';
                         document.getElementById('nav-logout-btn').style.display = 'inline-block';
-                        // Tarik data spasial milik user dari cloud Firestore
                         loadCloudUserData(user.uid);
                     } else {
                         isUserLoggedIn = false;
@@ -1042,7 +1045,7 @@
         function changeBase(val) { if(val === 'osm') { map.addLayer(osmMain); map.removeLayer(satelitMain); } else { map.addLayer(satelitMain); map.removeLayer(osmMain); } }
         function goHome() { map.setView(WUNUT_CENTER, DEFAULT_ZOOM); }
         var userMarker;
-        function findLocation() { map.locate({setView: true, maxZoom: 16}); showToast("Mencari lokasi Anda...", "info"); }
+        function findLocation() { map.locate({setView: true, maxZoom: 16}); showToast("Melacak titik lokasi Anda...", "info"); }
         map.on('locationfound', function(e) { if(userMarker) map.removeLayer(userMarker); userMarker = L.marker(e.latlng).addTo(map).bindPopup("Lokasi Anda Saat Ini").openPopup(); });
         function toggleFullScreen() { var elem = document.getElementById("peta"); if (!document.fullscreenElement) elem.requestFullscreen(); else document.exitFullscreen(); }
 
@@ -1055,12 +1058,19 @@
         const statusColors = { 'Hak Guna Bangunan': '#387cc3', 'Hak Guna Usaha': '#df8c54', 'Hak Milik': '#f6d246', 'Hak Pakai': '#50c15d', 'Jaringan Jalan': '#cb1b1d', 'Kosong': '#a07f6e', 'Sungai': '#355cf8' };
         const fungsiJalanColors = { 'Arteri': '#e11d48', 'Kolektor': '#f59e0b', 'Lokal': '#3b82f6', 'Lingkungan': '#10b981', 'Setapak': '#8b5cf6', 'Lainnya': '#94a3b8' };
         const zntColors = { '100000-200000': '#ffe6cc', '500000-1000000': '#c00000' };
-        const penggunaanColors = { 'Sawah': '#9acd32', 'Pemukiman': '#fa8072', 'Jalan': '#ff0000', 'Sungai': '#87cefa' }; // Disingkat
+        const penggunaanColors = { 'Sawah': '#9acd32', 'Pemukiman': '#fa8072', 'Jalan': '#ff0000', 'Sungai': '#87cefa' }; 
         const colorKp2b = '#4b5320'; 
         const colorLsd = '#90ee90'; 
 
         function getPropValue(properties, ...possibleKeys) { for (let key of possibleKeys) { if (properties[key] !== undefined) return properties[key]; for (let actualKey in properties) { if (actualKey.toLowerCase() === key.toLowerCase()) return properties[actualKey]; } } return '-'; }
-        function changeOpacity(layer, val, textId) { if(layer) { layer.setStyle({fillOpacity: val, opacity: val}); document.getElementById(textId).innerText = Math.round(val * 100) + '%'; } }
+        
+        function changeOpacity(layer, val, textId) { 
+            if(layer) { 
+                if(layer.setStyle) { layer.setStyle({fillOpacity: val, opacity: val}); }
+                else { layer.eachLayer(l => { if(l.setStyle) l.setStyle({fillOpacity: val, opacity: val}); }); }
+                if(document.getElementById(textId)) document.getElementById(textId).innerText = Math.round(val * 100) + '%'; 
+            } 
+        }
 
         function stylePolaRuang(feature) { let val = getPropValue(feature.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona'); return { fillColor: subZonaColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: 0.8 }; }
         function styleBidangTanah(feature) { let val = getPropValue(feature.properties, 'STATUS', 'Status', 'status'); return { fillColor: statusColors[val] || '#cccccc', weight: 1.2, opacity: 1, color: '#444444', fillOpacity: 0.8 }; }
@@ -1070,10 +1080,10 @@
         function styleKp2b(feature) { return { fillColor: colorKp2b, weight: 1.2, color: '#ffffff', fillOpacity: 0.8 }; }
         function styleLsd(feature) { return { fillColor: colorLsd, weight: 1.2, color: '#ffffff', fillOpacity: 0.8 }; }
 
-        // Penarikan Data (Fetch Data)
+        // Penarikan Data (Fetch Data Utama)
         fetch('polaruangwunutbaru.geojson').then(res => res.json()).then(data => { rawPolaRuangData = data; polaRuangLayer = L.geoJSON(data, { style: stylePolaRuang, onEachFeature: (f, l) => { l.bindPopup(`<b>Pola Ruang</b><br>Sub Zona: ${getPropValue(f.properties, 'SUB_ZONA')}`); l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); l.on('mouseout', e => polaRuangLayer.resetStyle(e.target)); } }); if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer); });
         fetch('bidangtanahwunut.geojson').then(res => res.json()).then(data => { rawBidangTanahData = data; bidangTanahLayer = L.geoJSON(data, { style: styleBidangTanah, onEachFeature: (f, l) => { l.bindPopup(`<b>Bidang Tanah</b><br>Status: ${getPropValue(f.properties, 'STATUS')}<br>Luas: ${getPropValue(f.properties, 'Luas')} m²`); l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); l.on('mouseout', e => bidangTanahLayer.resetStyle(e.target)); } }); if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer); });
-        fetch('jalanwunut.geojson').then(res => res.json()).then(data => { rawJalanData = data; jalanLayer = L.geoJSON(data, { style: styleJalan, onEachFeature: (f, l) => { l.bindPopup(`<b>Jaringan Jalan</b><br>Fungsi: ${getPropValue(f.properties, 'fungsi')}`); l.on('mouseover', e => e.target.setStyle({weight: 5, color: '#000'})); l.on('mouseout', e => jalanLayer.resetStyle(e.target)); } }); }); // Jalan sengaja tidak diceklis default di checkbox html
+        fetch('jalanwunut.geojson').then(res => res.json()).then(data => { rawJalanData = data; jalanLayer = L.geoJSON(data, { style: styleJalan, onEachFeature: (f, l) => { l.bindPopup(`<b>Jaringan Jalan</b><br>Fungsi: ${getPropValue(f.properties, 'fungsi')}`); l.on('mouseover', e => e.target.setStyle({weight: 5, color: '#000'})); l.on('mouseout', e => jalanLayer.resetStyle(e.target)); } }); }); 
         fetch('zntwunut.geojson').then(res => res.json()).then(data => { rawZntData = data; zntLayer = L.geoJSON(data, { style: styleZnt }); });
         fetch('penggunaanlahan.geojson').then(res => res.json()).then(data => { rawPenggunaanData = data; penggunaanLayer = L.geoJSON(data, { style: stylePenggunaan }); });
         fetch('kp2bwunut.geojson').then(res => res.json()).then(data => { rawKp2bData = data; kp2bLayer = L.geoJSON(data, { style: styleKp2b }); });
@@ -1093,80 +1103,205 @@
             renderLegend(); 
         }
 
-        // --- SISTEM RUTE PERJALANAN (LEAFLET ROUTING MACHINE) ---
-        var routingControl = null;
-        var routeStart = null; var routeEnd = null;
-        var isSettingStart = false; var isSettingEnd = false;
-        var markerStart = null; var markerEnd = null;
+        // --- SISTEM PEMBACAAN REFERENSI (SHP/KML/GeoJSON) & MANAJEMEN LAYER UNGGAHAN ---
+        var userUploadedLayers = {}; 
+        var uploadIdCounter = 0;
 
-        function startSetRoute(type) {
-            if(type === 'start') { isSettingStart = true; isSettingEnd = false; showToast('Silakan klik lokasi pada peta untuk menetapkan Titik Awal', 'info'); }
-            if(type === 'end') { isSettingEnd = true; isSettingStart = false; showToast('Silakan klik lokasi pada peta untuk menetapkan Titik Akhir', 'info'); }
+        function addLayerToManagement(layer, name, isCloud = false) {
+            let id = 'up_layer_' + uploadIdCounter++;
+            userUploadedLayers[id] = { layer: layer, name: name, isCloud: isCloud };
+            renderUploadedLayersList();
         }
 
-        map.on('click', function(e) {
-            if(isSettingStart) {
-                routeStart = e.latlng; isSettingStart = false; 
-                if(markerStart) map.removeLayer(markerStart);
-                markerStart = L.marker(routeStart).addTo(map).bindPopup("Titik Awal").openPopup();
-                showToast('Titik Awal berhasil ditetapkan.', 'success');
-                updateRoute();
-            } else if(isSettingEnd) {
-                routeEnd = e.latlng; isSettingEnd = false; 
-                if(markerEnd) map.removeLayer(markerEnd);
-                markerEnd = L.marker(routeEnd).addTo(map).bindPopup("Titik Akhir").openPopup();
-                showToast('Titik Akhir berhasil ditetapkan.', 'success');
-                updateRoute();
+        function renderUploadedLayersList() {
+            const container = document.getElementById('uploaded-layers-container');
+            const list = document.getElementById('uploaded-list');
+            list.innerHTML = '';
+            let hasLayers = false;
+
+            for (const [id, data] of Object.entries(userUploadedLayers)) {
+                hasLayers = true;
+                const li = document.createElement('li');
+                li.style.cssText = 'background: white; padding: 8px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #cbd5e1;';
+                
+                const headerDiv = document.createElement('div');
+                headerDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.style.cssText = 'font-weight: 600; color: var(--deep-navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;';
+                nameSpan.innerHTML = data.name + (data.isCloud ? " <i class='fa-solid fa-cloud' style='color:#0ea5e9; font-size:10px;' title='Tersimpan di Cloud'></i>" : "");
+
+                const controlsDiv = document.createElement('div');
+                controlsDiv.style.cssText = 'display: flex; gap: 5px; align-items: center;';
+                
+                const toggleCheck = document.createElement('input');
+                toggleCheck.type = 'checkbox';
+                toggleCheck.checked = map.hasLayer(data.layer);
+                toggleCheck.onchange = () => toggleUploadedLayer(id);
+                toggleCheck.title = "Sembunyikan/Tampilkan Layer";
+
+                const delBtn = document.createElement('button');
+                delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                delBtn.style.cssText = 'background: #ef4444; color: white; border: none; border-radius: 3px; padding: 3px 6px; cursor: pointer;';
+                delBtn.onclick = () => deleteUploadedLayer(id, data.name);
+                delBtn.title = "Hapus Layer Permanen";
+
+                controlsDiv.appendChild(toggleCheck);
+                controlsDiv.appendChild(delBtn);
+                headerDiv.appendChild(nameSpan);
+                headerDiv.appendChild(controlsDiv);
+
+                const opacityDiv = document.createElement('div');
+                opacityDiv.style.cssText = 'display: flex; align-items: center; gap: 5px; font-weight:600; color:var(--text-body);';
+                const opacityLabel = document.createElement('span'); opacityLabel.innerText = 'Opasitas:';
+                const opacitySlider = document.createElement('input');
+                opacitySlider.type = 'range'; opacitySlider.min = 0; opacitySlider.max = 1; opacitySlider.step = 0.1; opacitySlider.value = 0.8;
+                opacitySlider.style.width = '100%';
+                opacitySlider.oninput = (e) => changeUploadedLayerOpacity(id, e.target.value);
+
+                opacityDiv.appendChild(opacityLabel); opacityDiv.appendChild(opacitySlider);
+                li.appendChild(headerDiv); li.appendChild(opacityDiv); list.appendChild(li);
             }
-        });
-
-        function updateRoute() {
-            if(routeStart && routeEnd) {
-                if(routingControl) map.removeControl(routingControl);
-                showToast('Sedang mengkalkulasi rute...', 'info');
-                routingControl = L.Routing.control({
-                    waypoints: [routeStart, routeEnd],
-                    routeWhileDragging: true,
-                    language: 'id',
-                    show: false, // Menyembunyikan panel teks itinerary agar UI bersih
-                    addWaypoints: false,
-                    createMarker: function() { return null; }, // Custom marker sudah dibuat di klik event
-                    lineOptions: { styles: [{color: '#e11d48', weight: 6, opacity: 0.8 }] }
-                }).on('routesfound', function(e) {
-                    showToast('Rute optimal berhasil ditemukan.', 'success');
-                }).on('routingerror', function(err) {
-                    showToast('Gagal memproses rute. Pastikan titik berada di area jalan.', 'error');
-                }).addTo(map);
-            }
+            container.style.display = hasLayers ? 'block' : 'none';
         }
 
-        function clearRoute() {
-            if(routingControl) { map.removeControl(routingControl); routingControl = null; }
-            if(markerStart) { map.removeLayer(markerStart); markerStart = null; }
-            if(markerEnd) { map.removeLayer(markerEnd); markerEnd = null; }
-            routeStart = null; routeEnd = null; isSettingStart = false; isSettingEnd = false;
-            showToast('Rute telah dibersihkan dari layar peta.', 'success');
+        function toggleUploadedLayer(id) {
+            const layerData = userUploadedLayers[id]; if (!layerData) return;
+            if (map.hasLayer(layerData.layer)) { map.removeLayer(layerData.layer); } 
+            else { map.addLayer(layerData.layer); }
         }
 
-        // --- LEGENDA PETA ---
-        function toggleLegendPanel() {
-            const wrapper = document.getElementById('slide-legend'); 
-            wrapper.classList.toggle('open');
-            document.getElementById('legend-icon').className = wrapper.classList.contains('open') ? 'fa-solid fa-xmark' : 'fa-solid fa-list';
+        function changeUploadedLayerOpacity(id, val) {
+            const layerData = userUploadedLayers[id]; if (!layerData) return;
+            if(layerData.layer.setStyle) { layerData.layer.setStyle({ fillOpacity: val, opacity: val }); } 
+            else { layerData.layer.eachLayer(function(l) { if(l.setStyle) l.setStyle({ fillOpacity: val, opacity: val }); }); }
         }
 
-        function renderLegend() {
-            const legDiv = document.getElementById('legend-list-content'); legDiv.innerHTML = ''; 
-            const checks = { pola: document.getElementById('check-polaruang').checked, bidang: document.getElementById('check-bidangtanah').checked, jalan: document.getElementById('check-jalan').checked, znt: document.getElementById('check-znt').checked, penggunaan: document.getElementById('check-penggunaan').checked, kp2b: document.getElementById('check-kp2b').checked, lsd: document.getElementById('check-lsd').checked };
+        async function deleteUploadedLayer(id, fileName) {
+            Swal.fire({
+                title: 'Hapus layer referensi?', text: "Layer akan dihapus dari peta (dan database Cloud).", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#cbd5e1',
+                confirmButtonText: 'Ya, Hapus', customClass: { container: 'swal2-container' }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const layerData = userUploadedLayers[id];
+                    if (map.hasLayer(layerData.layer)) map.removeLayer(layerData.layer);
+                    delete userUploadedLayers[id];
+                    renderUploadedLayersList();
+                    
+                    if (isUserLoggedIn && window.firebaseAuth.currentUser) {
+                        try {
+                            const uid = window.firebaseAuth.currentUser.uid;
+                            const docRef = window.doc(window.firebaseDb, "users", uid);
+                            const docSnap = await window.getDoc(docRef);
+                            if (docSnap.exists()) {
+                                let uploads = docSnap.data().uploads || [];
+                                uploads = uploads.filter(u => u.fileName !== fileName);
+                                await window.setDoc(docRef, { uploads: uploads }, { merge: true });
+                            }
+                        } catch(e) { console.error("Cloud delete fail", e); }
+                    }
+                    showToast('Layer referensi dihapus.', 'success');
+                }
+            });
+        }
+
+        async function saveToCloud(uid, geojsonData, fileName) {
+            try {
+                const docRef = window.doc(window.firebaseDb, "users", uid);
+                const docSnap = await window.getDoc(docRef);
+                let uploads = docSnap.exists() ? docSnap.data().uploads || [] : [];
+                
+                if(uploads.find(u => u.fileName === fileName)) return; // Prevent duplicate
+
+                uploads.push({ fileName: fileName, data: JSON.stringify(geojsonData) });
+                await window.setDoc(docRef, { uploads: uploads }, { merge: true });
+                showToast(`Sinkronisasi Cloud berhasil: ${fileName}`, "success");
+                
+                for (const [id, data] of Object.entries(userUploadedLayers)) {
+                    if(data.name === fileName) { data.isCloud = true; renderUploadedLayersList(); break; }
+                }
+            } catch(e) { console.error(e); showToast('Gagal melakukan sinkronisasi ke server cloud.', 'error'); }
+        }
+
+        async function loadCloudUserData(uid) {
+            try {
+                const docRef = window.doc(window.firebaseDb, "users", uid);
+                const docSnap = await window.getDoc(docRef);
+                if (docSnap.exists()) {
+                    const uploads = docSnap.data().uploads || [];
+                    if(uploads.length > 0) {
+                        uploads.forEach(upload => {
+                            let alreadyLoaded = false;
+                            for(let k in userUploadedLayers) { if(userUploadedLayers[k].name === upload.fileName) alreadyLoaded = true; }
+                            if(alreadyLoaded) return;
+
+                            const geojson = JSON.parse(upload.data);
+                            const layer = L.geoJSON(geojson, { style: { color: '#8b5cf6', weight: 3, fillOpacity: 0.3 } }).addTo(map);
+                            layer.bindPopup(`<b>Data Referensi Cloud</b><br>${upload.fileName}`);
+                            addLayerToManagement(layer, upload.fileName, true);
+                        });
+                        showToast(`Data spasial personal Anda dimuat dari Cloud.`, "info");
+                    }
+                }
+            } catch(e) { console.error("Cloud load error", e); }
+        }
+
+        function loadSpatialData(event) {
+            const file = event.target.files[0]; if (!file) return;
+            const fileName = file.name.toLowerCase();
+            const reader = new FileReader();
+
+            showToast("Menganalisis file unggahan Anda...", "info");
+
+            if (fileName.endsWith('.zip')) {
+                reader.onload = function(e) {
+                    shp(e.target.result).then(function(geojson) {
+                        const shpLayer = L.geoJSON(geojson, { style: { color: '#0284c7', weight: 3, fillOpacity: 0.3 } }).addTo(map);
+                        map.fitBounds(shpLayer.getBounds(), { padding: [30, 30] });
+                        addLayerToManagement(shpLayer, file.name, false);
+                        showToast(`Shapefile '${file.name}' sukses diekstraksi.`, "success");
+                        if(isUserLoggedIn && window.firebaseAuth.currentUser) saveToCloud(window.firebaseAuth.currentUser.uid, geojson, file.name);
+                    }).catch(function(err) { showToast("Gagal memproses Shapefile. Format arsip .zip bermasalah.", "error"); });
+                };
+                reader.readAsArrayBuffer(file);
+            } 
+            else if (fileName.endsWith('.geojson') || fileName.endsWith('.json')) {
+                reader.onload = function(e) {
+                    try {
+                        const geojson = JSON.parse(e.target.result);
+                        const layer = L.geoJSON(geojson, { style: { color: '#10b981', weight: 3, fillOpacity: 0.3 } }).addTo(map);
+                        map.fitBounds(layer.getBounds(), { padding: [30, 30] });
+                        addLayerToManagement(layer, file.name, false);
+                        showToast(`File GeoJSON '${file.name}' berhasil dimuat.`, "success");
+                        if(isUserLoggedIn && window.firebaseAuth.currentUser) saveToCloud(window.firebaseAuth.currentUser.uid, geojson, file.name);
+                    } catch (error) { showToast("Sintaksis file GeoJSON yang Anda unggah tidak valid.", "error"); }
+                };
+                reader.readAsText(file);
+            } 
+            else if (fileName.endsWith('.kml')) {
+                // PERBAIKAN BUG OMNIVORE KML
+                reader.onload = function(e) {
+                    try {
+                        const customLayer = omnivore.kml.parse(e.target.result);
+                        customLayer.setStyle({ color: '#38bdf8', weight: 3, fillOpacity: 0.3 });
+                        customLayer.addTo(map); 
+                        map.fitBounds(customLayer.getBounds(), { padding: [30, 30] });
+                        addLayerToManagement(customLayer, file.name, false);
+                        showToast(`Berkas KML '${file.name}' sukses direfleksikan ke peta.`, "success");
+                        
+                        if(isUserLoggedIn && window.firebaseAuth.currentUser) {
+                            const kmlAsGeojson = customLayer.toGeoJSON();
+                            saveToCloud(window.firebaseAuth.currentUser.uid, kmlAsGeojson, file.name);
+                        }
+                    } catch (error) { showToast("Gagal membaca struktur KML.", "error"); }
+                };
+                reader.readAsText(file);
+            } 
+            else { showToast("Sistem hanya mendukung ekstensi arsip .zip (Shapefile), .geojson, dan .kml.", "error"); }
             
-            if (checks.pola) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:10px; font-weight:700;">POLA RUANG</div>`; for (const [key, color] of Object.entries(subZonaColors)) { if (key !== 'Lainnya') { legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; } } }
-            if (checks.bidang) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:15px; font-weight:700;">BIDANG TANAH</div>`; for (const [key, color] of Object.entries(statusColors)) legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; }
-            if (checks.jalan) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:15px; font-weight:700;">JARINGAN JALAN</div>`; for (const [key, color] of Object.entries(fungsiJalanColors)) legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; }
-            if (checks.znt) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:15px; font-weight:700;">ZNT</div>`; for (const [key, color] of Object.entries(zntColors)) legDiv.innerHTML += `<div class="legend-item"><div class="color-box" style="background:${color}"></div>${key}</div>`; }
-            if (checks.kp2b) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:15px; font-weight:700;">STATUS KP2B</div><div class="legend-item"><div class="color-box" style="background:${colorKp2b}"></div>Kawasan Pertanian Pangan Berkelanjutan</div>`; }
-            if (checks.lsd) { legDiv.innerHTML += `<div style="font-size:10px; color:#888; margin-top:15px; font-weight:700;">STATUS LSD</div><div class="legend-item"><div class="color-box" style="background:${colorLsd}"></div>Lahan Sawah Dilindungi</div>`; }
-            
-            if (!Object.values(checks).includes(true)) { legDiv.innerHTML = `<div style="font-size:11px; color:#888; margin-top:10px; text-align:center;">Belum ada lapisan data aktif.</div>`; }
+            // Reset input file agar bisa upload file yang sama lagi jika dihapus
+            event.target.value = '';
         }
 
         // --- SISTEM PENCARIAN ATRIBUT ---
@@ -1248,320 +1383,64 @@
             showToast("Pencarian diatur ulang.", "info");
         }
 
-        // --- SISTEM DIGITASI & PENYIMPANAN CLOUD ---
-        var drawnItems = L.featureGroup().addTo(map);
-        var selectedDrawnLayer = null;
+        // --- SISTEM RUTE PERJALANAN ---
+        var routingControl = null;
+        var routeStart = null; var routeEnd = null;
+        var isSettingStart = false; var isSettingEnd = false;
+        var markerStart = null; var markerEnd = null;
 
-        function updateDigitizedList() {
-            const listContainer = document.getElementById('digitized-list-container');
-            const listUl = document.getElementById('digitized-list'); listUl.innerHTML = '';
-            const layers = drawnItems.getLayers();
-            if (layers.length === 0) { listContainer.style.display = 'none'; return; }
-            listContainer.style.display = 'block';
-            layers.forEach(layer => {
-                const id = drawnItems.getLayerId(layer);
-                const nama = layer.feature?.properties?.nama || 'Area Belum Teridentifikasi';
-                const li = document.createElement('li');
-                li.style.cssText = 'display: flex; justify-content: space-between; align-items: center; background: white; padding: 8px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #cbd5e1;';
-                li.innerHTML = `
-                    <span style="flex:1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--deep-navy); font-weight: 600; cursor:pointer;" onclick="focusDrawnLayer(${id})">${nama}</span>
-                    <div style="display:flex; gap:5px;">
-                        <button onclick="downloadSingleDrawnData(${id})" style="background: var(--terracotta); color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 10px;" title="Unduh"><i class="fa-solid fa-download"></i></button>
-                        <button onclick="deleteSingleDrawnData(${id})" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 10px;" title="Hapus"><i class="fa-solid fa-trash"></i></button>
-                    </div>`;
-                listUl.appendChild(li);
-            });
+        function startSetRoute(type) {
+            if(type === 'start') { isSettingStart = true; isSettingEnd = false; showToast('Klik lokasi pada peta untuk menetapkan Titik Awal', 'info'); }
+            if(type === 'end') { isSettingEnd = true; isSettingStart = false; showToast('Klik lokasi pada peta untuk menetapkan Titik Akhir', 'info'); }
         }
 
-        function focusDrawnLayer(id) { const layer = drawnItems.getLayer(id); if (layer) { map.fitBounds(layer.getBounds(), { padding: [30, 30] }); layer.fire('click'); } }
-
-        map.on('pm:create', function(e) {
-            var layer = e.layer;
-            layer.feature = layer.feature || { type: 'Feature', properties: {} };
-            drawnItems.addLayer(layer);
-            layer.on('click', function(evt) {
-                selectedDrawnLayer = evt.target;
-                document.getElementById('digi-nama').value = layer.feature.properties.nama || '';
-                document.getElementById('digi-ket').value = layer.feature.properties.keterangan || '';
-                drawnItems.eachLayer(l => l.setStyle({ color: '#c5a059', weight: 3, fillColor: '#c5a059' }));
-                layer.setStyle({ color: '#ff0000', weight: 4, fillColor: '#ff0000' });
-                openSidebarTab('s-digitize', document.querySelectorAll('.s-tab')[3]);
-            });
-            updateDigitizedList(); layer.fire('click'); 
-            showToast("Area selesai disketsa. Silakan isi form atribut di sidebar.", "info");
+        map.on('click', function(e) {
+            if(isSettingStart) {
+                routeStart = e.latlng; isSettingStart = false; 
+                if(markerStart) map.removeLayer(markerStart);
+                markerStart = L.marker(routeStart).addTo(map).bindPopup("Titik Awal").openPopup();
+                showToast('Titik Awal berhasil ditetapkan.', 'success');
+                updateRoute();
+            } else if(isSettingEnd) {
+                routeEnd = e.latlng; isSettingEnd = false; 
+                if(markerEnd) map.removeLayer(markerEnd);
+                markerEnd = L.marker(routeEnd).addTo(map).bindPopup("Titik Akhir").openPopup();
+                showToast('Titik Akhir berhasil ditetapkan.', 'success');
+                updateRoute();
+            }
         });
 
-        map.on('pm:remove', function(e) { drawnItems.removeLayer(e.layer); updateDigitizedList(); });
-
-        function enableDrawPolygon() { map.pm.enableDraw('Polygon'); showToast('Gunakan kursor untuk mulai menggambar batas area poligon.', 'info'); }
-
-        function saveAttributes() {
-            if (!selectedDrawnLayer) return showToast("Mohon pilih area hasil digitasi di peta terlebih dahulu.", "warning");
-            selectedDrawnLayer.feature.properties.nama = document.getElementById('digi-nama').value;
-            selectedDrawnLayer.feature.properties.keterangan = document.getElementById('digi-ket').value;
-            selectedDrawnLayer.bindPopup(`<div style="font-family:'Inter', sans-serif;"><b style="color:var(--deep-navy); font-size:14px;">${selectedDrawnLayer.feature.properties.nama}</b><hr style="border:0; border-top:1px solid #ccc; margin:5px 0;"><div style="font-size:12px;">${selectedDrawnLayer.feature.properties.keterangan}</div></div>`);
-            selectedDrawnLayer.setStyle({ color: '#c5a059', weight: 3, fillColor: '#c5a059' }); 
-            selectedDrawnLayer = null; document.getElementById('digi-nama').value = ''; document.getElementById('digi-ket').value = '';
-            updateDigitizedList(); showToast("Data atribut sukses didaftarkan.", "success");
-        }
-
-        function downloadSingleDrawnData(id) {
-            const layer = drawnItems.getLayer(id); if (!layer) return;
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(layer.toGeoJSON()));
-            const dl = document.createElement('a'); dl.href = dataStr;
-            let fileName = layer.feature?.properties?.nama ? layer.feature.properties.nama.replace(/\s+/g, '_') : 'Objek';
-            dl.download = `Digitasi_${fileName}.geojson`;
-            document.body.appendChild(dl); dl.click(); dl.remove();
-            showToast("File sedang diunduh...", "success");
-        }
-
-        function deleteSingleDrawnData(id) {
-            const layer = drawnItems.getLayer(id); if (!layer) return;
-            Swal.fire({
-                title: 'Hapus elemen ini?', text: "Tindakan penghapusan ini bersifat permanen!", icon: 'warning',
-                showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#cbd5e1',
-                confirmButtonText: 'Ya, hapus!', cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    drawnItems.removeLayer(layer); map.removeLayer(layer);
-                    if (selectedDrawnLayer === layer) { selectedDrawnLayer = null; document.getElementById('digi-nama').value = ''; document.getElementById('digi-ket').value = ''; }
-                    updateDigitizedList(); showToast("Elemen berhasil dihapus.", "success");
-                }
-            });
-        }
-
-        function downloadAllDrawnData() {
-            if (drawnItems.getLayers().length === 0) return showToast("Belum ada data digitasi area pada layar.", "warning");
-            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(drawnItems.toGeoJSON()));
-            var dl = document.createElement('a'); dl.href = dataStr; dl.download = "Kompilasi_Digitasi_SIPET.geojson";
-            document.body.appendChild(dl); dl.click(); dl.remove();
-            showToast("Seluruh daftar hasil digitasi sedang diunduh.", "success");
-        }
-
-        function downloadData() {
-            const layersToDownload = [];
-            if (document.getElementById('check-polaruang').checked && rawPolaRuangData) layersToDownload.push({name: "Pola_Ruang_Wunut.geojson", data: rawPolaRuangData});
-            if (document.getElementById('check-bidangtanah').checked && rawBidangTanahData) layersToDownload.push({name: "Bidang_Tanah_Wunut.geojson", data: rawBidangTanahData});
-            if (document.getElementById('check-jalan').checked && rawJalanData) layersToDownload.push({name: "Jaringan_Jalan_Wunut.geojson", data: rawJalanData});
-            if (document.getElementById('check-znt').checked && rawZntData) layersToDownload.push({name: "ZNT_Wunut.geojson", data: rawZntData});
-            if (document.getElementById('check-penggunaan').checked && rawPenggunaanData) layersToDownload.push({name: "Penggunaan_Lahan_Wunut.geojson", data: rawPenggunaanData});
-            if (document.getElementById('check-kp2b').checked && rawKp2bData) layersToDownload.push({name: "KP2B_Wunut.geojson", data: rawKp2bData});
-            if (document.getElementById('check-lsd').checked && rawLsdData) layersToDownload.push({name: "LSD_Wunut.geojson", data: rawLsdData});
-
-            if (layersToDownload.length === 0) return showToast("Silakan aktifkan minimal satu kotak centang Layer.", "warning");
-            if (layersToDownload.length === 1) {
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(layersToDownload[0].data));
-                const dl = document.createElement('a'); dl.href = dataStr; dl.download = layersToDownload[0].name;
-                document.body.appendChild(dl); dl.click(); dl.remove();
-                showToast(`File ${layersToDownload[0].name} sedang diunduh.`, "success");
-            } else {
-                showToast(`Memproses kompresi ZIP untuk ${layersToDownload.length} berkas...`, "info");
-                var zip = new JSZip();
-                layersToDownload.forEach(layer => { zip.file(layer.name, JSON.stringify(layer.data)); });
-                zip.generateAsync({type:"blob"}).then(function(content) { saveAs(content, "Data_Kolektif_Spasial_Wunut.zip"); });
+        function updateRoute() {
+            if(routeStart && routeEnd) {
+                if(routingControl) map.removeControl(routingControl);
+                showToast('Sedang mengkalkulasi rute...', 'info');
+                routingControl = L.Routing.control({
+                    waypoints: [routeStart, routeEnd],
+                    routeWhileDragging: true,
+                    language: 'id',
+                    show: false, // Disembunyikan agar UI bersih
+                    addWaypoints: false,
+                    createMarker: function() { return null; }, 
+                    lineOptions: { styles: [{color: '#e11d48', weight: 6, opacity: 0.8 }] },
+                    router: L.Routing.osrmv1({
+                        serviceUrl: 'https://router.project-osrm.org/route/v1'
+                    })
+                }).on('routesfound', function(e) {
+                    showToast('Rute optimal berhasil ditemukan.', 'success');
+                }).on('routingerror', function(err) {
+                    showToast('Gagal memproses rute. Pastikan titik berada di dekat area jalan raya.', 'error');
+                }).addTo(map);
             }
         }
 
-        // --- SISTEM PEMBACAAN REFERENSI (SHP/KML/GeoJSON) & MANAJEMEN LAYER CLOUD ---
-        var userUploadedLayers = {}; 
-        var uploadIdCounter = 0;
-
-        function addLayerToManagement(layer, name, isCloud = false) {
-            let id = 'up_layer_' + uploadIdCounter++;
-            userUploadedLayers[id] = { layer: layer, name: name, isCloud: isCloud };
-            renderUploadedLayersList();
+        function clearRoute() {
+            if(routingControl) { map.removeControl(routingControl); routingControl = null; }
+            if(markerStart) { map.removeLayer(markerStart); markerStart = null; }
+            if(markerEnd) { map.removeLayer(markerEnd); markerEnd = null; }
+            routeStart = null; routeEnd = null; isSettingStart = false; isSettingEnd = false;
+            showToast('Rute telah dibersihkan dari layar peta.', 'success');
         }
 
-        function renderUploadedLayersList() {
-            const container = document.getElementById('uploaded-layers-container');
-            const list = document.getElementById('uploaded-list');
-            list.innerHTML = '';
-            let hasLayers = false;
-
-            for (const [id, data] of Object.entries(userUploadedLayers)) {
-                hasLayers = true;
-                const li = document.createElement('li');
-                li.style.cssText = 'background: white; padding: 8px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #cbd5e1;';
-                
-                const headerDiv = document.createElement('div');
-                headerDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;';
-                
-                const nameSpan = document.createElement('span');
-                nameSpan.style.cssText = 'font-weight: 600; color: var(--deep-navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;';
-                nameSpan.innerHTML = data.name + (data.isCloud ? " <i class='fa-solid fa-cloud' style='color:#0ea5e9; font-size:10px;' title='Tersimpan di Cloud'></i>" : "");
-
-                const controlsDiv = document.createElement('div');
-                controlsDiv.style.cssText = 'display: flex; gap: 5px; align-items: center;';
-                
-                const toggleCheck = document.createElement('input');
-                toggleCheck.type = 'checkbox';
-                toggleCheck.checked = map.hasLayer(data.layer);
-                toggleCheck.onchange = () => toggleUploadedLayer(id);
-                toggleCheck.title = "Sembunyikan/Tampilkan Layer";
-
-                const delBtn = document.createElement('button');
-                delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
-                delBtn.style.cssText = 'background: #ef4444; color: white; border: none; border-radius: 3px; padding: 3px 6px; cursor: pointer;';
-                delBtn.onclick = () => deleteUploadedLayer(id, data.name);
-                delBtn.title = "Hapus Layer Permanen";
-
-                controlsDiv.appendChild(toggleCheck);
-                controlsDiv.appendChild(delBtn);
-                headerDiv.appendChild(nameSpan);
-                headerDiv.appendChild(controlsDiv);
-
-                const opacityDiv = document.createElement('div');
-                opacityDiv.style.cssText = 'display: flex; align-items: center; gap: 5px; font-weight:600; color:var(--text-body);';
-                const opacityLabel = document.createElement('span'); opacityLabel.innerText = 'Opasitas:';
-                const opacitySlider = document.createElement('input');
-                opacitySlider.type = 'range'; opacitySlider.min = 0; opacitySlider.max = 1; opacitySlider.step = 0.1; opacitySlider.value = 0.8;
-                opacitySlider.style.width = '100%';
-                opacitySlider.oninput = (e) => changeUploadedLayerOpacity(id, e.target.value);
-
-                opacityDiv.appendChild(opacityLabel); opacityDiv.appendChild(opacitySlider);
-                li.appendChild(headerDiv); li.appendChild(opacityDiv); list.appendChild(li);
-            }
-            container.style.display = hasLayers ? 'block' : 'none';
-        }
-
-        function toggleUploadedLayer(id) {
-            const layerData = userUploadedLayers[id]; if (!layerData) return;
-            if (map.hasLayer(layerData.layer)) { map.removeLayer(layerData.layer); } 
-            else { map.addLayer(layerData.layer); }
-        }
-
-        function changeUploadedLayerOpacity(id, val) {
-            const layerData = userUploadedLayers[id]; if (!layerData) return;
-            if(layerData.layer.setStyle) { layerData.layer.setStyle({ fillOpacity: val, opacity: val }); } 
-            else { layerData.layer.eachLayer(function(l) { if(l.setStyle) l.setStyle({ fillOpacity: val, opacity: val }); }); }
-        }
-
-        async function deleteUploadedLayer(id, fileName) {
-            Swal.fire({
-                title: 'Hapus layer referensi?', text: "Layer akan dihapus dari peta (dan database Cloud).", icon: 'warning',
-                showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#cbd5e1',
-                confirmButtonText: 'Ya, Hapus'
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    const layerData = userUploadedLayers[id];
-                    if (map.hasLayer(layerData.layer)) map.removeLayer(layerData.layer);
-                    delete userUploadedLayers[id];
-                    renderUploadedLayersList();
-                    
-                    if (isUserLoggedIn && window.firebaseAuth.currentUser) {
-                        try {
-                            const uid = window.firebaseAuth.currentUser.uid;
-                            const docRef = window.doc(window.firebaseDb, "users", uid);
-                            const docSnap = await window.getDoc(docRef);
-                            if (docSnap.exists()) {
-                                let uploads = docSnap.data().uploads || [];
-                                uploads = uploads.filter(u => u.fileName !== fileName);
-                                await window.setDoc(docRef, { uploads: uploads }, { merge: true });
-                            }
-                        } catch(e) { console.error("Cloud delete fail", e); }
-                    }
-                    showToast('Layer referensi dihapus.', 'success');
-                }
-            });
-        }
-
-        async function saveToCloud(uid, geojsonData, fileName) {
-            try {
-                const docRef = window.doc(window.firebaseDb, "users", uid);
-                const docSnap = await window.getDoc(docRef);
-                let uploads = docSnap.exists() ? docSnap.data().uploads || [] : [];
-                
-                // Cek agar tidak duplikat
-                if(uploads.find(u => u.fileName === fileName)) return;
-
-                uploads.push({ fileName: fileName, data: JSON.stringify(geojsonData) });
-                await window.setDoc(docRef, { uploads: uploads }, { merge: true });
-                showToast(`Sinkronisasi Cloud berhasil: ${fileName}`, "success");
-                
-                // Update label to show cloud icon
-                for (const [id, data] of Object.entries(userUploadedLayers)) {
-                    if(data.name === fileName) { data.isCloud = true; renderUploadedLayersList(); break; }
-                }
-            } catch(e) { console.error(e); showToast('Gagal melakukan sinkronisasi ke server cloud.', 'error'); }
-        }
-
-        async function loadCloudUserData(uid) {
-            try {
-                const docRef = window.doc(window.firebaseDb, "users", uid);
-                const docSnap = await window.getDoc(docRef);
-                if (docSnap.exists()) {
-                    const uploads = docSnap.data().uploads || [];
-                    if(uploads.length > 0) {
-                        uploads.forEach(upload => {
-                            // Cegah double load jika refresh
-                            let alreadyLoaded = false;
-                            for(let k in userUploadedLayers) { if(userUploadedLayers[k].name === upload.fileName) alreadyLoaded = true; }
-                            if(alreadyLoaded) return;
-
-                            const geojson = JSON.parse(upload.data);
-                            const layer = L.geoJSON(geojson, { style: { color: '#8b5cf6', weight: 3, fillOpacity: 0.3 } }).addTo(map);
-                            layer.bindPopup(`<b>Data Referensi Cloud</b><br>${upload.fileName}`);
-                            addLayerToManagement(layer, upload.fileName, true);
-                        });
-                        showToast(`Data spasial personal Anda dimuat dari Cloud.`, "info");
-                    }
-                }
-            } catch(e) { console.error("Cloud load error", e); }
-        }
-
-        function loadSpatialData(event) {
-            const file = event.target.files[0]; if (!file) return;
-            const fileName = file.name.toLowerCase();
-            const reader = new FileReader();
-
-            showToast("Menganalisis file unggahan Anda...", "info");
-
-            if (fileName.endsWith('.zip')) {
-                reader.onload = function(e) {
-                    shp(e.target.result).then(function(geojson) {
-                        const shpLayer = L.geoJSON(geojson, { style: { color: '#0284c7', weight: 3, fillOpacity: 0.3 } }).addTo(map);
-                        map.fitBounds(shpLayer.getBounds(), { padding: [30, 30] });
-                        addLayerToManagement(shpLayer, file.name, false);
-                        showToast(`Shapefile '${file.name}' sukses diekstraksi.`, "success");
-                        if(isUserLoggedIn && window.firebaseAuth.currentUser) saveToCloud(window.firebaseAuth.currentUser.uid, geojson, file.name);
-                    }).catch(function(err) { showToast("Gagal memproses Shapefile. Format arsip .zip bermasalah.", "error"); });
-                };
-                reader.readAsArrayBuffer(file);
-            } 
-            else if (fileName.endsWith('.geojson') || fileName.endsWith('.json')) {
-                reader.onload = function(e) {
-                    try {
-                        const geojson = JSON.parse(e.target.result);
-                        const layer = L.geoJSON(geojson, { style: { color: '#10b981', weight: 3, fillOpacity: 0.3 } }).addTo(map);
-                        map.fitBounds(layer.getBounds(), { padding: [30, 30] });
-                        addLayerToManagement(layer, file.name, false);
-                        showToast(`File GeoJSON '${file.name}' berhasil dimuat.`, "success");
-                        if(isUserLoggedIn && window.firebaseAuth.currentUser) saveToCloud(window.firebaseAuth.currentUser.uid, geojson, file.name);
-                    } catch (error) { showToast("Sintaksis file GeoJSON yang Anda unggah tidak valid.", "error"); }
-                };
-                reader.readAsText(file);
-            } 
-            else if (fileName.endsWith('.kml')) {
-                reader.onload = function(e) {
-                    try {
-                        const customLayer = omnivore.kml.parse(e.target.result);
-                        customLayer.on('ready', function() {
-                            customLayer.setStyle({ color: '#38bdf8', weight: 3, fillOpacity: 0.3 });
-                            map.fitBounds(customLayer.getBounds(), { padding: [30, 30] });
-                            addLayerToManagement(customLayer, file.name, false);
-                            showToast(`File KML '${file.name}' sukses direfleksikan ke peta.`, "success");
-                            if(isUserLoggedIn && window.firebaseAuth.currentUser) {
-                                const kmlAsGeojson = customLayer.toGeoJSON();
-                                saveToCloud(window.firebaseAuth.currentUser.uid, kmlAsGeojson, file.name);
-                            }
-                        });
-                        customLayer.addTo(map);
-                    } catch (error) { showToast("Gagal membaca struktur KML.", "error"); }
-                };
-                reader.readAsText(file);
-            } 
-            else { showToast("Sistem hanya mendukung ekstensi arsip .zip (Shapefile), .geojson, dan .kml.", "error"); }
-        }
     </script>
 </body>
 </html>
