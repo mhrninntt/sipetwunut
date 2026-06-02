@@ -44,15 +44,15 @@
         /* PERBAIKAN NOTIFIKASI: FLOAT TENGAH ATAS, KECIL, ELEGAN & CEPAT HILANG */
         .swal2-container { z-index: 9999999 !important; }
         .custom-toast-center { 
-            padding: 10px 20px !important; 
-            font-size: 14px !important;
-            border-radius: 8px !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+            padding: 8px 16px !important; 
+            font-size: 13px !important;
+            border-radius: 30px !important;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15) !important;
             background: #ffffff !important;
             color: var(--deep-navy) !important;
-            border-left: 4px solid var(--accent-gold) !important;
+            border: 1px solid var(--accent-gold) !important;
             width: auto !important;
-            max-width: 400px !important;
+            margin-top: 10px !important;
         }
 
         .logo-wrapper { display: flex; align-items: center; justify-content: center; }
@@ -650,11 +650,9 @@
                                     </div>
                                     <input type="file" id="spatial-upload" accept=".kml,.geojson,.zip" style="display: none;" onchange="loadSpatialData(event)">
                                     
-                                    <div id="uploaded-layers-container" style="margin-top: 15px;">
+                                    <div id="uploaded-layers-container" style="margin-top: 15px; display: none;">
                                         <div style="font-size: 11px; font-weight: 700; color: var(--deep-navy); margin-bottom: 10px;">DAFTAR LAYER REFERENSI AKTIF:</div>
-                                        <ul id="uploaded-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px; max-height: 200px; overflow-y: auto;">
-                                            <li style="padding: 10px; text-align: center; color: var(--text-body); font-style: italic; background: rgba(0,0,0,0.02); border-radius: 4px;">Belum ada data referensi yang diunggah.</li>
-                                        </ul>
+                                        <ul id="uploaded-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px; max-height: 200px; overflow-y: auto;"></ul>
                                     </div>
                                 </div>
                             </div>
@@ -899,13 +897,13 @@
     </script>
 
     <script>
-        // PUSTAKA NOTIFIKASI ELEGAN (Diperbaiki Z-Index & Posisi Float Top, Cepat Hilang)
+        // PUSTAKA NOTIFIKASI ELEGAN (Perbaikan Desain Float Tengah Atas Cepat Hilang)
         function showToast(message, iconType = 'success') {
             Swal.fire({
-                toast: true, position: 'top', // Melayang di tengah atas
+                toast: true, position: 'top', 
                 icon: iconType, title: message,
-                showConfirmButton: false, timer: 1500, timerProgressBar: false,
-                background: 'var(--white)', color: 'var(--deep-navy)',
+                showConfirmButton: false, timer: 2000, timerProgressBar: false,
+                background: '#ffffff', color: 'var(--deep-navy)',
                 customClass: { popup: 'swal2-container custom-toast-center' }
             });
         }
@@ -1148,7 +1146,7 @@
             renderLegend(); 
         }
 
-        // --- SISTEM PEMBACAAN REFERENSI (SHP/KML/GeoJSON) & MANAJEMEN LAYER UNGGAHAN ---
+        // --- SISTEM PEMBACAAN REFERENSI & MANAJEMEN LAYER UNGGAHAN ---
         var userUploadedLayers = {}; 
         var uploadIdCounter = 0;
 
@@ -1175,7 +1173,6 @@
                 const nameSpan = document.createElement('span');
                 nameSpan.style.cssText = 'font-weight: 600; color: var(--deep-navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; cursor: pointer;';
                 nameSpan.innerHTML = data.name + (data.isCloud ? " <i class='fa-solid fa-cloud' style='color:#0ea5e9; font-size:10px;' title='Tersimpan di Cloud'></i>" : "");
-                // Klik nama layer untuk zoom
                 nameSpan.onclick = () => { if(map.hasLayer(data.layer)) map.fitBounds(data.layer.getBounds(), {padding:[30,30]}); };
 
                 const controlsDiv = document.createElement('div');
@@ -1264,16 +1261,15 @@
                 const docSnap = await window.getDoc(docRef);
                 let uploads = docSnap.exists() ? docSnap.data().uploads || [] : [];
                 
-                if(uploads.find(u => u.fileName === fileName)) return; // Prevent duplicate
+                if(uploads.find(u => u.fileName === fileName)) return;
 
                 uploads.push({ fileName: fileName, data: JSON.stringify(geojsonData) });
                 await window.setDoc(docRef, { uploads: uploads }, { merge: true });
-                showToast(`Sinkronisasi Cloud berhasil: ${fileName}`, "success");
                 
                 for (const [id, data] of Object.entries(userUploadedLayers)) {
                     if(data.name === fileName) { data.isCloud = true; renderUploadedLayersList(); break; }
                 }
-            } catch(e) { console.error(e); showToast('Gagal melakukan sinkronisasi ke server cloud.', 'error'); }
+            } catch(e) { console.error(e); }
         }
 
         async function loadCloudUserData(uid) {
@@ -1335,23 +1331,24 @@
                 reader.onload = function(e) {
                     try {
                         const customLayer = omnivore.kml.parse(e.target.result);
-                        customLayer.setStyle({ color: '#38bdf8', weight: 3, fillOpacity: 0.3 });
-                        customLayer.addTo(map); 
-                        map.fitBounds(customLayer.getBounds(), { padding: [30, 30] });
-                        addLayerToManagement(customLayer, file.name, false);
-                        showToast(`Berkas KML '${file.name}' sukses direfleksikan ke peta.`, "success");
-                        
-                        if(isUserLoggedIn && window.firebaseAuth.currentUser) {
-                            const kmlAsGeojson = customLayer.toGeoJSON();
-                            saveToCloud(window.firebaseAuth.currentUser.uid, kmlAsGeojson, file.name);
-                        }
+                        customLayer.on('ready', function() {
+                            customLayer.setStyle({ color: '#38bdf8', weight: 3, fillOpacity: 0.3 });
+                            map.fitBounds(customLayer.getBounds(), { padding: [30, 30] });
+                            addLayerToManagement(customLayer, file.name, false);
+                            showToast(`Berkas KML '${file.name}' sukses direfleksikan ke peta.`, "success");
+                            
+                            if(isUserLoggedIn && window.firebaseAuth.currentUser) {
+                                const kmlAsGeojson = customLayer.toGeoJSON();
+                                saveToCloud(window.firebaseAuth.currentUser.uid, kmlAsGeojson, file.name);
+                            }
+                        });
+                        customLayer.addTo(map);
                     } catch (error) { showToast("Gagal mengurai file KML. Format XML tidak standar.", "error"); }
                 };
                 reader.readAsText(file);
             } 
             else { showToast("Sistem hanya mendukung ekstensi arsip .zip (Shapefile), .geojson, dan .kml.", "error"); }
             
-            // Reset input file agar bisa upload file yang sama lagi jika dihapus
             event.target.value = '';
         }
 
@@ -1437,14 +1434,14 @@
             showToast("Pencarian diatur ulang.", "info");
         }
 
-        // --- SISTEM RUTE PERJALANAN (Routing Machine dengan UI Bersih & Aman OSRM) ---
+        // --- SISTEM RUTE PERJALANAN (ANTI-GAGAL DENGAN FALLBACK JALUR LURUS/UDARA JIKA OSRM MATI) ---
         var routingControl = null;
         var routeStart = null; var routeEnd = null;
         var isSettingStart = false; var isSettingEnd = false;
         var markerStart = null; var markerEnd = null;
+        var fallbackPolyline = null; // Menyimpan garis rute manual jika server OSRM down
 
         function startSetRoute(type) {
-            // Ubah gaya tombol untuk menandakan sedang aktif
             document.getElementById('btn-set-start').classList.remove('active');
             document.getElementById('btn-set-end').classList.remove('active');
             
@@ -1461,9 +1458,7 @@
         }
 
         function useMyLocation(type) {
-            if (!navigator.geolocation) {
-                return showToast("Browser tidak mendukung geolokasi", "error");
-            }
+            if (!navigator.geolocation) { return showToast("Browser tidak mendukung geolokasi", "error"); }
             showToast("Melacak lokasi Anda...", "info");
             navigator.geolocation.getCurrentPosition(position => {
                 const latlng = L.latLng(position.coords.latitude, position.coords.longitude);
@@ -1481,12 +1476,9 @@
                     showToast("Titik tujuan menggunakan lokasi Anda", "success");
                 }
                 map.setView(latlng, 16);
-            }, () => {
-                showToast("Gagal melacak lokasi. Mohon izinkan akses lokasi browser.", "error");
-            });
+            }, () => { showToast("Gagal melacak lokasi. Mohon izinkan akses lokasi browser.", "error"); });
         }
 
-        // Fungsi khusus agar objek digitasi dapat diruting langsung dari popup
         function setRouteDestFromPopup(lat, lng) {
             routeEnd = L.latLng(lat, lng);
             if(markerEnd) map.removeLayer(markerEnd);
@@ -1494,10 +1486,7 @@
             document.getElementById('route-end-display').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
             showToast('Titik Tujuan diarahkan ke objek ini.', 'success');
             
-            // Buka tab rute agar user tahu
             openSidebarTab('s-route', document.querySelectorAll('.s-tab')[2]);
-            
-            // Autocalculate if start exists
             if(routeStart) { calculateRouteNow(); } 
         }
 
@@ -1519,14 +1508,16 @@
             }
         });
 
+        // FUNGSI ROUTING ANTI GAGAL
         function calculateRouteNow() {
             if(!routeStart || !routeEnd) {
                 return showToast('Mohon lengkapi Titik Awal (A) dan Titik Tujuan (B).', 'warning');
             }
             
             if(routingControl) map.removeControl(routingControl);
+            if(fallbackPolyline) map.removeLayer(fallbackPolyline);
             
-            showToast('Mencari alternatif rute jalan terdekat...', 'info');
+            showToast('Mencari alternatif rute jalan terdekat (OSRM)...', 'info');
             document.getElementById('itinerary-box').innerHTML = '<div style="text-align:center; padding:20px;"><i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--terracotta);"></i><br><br>Menghitung jarak dan kalkulasi rute...</div>';
             
             try {
@@ -1534,7 +1525,7 @@
                     waypoints: [routeStart, routeEnd],
                     routeWhileDragging: false,
                     language: 'id',
-                    show: false, // UI Kustom via Sidebar
+                    show: false, // Sembunyikan default UI agar pakai custom
                     addWaypoints: false,
                     fitSelectedRoutes: true,
                     showAlternatives: true, 
@@ -1542,7 +1533,7 @@
                     altLineOptions: { styles: [{color: '#94a3b8', weight: 4, opacity: 0.6 }] },
                     createMarker: function() { return null; }, 
                     router: L.Routing.osrmv1({
-                        serviceUrl: 'https://router.project-osrm.org/route/v1'
+                        serviceUrl: 'https://router.project-osrm.org/route/v1' // Server Default
                     })
                 }).on('routesfound', function(e) {
                     try {
@@ -1551,11 +1542,11 @@
                         var distance = (summary.totalDistance / 1000).toFixed(2); 
                         var time = Math.round(summary.totalTime / 60); 
                         
-                        showToast(`Jarak optimal: ${distance} KM (Est. Waktu: ${time} menit).`, 'success');
+                        showToast(`Rute Jalan ditemukan: ${distance} KM.`, 'success');
                         
                         var instrs = routes[0].instructions || [];
                         var html = `<div style="background: #f0fdf4; border:1px solid #86efac; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-                                        <div style="font-weight: 800; color: #166534; font-size:14px; margin-bottom:5px;"><i class="fa-solid fa-car"></i> Rute Optimal Ditemukan</div>
+                                        <div style="font-weight: 800; color: #166534; font-size:14px; margin-bottom:5px;"><i class="fa-solid fa-car"></i> Rute Jalan Raya (OSRM)</div>
                                         <div style="color: #15803d; font-weight:600; display:flex; justify-content:space-between;">
                                             <span><i class="fa-solid fa-road"></i> ${distance} KM</span>
                                             <span><i class="fa-solid fa-clock"></i> ${time} Menit</span>
@@ -1586,21 +1577,48 @@
                         }
                         html += `</ul>`;
                         document.getElementById('itinerary-box').innerHTML = html;
-                    } catch(err) {
-                        console.error(err); document.getElementById('itinerary-box').innerHTML = '<div style="color:#ef4444; padding:10px;">Terjadi kesalahan sistem saat memuat detail arah rute.</div>';
-                    }
+                    } catch(err) { executeFallbackRoute(); }
                 }).on('routingerror', function(err) {
-                    console.error("Routing Error Detail: ", err);
-                    showToast('Titik terlalu jauh dari jaringan jalan.', 'error');
-                    document.getElementById('itinerary-box').innerHTML = '<div style="background:#fef2f2; border:1px solid #fecaca; color:#ef4444; padding:15px; border-radius:8px; text-align:center;"><i class="fa-solid fa-triangle-exclamation fa-2x" style="margin-bottom:10px;"></i><br>Gagal mengalkulasi rute.<br>Titik yang Tuan Putri pilih terlalu jauh dari jalan raya (OSM). Silakan geser titik sedikit.</div>';
+                    // JIKA SERVER OSRM DOWN ATAU TITIK DILUAR JALAN, EKSEKUSI FALLBACK MANUAL (JARAK LURUS)
+                    executeFallbackRoute();
                 }).addTo(map);
-            } catch (error) {
-                showToast('Mesin routing mengalami gangguan.', 'error');
-            }
+            } catch (error) { executeFallbackRoute(); }
+        }
+
+        // PENGAMAN JIKA OSRM GAGAL -> BUAT GARIS MANUAL
+        function executeFallbackRoute() {
+            if(routingControl) { map.removeControl(routingControl); routingControl = null; }
+            if(fallbackPolyline) map.removeLayer(fallbackPolyline);
+            
+            showToast('Server rute jalan sedang sibuk. Menampilkan jarak matematis...', 'warning');
+            
+            // Hitung jarak matematis
+            var distanceMeters = map.distance(routeStart, routeEnd);
+            var distanceKm = (distanceMeters / 1000).toFixed(2);
+            
+            // Gambar Garis Lurus (Dasher)
+            fallbackPolyline = L.polyline([routeStart, routeEnd], {
+                color: '#ef4444', weight: 5, opacity: 0.8, dashArray: '10, 10'
+            }).addTo(map);
+            map.fitBounds(fallbackPolyline.getBounds(), {padding: [50, 50]});
+            
+            // Tampilkan Info Jarak di Panel
+            var html = `<div style="background: #fef2f2; border:1px solid #fecaca; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                            <div style="font-weight: 800; color: #b91c1c; font-size:14px; margin-bottom:5px;"><i class="fa-solid fa-ruler"></i> Jarak Matematis Terdekat</div>
+                            <div style="color: #b91c1c; font-weight:600; display:flex; justify-content:space-between;">
+                                <span><i class="fa-solid fa-road"></i> ${distanceKm} KM</span>
+                                <span><i class="fa-solid fa-triangle-exclamation"></i> Jalur OSRM Offline</span>
+                            </div>
+                        </div>
+                        <div style="padding: 10px; color:var(--text-body); font-style:italic; text-align:center; font-size:11px;">
+                            Catatan: Karena titik tujuan berada di luar cakupan jaringan aspal atau server OSRM sedang sibuk, sistem menarik garis proyeksi jarak terdekat secara lurus.
+                        </div>`;
+            document.getElementById('itinerary-box').innerHTML = html;
         }
 
         function clearRoute() {
             if(routingControl) { map.removeControl(routingControl); routingControl = null; }
+            if(fallbackPolyline) { map.removeLayer(fallbackPolyline); fallbackPolyline = null; }
             if(markerStart) { map.removeLayer(markerStart); markerStart = null; }
             if(markerEnd) { map.removeLayer(markerEnd); markerEnd = null; }
             routeStart = null; routeEnd = null; isSettingStart = false; isSettingEnd = false;
