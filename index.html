@@ -39,6 +39,9 @@
         html { scroll-behavior: smooth; }
         body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--soft-sand); color: var(--deep-navy); overflow-x: hidden; }
 
+        /* PERBAIKAN BUG NOTIFIKASI TERTUTUP PETA */
+        .swal2-container { z-index: 99999 !important; }
+
         .logo-wrapper { display: flex; align-items: center; justify-content: center; }
         
         .water-drop-logo {
@@ -695,6 +698,11 @@
                                         </div>
                                         <input type="file" id="spatial-upload" accept=".kml,.geojson,.zip" style="display: none;" onchange="loadSpatialData(event)">
                                     </div>
+                                    
+                                    <div id="uploaded-layers-container" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px; display: none;">
+                                        <div style="font-size: 11px; font-weight: 700; color: var(--deep-navy); margin-bottom: 10px;">DAFTAR DATA REFERENSI UNGGAHAN:</div>
+                                        <ul id="uploaded-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px; max-height: 150px; overflow-y: auto;"></ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -848,7 +856,8 @@
             Swal.fire({
                 toast: true, position: 'top-end',
                 icon: iconType, title: message,
-                showConfirmButton: false, timer: 3000, timerProgressBar: true
+                showConfirmButton: false, timer: 3000, timerProgressBar: true,
+                customClass: { popup: 'swal2-container' }
             });
         }
 
@@ -1088,6 +1097,7 @@
         var routingControl = null;
         var routeStart = null; var routeEnd = null;
         var isSettingStart = false; var isSettingEnd = false;
+        var markerStart = null; var markerEnd = null;
 
         function startSetRoute(type) {
             if(type === 'start') { isSettingStart = true; isSettingEnd = false; showToast('Silakan klik lokasi pada peta untuk menetapkan Titik Awal', 'info'); }
@@ -1096,31 +1106,46 @@
 
         map.on('click', function(e) {
             if(isSettingStart) {
-                routeStart = e.latlng; isSettingStart = false; updateRoute();
+                routeStart = e.latlng; isSettingStart = false; 
+                if(markerStart) map.removeLayer(markerStart);
+                markerStart = L.marker(routeStart).addTo(map).bindPopup("Titik Awal").openPopup();
                 showToast('Titik Awal berhasil ditetapkan.', 'success');
+                updateRoute();
             } else if(isSettingEnd) {
-                routeEnd = e.latlng; isSettingEnd = false; updateRoute();
+                routeEnd = e.latlng; isSettingEnd = false; 
+                if(markerEnd) map.removeLayer(markerEnd);
+                markerEnd = L.marker(routeEnd).addTo(map).bindPopup("Titik Akhir").openPopup();
                 showToast('Titik Akhir berhasil ditetapkan.', 'success');
+                updateRoute();
             }
         });
 
         function updateRoute() {
             if(routeStart && routeEnd) {
                 if(routingControl) map.removeControl(routingControl);
+                showToast('Sedang mengkalkulasi rute...', 'info');
                 routingControl = L.Routing.control({
                     waypoints: [routeStart, routeEnd],
                     routeWhileDragging: true,
                     language: 'id',
                     show: false, // Menyembunyikan panel teks itinerary agar UI bersih
-                    lineOptions: { styles: [{color: '#0284c7', weight: 5, opacity: 0.8 }] }
+                    addWaypoints: false,
+                    createMarker: function() { return null; }, // Custom marker sudah dibuat di klik event
+                    lineOptions: { styles: [{color: '#e11d48', weight: 6, opacity: 0.8 }] }
+                }).on('routesfound', function(e) {
+                    showToast('Rute optimal berhasil ditemukan.', 'success');
+                }).on('routingerror', function(err) {
+                    showToast('Gagal memproses rute. Pastikan titik berada di area jalan.', 'error');
                 }).addTo(map);
-                showToast('Kalkulasi rute selesai diproses.', 'success');
             }
         }
+
         function clearRoute() {
             if(routingControl) { map.removeControl(routingControl); routingControl = null; }
+            if(markerStart) { map.removeLayer(markerStart); markerStart = null; }
+            if(markerEnd) { map.removeLayer(markerEnd); markerEnd = null; }
             routeStart = null; routeEnd = null; isSettingStart = false; isSettingEnd = false;
-            showToast('Rute telah dibersihkan dari layar peta.', 'info');
+            showToast('Rute telah dibersihkan dari layar peta.', 'success');
         }
 
         // --- LEGENDA PETA ---
@@ -1204,7 +1229,7 @@
                 } else { l.setStyle({ opacity: 0.1, fillOpacity: 0.05 }); }
             });
 
-            if (found) { map.fitBounds(bounds, {padding: [50,50]}); showToast("Data ditemukan", "success"); } 
+            if (found) { map.fitBounds(bounds, {padding: [50,50]}); showToast("Data pencarian ditemukan.", "success"); } 
             else { showToast("Elemen spasial tidak ditemukan.", "error"); resetSearchStyle(); }
         }
 
@@ -1263,15 +1288,15 @@
                 openSidebarTab('s-digitize', document.querySelectorAll('.s-tab')[3]);
             });
             updateDigitizedList(); layer.fire('click'); 
-            showToast("Bentuk area selesai disketsa. Silakan isi form atribut.", "info");
+            showToast("Area selesai disketsa. Silakan isi form atribut di sidebar.", "info");
         });
 
         map.on('pm:remove', function(e) { drawnItems.removeLayer(e.layer); updateDigitizedList(); });
 
-        function enableDrawPolygon() { map.pm.enableDraw('Polygon'); showToast('Gunakan kursor untuk menggambar poligon', 'info'); }
+        function enableDrawPolygon() { map.pm.enableDraw('Polygon'); showToast('Gunakan kursor untuk mulai menggambar batas area poligon.', 'info'); }
 
         function saveAttributes() {
-            if (!selectedDrawnLayer) return showToast("Pilih area hasil digitasi di peta terlebih dahulu.", "warning");
+            if (!selectedDrawnLayer) return showToast("Mohon pilih area hasil digitasi di peta terlebih dahulu.", "warning");
             selectedDrawnLayer.feature.properties.nama = document.getElementById('digi-nama').value;
             selectedDrawnLayer.feature.properties.keterangan = document.getElementById('digi-ket').value;
             selectedDrawnLayer.bindPopup(`<div style="font-family:'Inter', sans-serif;"><b style="color:var(--deep-navy); font-size:14px;">${selectedDrawnLayer.feature.properties.nama}</b><hr style="border:0; border-top:1px solid #ccc; margin:5px 0;"><div style="font-size:12px;">${selectedDrawnLayer.feature.properties.keterangan}</div></div>`);
@@ -1293,24 +1318,24 @@
         function deleteSingleDrawnData(id) {
             const layer = drawnItems.getLayer(id); if (!layer) return;
             Swal.fire({
-                title: 'Hapus elemen ini?', text: "Tindakan ini bersifat permanen!", icon: 'warning',
+                title: 'Hapus elemen ini?', text: "Tindakan penghapusan ini bersifat permanen!", icon: 'warning',
                 showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#cbd5e1',
                 confirmButtonText: 'Ya, hapus!', cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
                     drawnItems.removeLayer(layer); map.removeLayer(layer);
                     if (selectedDrawnLayer === layer) { selectedDrawnLayer = null; document.getElementById('digi-nama').value = ''; document.getElementById('digi-ket').value = ''; }
-                    updateDigitizedList(); showToast("Elemen berhasil dihapus", "success");
+                    updateDigitizedList(); showToast("Elemen berhasil dihapus.", "success");
                 }
             });
         }
 
         function downloadAllDrawnData() {
-            if (drawnItems.getLayers().length === 0) return showToast("Belum ada data digitasi area di layar.", "warning");
+            if (drawnItems.getLayers().length === 0) return showToast("Belum ada data digitasi area pada layar.", "warning");
             var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(drawnItems.toGeoJSON()));
             var dl = document.createElement('a'); dl.href = dataStr; dl.download = "Kompilasi_Digitasi_SIPET.geojson";
             document.body.appendChild(dl); dl.click(); dl.remove();
-            showToast("Seluruh daftar digitasi sedang diunduh.", "success");
+            showToast("Seluruh daftar hasil digitasi sedang diunduh.", "success");
         }
 
         function downloadData() {
@@ -1318,31 +1343,146 @@
             if (document.getElementById('check-polaruang').checked && rawPolaRuangData) layersToDownload.push({name: "Pola_Ruang_Wunut.geojson", data: rawPolaRuangData});
             if (document.getElementById('check-bidangtanah').checked && rawBidangTanahData) layersToDownload.push({name: "Bidang_Tanah_Wunut.geojson", data: rawBidangTanahData});
             if (document.getElementById('check-jalan').checked && rawJalanData) layersToDownload.push({name: "Jaringan_Jalan_Wunut.geojson", data: rawJalanData});
-            
-            if (layersToDownload.length === 0) return showToast("Aktifkan minimal satu kotak centang Layer.", "warning");
+            if (document.getElementById('check-znt').checked && rawZntData) layersToDownload.push({name: "ZNT_Wunut.geojson", data: rawZntData});
+            if (document.getElementById('check-penggunaan').checked && rawPenggunaanData) layersToDownload.push({name: "Penggunaan_Lahan_Wunut.geojson", data: rawPenggunaanData});
+            if (document.getElementById('check-kp2b').checked && rawKp2bData) layersToDownload.push({name: "KP2B_Wunut.geojson", data: rawKp2bData});
+            if (document.getElementById('check-lsd').checked && rawLsdData) layersToDownload.push({name: "LSD_Wunut.geojson", data: rawLsdData});
+
+            if (layersToDownload.length === 0) return showToast("Silakan aktifkan minimal satu kotak centang Layer.", "warning");
             if (layersToDownload.length === 1) {
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(layersToDownload[0].data));
                 const dl = document.createElement('a'); dl.href = dataStr; dl.download = layersToDownload[0].name;
                 document.body.appendChild(dl); dl.click(); dl.remove();
-                showToast(`File ${layersToDownload[0].name} diunduh.`, "success");
+                showToast(`File ${layersToDownload[0].name} sedang diunduh.`, "success");
             } else {
-                showToast(`Membungkus ${layersToDownload.length} berkas ZIP...`, "info");
+                showToast(`Memproses kompresi ZIP untuk ${layersToDownload.length} berkas...`, "info");
                 var zip = new JSZip();
                 layersToDownload.forEach(layer => { zip.file(layer.name, JSON.stringify(layer.data)); });
                 zip.generateAsync({type:"blob"}).then(function(content) { saveAs(content, "Data_Kolektif_Spasial_Wunut.zip"); });
             }
         }
 
-        // --- SISTEM PEMBACAAN REFERENSI (SHP/KML/GeoJSON) & INTEGRASI CLOUD ---
+        // --- SISTEM PEMBACAAN REFERENSI (SHP/KML/GeoJSON) & MANAJEMEN LAYER CLOUD ---
+        var userUploadedLayers = {}; 
+        var uploadIdCounter = 0;
+
+        function addLayerToManagement(layer, name, isCloud = false) {
+            let id = 'up_layer_' + uploadIdCounter++;
+            userUploadedLayers[id] = { layer: layer, name: name, isCloud: isCloud };
+            renderUploadedLayersList();
+        }
+
+        function renderUploadedLayersList() {
+            const container = document.getElementById('uploaded-layers-container');
+            const list = document.getElementById('uploaded-list');
+            list.innerHTML = '';
+            let hasLayers = false;
+
+            for (const [id, data] of Object.entries(userUploadedLayers)) {
+                hasLayers = true;
+                const li = document.createElement('li');
+                li.style.cssText = 'background: white; padding: 8px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #cbd5e1;';
+                
+                const headerDiv = document.createElement('div');
+                headerDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.style.cssText = 'font-weight: 600; color: var(--deep-navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;';
+                nameSpan.innerHTML = data.name + (data.isCloud ? " <i class='fa-solid fa-cloud' style='color:#0ea5e9; font-size:10px;' title='Tersimpan di Cloud'></i>" : "");
+
+                const controlsDiv = document.createElement('div');
+                controlsDiv.style.cssText = 'display: flex; gap: 5px; align-items: center;';
+                
+                const toggleCheck = document.createElement('input');
+                toggleCheck.type = 'checkbox';
+                toggleCheck.checked = map.hasLayer(data.layer);
+                toggleCheck.onchange = () => toggleUploadedLayer(id);
+                toggleCheck.title = "Sembunyikan/Tampilkan Layer";
+
+                const delBtn = document.createElement('button');
+                delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                delBtn.style.cssText = 'background: #ef4444; color: white; border: none; border-radius: 3px; padding: 3px 6px; cursor: pointer;';
+                delBtn.onclick = () => deleteUploadedLayer(id, data.name);
+                delBtn.title = "Hapus Layer Permanen";
+
+                controlsDiv.appendChild(toggleCheck);
+                controlsDiv.appendChild(delBtn);
+                headerDiv.appendChild(nameSpan);
+                headerDiv.appendChild(controlsDiv);
+
+                const opacityDiv = document.createElement('div');
+                opacityDiv.style.cssText = 'display: flex; align-items: center; gap: 5px; font-weight:600; color:var(--text-body);';
+                const opacityLabel = document.createElement('span'); opacityLabel.innerText = 'Opasitas:';
+                const opacitySlider = document.createElement('input');
+                opacitySlider.type = 'range'; opacitySlider.min = 0; opacitySlider.max = 1; opacitySlider.step = 0.1; opacitySlider.value = 0.8;
+                opacitySlider.style.width = '100%';
+                opacitySlider.oninput = (e) => changeUploadedLayerOpacity(id, e.target.value);
+
+                opacityDiv.appendChild(opacityLabel); opacityDiv.appendChild(opacitySlider);
+                li.appendChild(headerDiv); li.appendChild(opacityDiv); list.appendChild(li);
+            }
+            container.style.display = hasLayers ? 'block' : 'none';
+        }
+
+        function toggleUploadedLayer(id) {
+            const layerData = userUploadedLayers[id]; if (!layerData) return;
+            if (map.hasLayer(layerData.layer)) { map.removeLayer(layerData.layer); } 
+            else { map.addLayer(layerData.layer); }
+        }
+
+        function changeUploadedLayerOpacity(id, val) {
+            const layerData = userUploadedLayers[id]; if (!layerData) return;
+            if(layerData.layer.setStyle) { layerData.layer.setStyle({ fillOpacity: val, opacity: val }); } 
+            else { layerData.layer.eachLayer(function(l) { if(l.setStyle) l.setStyle({ fillOpacity: val, opacity: val }); }); }
+        }
+
+        async function deleteUploadedLayer(id, fileName) {
+            Swal.fire({
+                title: 'Hapus layer referensi?', text: "Layer akan dihapus dari peta (dan database Cloud).", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#cbd5e1',
+                confirmButtonText: 'Ya, Hapus'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const layerData = userUploadedLayers[id];
+                    if (map.hasLayer(layerData.layer)) map.removeLayer(layerData.layer);
+                    delete userUploadedLayers[id];
+                    renderUploadedLayersList();
+                    
+                    if (isUserLoggedIn && window.firebaseAuth.currentUser) {
+                        try {
+                            const uid = window.firebaseAuth.currentUser.uid;
+                            const docRef = window.doc(window.firebaseDb, "users", uid);
+                            const docSnap = await window.getDoc(docRef);
+                            if (docSnap.exists()) {
+                                let uploads = docSnap.data().uploads || [];
+                                uploads = uploads.filter(u => u.fileName !== fileName);
+                                await window.setDoc(docRef, { uploads: uploads }, { merge: true });
+                            }
+                        } catch(e) { console.error("Cloud delete fail", e); }
+                    }
+                    showToast('Layer referensi dihapus.', 'success');
+                }
+            });
+        }
+
         async function saveToCloud(uid, geojsonData, fileName) {
             try {
                 const docRef = window.doc(window.firebaseDb, "users", uid);
                 const docSnap = await window.getDoc(docRef);
                 let uploads = docSnap.exists() ? docSnap.data().uploads || [] : [];
+                
+                // Cek agar tidak duplikat
+                if(uploads.find(u => u.fileName === fileName)) return;
+
                 uploads.push({ fileName: fileName, data: JSON.stringify(geojsonData) });
                 await window.setDoc(docRef, { uploads: uploads }, { merge: true });
-                showToast(`Data ${fileName} disinkronkan ke Cloud.`, "success");
-            } catch(e) { console.error(e); showToast('Gagal sinkronisasi ke cloud', 'error'); }
+                showToast(`Sinkronisasi Cloud berhasil: ${fileName}`, "success");
+                
+                // Update label to show cloud icon
+                for (const [id, data] of Object.entries(userUploadedLayers)) {
+                    if(data.name === fileName) { data.isCloud = true; renderUploadedLayersList(); break; }
+                }
+            } catch(e) { console.error(e); showToast('Gagal melakukan sinkronisasi ke server cloud.', 'error'); }
         }
 
         async function loadCloudUserData(uid) {
@@ -1353,11 +1493,17 @@
                     const uploads = docSnap.data().uploads || [];
                     if(uploads.length > 0) {
                         uploads.forEach(upload => {
+                            // Cegah double load jika refresh
+                            let alreadyLoaded = false;
+                            for(let k in userUploadedLayers) { if(userUploadedLayers[k].name === upload.fileName) alreadyLoaded = true; }
+                            if(alreadyLoaded) return;
+
                             const geojson = JSON.parse(upload.data);
                             const layer = L.geoJSON(geojson, { style: { color: '#8b5cf6', weight: 3, fillOpacity: 0.3 } }).addTo(map);
                             layer.bindPopup(`<b>Data Referensi Cloud</b><br>${upload.fileName}`);
+                            addLayerToManagement(layer, upload.fileName, true);
                         });
-                        showToast(`${uploads.length} berkas spasial cloud berhasil direfleksikan ke peta.`, "success");
+                        showToast(`Data spasial personal Anda dimuat dari Cloud.`, "info");
                     }
                 }
             } catch(e) { console.error("Cloud load error", e); }
@@ -1368,16 +1514,17 @@
             const fileName = file.name.toLowerCase();
             const reader = new FileReader();
 
-            showToast("Menganalisis file unggahan...", "info");
+            showToast("Menganalisis file unggahan Anda...", "info");
 
             if (fileName.endsWith('.zip')) {
                 reader.onload = function(e) {
                     shp(e.target.result).then(function(geojson) {
                         const shpLayer = L.geoJSON(geojson, { style: { color: '#0284c7', weight: 3, fillOpacity: 0.3 } }).addTo(map);
                         map.fitBounds(shpLayer.getBounds(), { padding: [30, 30] });
-                        showToast(`Shapefile '${file.name}' berhasil dibaca.`, "success");
+                        addLayerToManagement(shpLayer, file.name, false);
+                        showToast(`Shapefile '${file.name}' sukses diekstraksi.`, "success");
                         if(isUserLoggedIn && window.firebaseAuth.currentUser) saveToCloud(window.firebaseAuth.currentUser.uid, geojson, file.name);
-                    }).catch(function(err) { showToast("Gagal memuat Shapefile. Pastikan ZIP mengandung file valid.", "error"); });
+                    }).catch(function(err) { showToast("Gagal memproses Shapefile. Format arsip .zip bermasalah.", "error"); });
                 };
                 reader.readAsArrayBuffer(file);
             } 
@@ -1387,9 +1534,10 @@
                         const geojson = JSON.parse(e.target.result);
                         const layer = L.geoJSON(geojson, { style: { color: '#10b981', weight: 3, fillOpacity: 0.3 } }).addTo(map);
                         map.fitBounds(layer.getBounds(), { padding: [30, 30] });
-                        showToast(`GeoJSON '${file.name}' berhasil direfleksikan.`, "success");
+                        addLayerToManagement(layer, file.name, false);
+                        showToast(`File GeoJSON '${file.name}' berhasil dimuat.`, "success");
                         if(isUserLoggedIn && window.firebaseAuth.currentUser) saveToCloud(window.firebaseAuth.currentUser.uid, geojson, file.name);
-                    } catch (error) { showToast("Sintaksis file GeoJSON tidak valid.", "error"); }
+                    } catch (error) { showToast("Sintaksis file GeoJSON yang Anda unggah tidak valid.", "error"); }
                 };
                 reader.readAsText(file);
             } 
@@ -1397,17 +1545,22 @@
                 reader.onload = function(e) {
                     try {
                         const customLayer = omnivore.kml.parse(e.target.result);
-                        customLayer.setStyle({ color: '#38bdf8', weight: 3, fillOpacity: 0.3 });
-                        customLayer.addTo(map); map.fitBounds(customLayer.getBounds(), { padding: [30, 30] });
-                        showToast(`Berkas KML '${file.name}' berhasil direfleksikan.`, "success");
-                        // KML diubah jadi geojson melalui fungsi .toGeoJSON() milik Leaflet layer group jika ingin di-save cloud
-                        const kmlAsGeojson = customLayer.toGeoJSON();
-                        if(isUserLoggedIn && window.firebaseAuth.currentUser) saveToCloud(window.firebaseAuth.currentUser.uid, kmlAsGeojson, file.name);
-                    } catch (error) { showToast("Sintaksis file KML tidak valid.", "error"); }
+                        customLayer.on('ready', function() {
+                            customLayer.setStyle({ color: '#38bdf8', weight: 3, fillOpacity: 0.3 });
+                            map.fitBounds(customLayer.getBounds(), { padding: [30, 30] });
+                            addLayerToManagement(customLayer, file.name, false);
+                            showToast(`File KML '${file.name}' sukses direfleksikan ke peta.`, "success");
+                            if(isUserLoggedIn && window.firebaseAuth.currentUser) {
+                                const kmlAsGeojson = customLayer.toGeoJSON();
+                                saveToCloud(window.firebaseAuth.currentUser.uid, kmlAsGeojson, file.name);
+                            }
+                        });
+                        customLayer.addTo(map);
+                    } catch (error) { showToast("Gagal membaca struktur KML.", "error"); }
                 };
                 reader.readAsText(file);
             } 
-            else { showToast("Format file tidak didukung! Pastikan .zip, .geojson, atau .kml.", "error"); }
+            else { showToast("Sistem hanya mendukung ekstensi arsip .zip (Shapefile), .geojson, dan .kml.", "error"); }
         }
     </script>
 </body>
