@@ -41,12 +41,16 @@
         html { scroll-behavior: smooth; }
         body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--soft-sand); color: var(--deep-navy); overflow-x: hidden; }
 
-        /* PERBAIKAN Z-INDEX DAN GAYA NOTIFIKASI ELEGAN */
+        /* PERBAIKAN NOTIFIKASI: FLOATING DI TENGAH ATAS, KECIL & ELEGAN */
         .swal2-container { z-index: 9999999 !important; }
-        .custom-toast { 
-            border-left: 4px solid var(--accent-gold) !important; 
-            border-radius: 8px !important;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3) !important;
+        .custom-toast-center { 
+            padding: 8px 15px !important; 
+            font-size: 13px !important;
+            border-radius: 50px !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+            width: auto !important;
+            max-width: 400px !important;
+            border: 1px solid var(--accent-gold) !important;
         }
 
         .logo-wrapper { display: flex; align-items: center; justify-content: center; }
@@ -224,7 +228,7 @@
 
         /* KONTROL KANAN PETA */
         .right-controls { 
-            position: absolute; top: 250px; right: 10px; z-index: 1000; 
+            position: absolute; top: 20px; right: 10px; z-index: 1000; 
             display: flex; flex-direction: column; gap: 10px; 
             transition: var(--transition);
         }
@@ -267,7 +271,7 @@
         .legend-content::-webkit-scrollbar { width: 4px; }
         .legend-content::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 4px; }
 
-        /* Panel Itinerary Routing (Didesain Elegan) */
+        /* Panel Routing Leaflet (UI Perbaikan Rute) */
         .leaflet-routing-container { 
             background: var(--glass-bg) !important; 
             padding: 15px !important; 
@@ -278,9 +282,18 @@
             font-family: 'Inter', sans-serif !important;
             color: var(--deep-navy) !important;
             border: 1px solid rgba(255,255,255,0.5) !important;
+            margin-right: 20px !important;
+            margin-top: 80px !important; 
         }
-        .leaflet-routing-container h2, .leaflet-routing-container h3 {
+        .leaflet-routing-alt {
+            border-bottom: 1px solid rgba(0,0,0,0.1) !important;
+            padding-bottom: 10px !important;
+            margin-bottom: 10px !important;
+        }
+        .leaflet-routing-alt:last-child { border-bottom: none !important; }
+        .leaflet-routing-alt h2, .leaflet-routing-alt h3 {
             color: var(--terracotta) !important;
+            font-size: 14px !important;
         }
         
         /* ======== TATA LETAK PERANGKAT SELULER (RESPONSIF) ======== */
@@ -309,6 +322,11 @@
             .north-arrow {
                 bottom: calc(55vh + 15px);
                 left: 10px;
+            }
+            .leaflet-routing-container {
+                margin-top: 60px !important;
+                margin-right: 10px !important;
+                max-height: 35vh !important;
             }
         }
 
@@ -686,10 +704,10 @@
                             
                             <div id="s-route" class="s-panel">
                                 <div class="control-group">
-                                    <div class="control-title">Kalkulasi Rute Perjalanan</div>
-                                    <p style="font-size: 11px; color: var(--text-body); margin-top: 0;">Tekan tombol di bawah, lalu klik pada peta untuk menentukan titik awal dan akhir rute.</p>
+                                    <div class="control-title">Kalkulasi Rute Jaringan Jalan</div>
+                                    <p style="font-size: 11px; color: var(--text-body); margin-top: 0;">Sistem akan mencari beberapa alternatif rute dan menghitung jarak optimal.</p>
                                     
-                                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                    <div style="display: flex; gap: 10px; margin-bottom: 10px; margin-top: 15px;">
                                         <button class="btn-map-action" onclick="startSetRoute('start')" style="background: var(--terracotta);"><i class="fa-solid fa-location-dot"></i> SET TITIK AWAL</button>
                                         <button class="btn-map-action" onclick="startSetRoute('end')" style="background: var(--navy);"><i class="fa-solid fa-flag-checkered"></i> SET TITIK AKHIR</button>
                                     </div>
@@ -873,15 +891,15 @@
     </script>
 
     <script>
-        // Pustaka Notifikasi Elegan (Override Z-Index dan Tema Custom)
+        // PUSTAKA NOTIFIKASI ELEGAN (Diperbaiki Z-Index & Posisi Float Top)
         function showToast(message, iconType = 'success') {
             Swal.fire({
-                toast: true, position: 'top-end',
+                toast: true, position: 'top', // Melayang di tengah atas
                 icon: iconType, title: message,
-                showConfirmButton: false, timer: 4000, timerProgressBar: true,
+                showConfirmButton: false, timer: 2000, timerProgressBar: true,
                 background: 'var(--deep-navy)', color: 'var(--sand)',
                 iconColor: 'var(--gold)',
-                customClass: { popup: 'swal2-container custom-toast' }
+                customClass: { popup: 'swal2-container custom-toast-center' }
             });
         }
 
@@ -1123,7 +1141,7 @@
             renderLegend(); 
         }
 
-        // --- SISTEM PEMBACAAN REFERENSI (SHP/KML/GeoJSON) & MANAJEMEN LAYER UNGGAHAN ---
+        // --- SISTEM PEMBACAAN REFERENSI (SHP/KML/GeoJSON) ---
         var userUploadedLayers = {}; 
         var uploadIdCounter = 0;
 
@@ -1148,8 +1166,10 @@
                 headerDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;';
                 
                 const nameSpan = document.createElement('span');
-                nameSpan.style.cssText = 'font-weight: 600; color: var(--deep-navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;';
+                nameSpan.style.cssText = 'font-weight: 600; color: var(--deep-navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; cursor: pointer;';
                 nameSpan.innerHTML = data.name + (data.isCloud ? " <i class='fa-solid fa-cloud' style='color:#0ea5e9; font-size:10px;' title='Tersimpan di Cloud'></i>" : "");
+                // Klik nama layer untuk zoom
+                nameSpan.onclick = () => { if(map.hasLayer(data.layer)) map.fitBounds(data.layer.getBounds(), {padding:[30,30]}); };
 
                 const controlsDiv = document.createElement('div');
                 controlsDiv.style.cssText = 'display: flex; gap: 5px; align-items: center;';
@@ -1299,13 +1319,15 @@
                 reader.readAsText(file);
             } 
             else if (fileName.endsWith('.kml')) {
-                // PERBAIKAN BUG OMNIVORE KML
                 reader.onload = function(e) {
                     try {
-                        // Membaca XML string menjadi Leaflet layer menggunakan Omnivore secara sinkronus
+                        // Membaca XML string menjadi GeoJSON secara sinkronus agar tidak ngelag
+                        var dom = (new DOMParser()).parseParseFromString(e.target.result, 'text/xml');
+                        // omnivore punya customLayer yang asinkron, tapi kita bisa pakai Leaflet standar atau callback 'ready'
                         const customLayer = omnivore.kml.parse(e.target.result);
                         customLayer.setStyle({ color: '#38bdf8', weight: 3, fillOpacity: 0.3 });
-                        customLayer.addTo(map); 
+                        
+                        customLayer.addTo(map);
                         map.fitBounds(customLayer.getBounds(), { padding: [30, 30] });
                         addLayerToManagement(customLayer, file.name, false);
                         showToast(`Berkas KML '${file.name}' sukses direfleksikan ke peta.`, "success");
@@ -1314,14 +1336,13 @@
                             const kmlAsGeojson = customLayer.toGeoJSON();
                             saveToCloud(window.firebaseAuth.currentUser.uid, kmlAsGeojson, file.name);
                         }
-                    } catch (error) { showToast("Gagal membaca struktur KML.", "error"); }
+                    } catch (error) { showToast("Gagal mengurai file KML. Format XML tidak standar.", "error"); }
                 };
                 reader.readAsText(file);
             } 
             else { showToast("Sistem hanya mendukung ekstensi arsip .zip (Shapefile), .geojson, dan .kml.", "error"); }
             
-            // Reset input file agar bisa upload file yang sama lagi jika dihapus
-            event.target.value = '';
+            event.target.value = ''; // Reset input agar bisa upload file yg sama berulang kali
         }
 
         // --- SISTEM PENCARIAN ATRIBUT ---
@@ -1403,22 +1424,22 @@
             showToast("Pencarian diatur ulang.", "info");
         }
 
-        // --- SISTEM RUTE PERJALANAN (DIPERBAIKI) ---
+        // --- SISTEM RUTE PERJALANAN (Routing Machine dengan UI Bersih) ---
         var routingControl = null;
         var routeStart = null; var routeEnd = null;
         var isSettingStart = false; var isSettingEnd = false;
         var markerStart = null; var markerEnd = null;
 
         function startSetRoute(type) {
-            if(type === 'start') { isSettingStart = true; isSettingEnd = false; showToast('Klik lokasi pada peta untuk menetapkan Titik Awal', 'info'); }
-            if(type === 'end') { isSettingEnd = true; isSettingStart = false; showToast('Klik lokasi pada peta untuk menetapkan Titik Akhir', 'info'); }
+            if(type === 'start') { isSettingStart = true; isSettingEnd = false; showToast('Klik lokasi pada peta untuk menetapkan Titik Awal rute.', 'info'); }
+            if(type === 'end') { isSettingEnd = true; isSettingStart = false; showToast('Klik lokasi pada peta untuk menetapkan Titik Akhir rute.', 'info'); }
         }
 
         // Fungsi khusus agar objek digitasi dapat diruting langsung
         function setRouteDestFromPopup(lat, lng) {
             routeEnd = L.latLng(lat, lng);
             if(markerEnd) map.removeLayer(markerEnd);
-            markerEnd = L.marker(routeEnd).addTo(map).bindPopup("Titik Akhir (Objek)").openPopup();
+            markerEnd = L.marker(routeEnd).addTo(map).bindPopup("Titik Tujuan (Objek Digitasi)").openPopup();
             showToast('Titik Akhir diarahkan ke objek ini.', 'success');
             
             if(routeStart) { updateRoute(); } 
@@ -1429,13 +1450,13 @@
             if(isSettingStart) {
                 routeStart = e.latlng; isSettingStart = false; 
                 if(markerStart) map.removeLayer(markerStart);
-                markerStart = L.marker(routeStart).addTo(map).bindPopup("Titik Awal").openPopup();
+                markerStart = L.marker(routeStart).addTo(map).bindPopup("Titik Awal Anda").openPopup();
                 showToast('Titik Awal berhasil ditetapkan.', 'success');
                 updateRoute();
             } else if(isSettingEnd) {
                 routeEnd = e.latlng; isSettingEnd = false; 
                 if(markerEnd) map.removeLayer(markerEnd);
-                markerEnd = L.marker(routeEnd).addTo(map).bindPopup("Titik Akhir").openPopup();
+                markerEnd = L.marker(routeEnd).addTo(map).bindPopup("Titik Akhir Tujuan").openPopup();
                 showToast('Titik Akhir berhasil ditetapkan.', 'success');
                 updateRoute();
             }
@@ -1444,22 +1465,31 @@
         function updateRoute() {
             if(routeStart && routeEnd) {
                 if(routingControl) map.removeControl(routingControl);
-                showToast('Sedang mengkalkulasi rute melalui jalan terdekat...', 'info');
+                showToast('Sedang mencari dan mengalkulasi rute jalan terdekat...', 'info');
+                
                 routingControl = L.Routing.control({
                     waypoints: [routeStart, routeEnd],
                     routeWhileDragging: true,
                     language: 'id',
-                    show: false, // Disembunyikan agar UI bersih
+                    show: true, // Menampilkan panel itinerary secara visual
+                    collapsible: true, // Bisa ditutup-buka agar tidak menumpuk layar
+                    showAlternatives: true, // Mengambil opsi rute ganda jika ada
                     addWaypoints: false,
-                    createMarker: function() { return null; }, 
+                    createMarker: function() { return null; }, // Marker kustom ditangani di luar plugin ini
+                    altLineOptions: { styles: [{color: '#0284c7', weight: 4, opacity: 0.5 }] },
                     lineOptions: { styles: [{color: '#e11d48', weight: 6, opacity: 0.8 }] },
                     router: L.Routing.osrmv1({
-                        serviceUrl: 'https://router.project-osrm.org/route/v1' // Penggunaan Peladen OSRM Publik
+                        serviceUrl: 'https://router.project-osrm.org/route/v1',
+                        profile: 'driving'
                     })
                 }).on('routesfound', function(e) {
-                    showToast('Rute optimal berhasil ditemukan.', 'success');
+                    var routes = e.routes;
+                    var summary = routes[0].summary;
+                    var distance = (summary.totalDistance / 1000).toFixed(2); // Hitung Jarak
+                    var time = Math.round(summary.totalTime % 3600 / 60); // Hitung Waktu
+                    showToast(`Terdapat ${routes.length} opsi rute. Jarak terdekat: ${distance} KM (Waktu: ${time} menit).`, 'success');
                 }).on('routingerror', function(err) {
-                    showToast('Gagal memproses rute. Pastikan titik berada di area jalan umum.', 'error');
+                    showToast('Gagal memproses rute. Pastikan titik berada cukup dekat dengan jaringan jalan umum OSRM.', 'error');
                 }).addTo(map);
             }
         }
@@ -1469,14 +1499,13 @@
             if(markerStart) { map.removeLayer(markerStart); markerStart = null; }
             if(markerEnd) { map.removeLayer(markerEnd); markerEnd = null; }
             routeStart = null; routeEnd = null; isSettingStart = false; isSettingEnd = false;
-            showToast('Rute telah dibersihkan dari layar peta.', 'success');
+            showToast('Riwayat rute telah dibersihkan dari layar peta.', 'success');
         }
 
         // --- SISTEM DIGITASI DAN PENYIMPANAN ATRIBUT ---
         var drawnItems = L.featureGroup().addTo(map);
         var selectedDrawnLayer = null;
 
-        // Pembaruan UI Daftar Hasil Digitasi
         function updateDigitizedList() {
             const listContainer = document.getElementById('digitized-list-container');
             const listUl = document.getElementById('digitized-list');
@@ -1541,19 +1570,20 @@
             updateDigitizedList(); 
         });
 
-        function enableDrawPolygon() { map.pm.enableDraw('Polygon'); showToast("Silakan klik di area peta untuk mulai menggambar poligon.", "info"); }
+        function enableDrawPolygon() { map.pm.enableDraw('Polygon'); showToast("Silakan klik di area peta untuk mulai menggambar batas poligon.", "info"); }
 
         function saveAttributes() {
             if (!selectedDrawnLayer) return showToast("Pemilihan area diperlukan. Silakan klik pada poligon hasil digitasi di peta terlebih dahulu.", "warning");
             
             const nama = document.getElementById('digi-nama').value;
             const ket = document.getElementById('digi-ket').value;
+            // Dapatkan kordinat tengah poligon untuk di routing
             const center = selectedDrawnLayer.getBounds().getCenter();
             
             selectedDrawnLayer.feature.properties.nama = nama;
             selectedDrawnLayer.feature.properties.keterangan = ket;
             
-            // Pop-up dilengkapi tombol Rute Otomatis
+            // Pop-up dilengkapi tombol "Rute ke Objek Ini"
             selectedDrawnLayer.bindPopup(`
                 <div style="font-family:'Inter', sans-serif;">
                     <b style="color:var(--deep-navy); font-size:14px;">${nama}</b>
@@ -1582,7 +1612,7 @@
             let fileName = layer.feature?.properties?.nama ? layer.feature.properties.nama.replace(/\s+/g, '_') : 'Objek';
             dl.download = `Digitasi_SIPET_${fileName}.geojson`;
             document.body.appendChild(dl); dl.click(); dl.remove();
-            showToast(`Sedang mengunduh file ${fileName}...`, "info");
+            showToast(`Sedang mengunduh file spasial: ${fileName}...`, "info");
         }
 
         function deleteSingleDrawnData(id) {
@@ -1603,7 +1633,7 @@
                         document.getElementById('digi-ket').value = '';
                     }
                     updateDigitizedList();
-                    showToast("Elemen berhasil dihapus.", "success");
+                    showToast("Elemen berhasil dihapus secara permanen.", "success");
                 }
             });
         }
