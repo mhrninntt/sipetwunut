@@ -7,7 +7,6 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@700&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     
-    <!-- Pustaka Spasial & UI -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
@@ -20,7 +19,6 @@
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     
-    <!-- Pustaka Utility -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -376,7 +374,6 @@
 </head>
 <body>
 
-    <!-- Antarmuka Autentikasi -->
     <div id="login-overlay">
         <div class="login-card" id="login-box">
             <button class="close-btn" onclick="closeLogin()"><i class="fa-solid fa-xmark"></i></button>
@@ -398,7 +395,6 @@
         </div>
     </div>
 
-    <!-- Lightbox Foto Profil -->
     <div id="lightbox-overlay" onclick="closeLightbox(event)">
         <div class="lightbox-content">
             <button class="lightbox-close" onclick="closeLightbox(event)"><i class="fa-solid fa-xmark"></i></button>
@@ -424,7 +420,6 @@
         </header>
 
         <main>
-            <!-- HALAMAN BERANDA -->
             <div id="beranda" class="content-section active-section">
                 <div class="hero">
                     <div class="hero-img" style="background: url('header.jpg') center/cover;"></div>
@@ -579,12 +574,10 @@
                 </div>
             </div>
 
-            <!-- HALAMAN WEBGIS SPASIAL -->
             <div id="peta" class="content-section">
                 <div class="map-wrapper">
                     <div id="map"></div>
 
-                    <!-- PENGATURAN PANEL KIRI WEBGIS -->
                     <div class="floating-sidebar">
                         <div class="sidebar-tabs-nav">
                             <button class="s-tab active" onclick="openSidebarTab('s-layers', this)"><i class="fa-solid fa-layer-group"></i> Layer</button>
@@ -594,7 +587,6 @@
                         </div>
 
                         <div class="sidebar-content-wrapper">
-                            <!-- PANEL 1: PENGATURAN LAPISAN (LAYER) -->
                             <div id="s-layers" class="s-panel active">
                                 <div class="control-group">
                                     <div class="control-title">Peta Dasar Terapan</div>
@@ -648,7 +640,6 @@
                                     </div>
                                 </div>
 
-                                <!-- MANAJEMEN LAYER UNGGAHAN -->
                                 <div class="control-group">
                                     <hr style="border-top:1px solid rgba(0,0,0,0.1); margin:15px 0;">
                                     <div class="control-title"><i class="fa-solid fa-cloud-arrow-up"></i> Data Referensi Eksternal (Unggahan)</div>
@@ -668,7 +659,6 @@
                                 </div>
                             </div>
 
-                            <!-- PANEL 2: PENCARIAN ATRIBUT SPASIAL -->
                             <div id="s-search" class="s-panel">
                                 <div class="control-group">
                                     <div class="control-title">Pencarian Data Spasial</div>
@@ -699,7 +689,6 @@
                                 </div>
                             </div>
                             
-                            <!-- PANEL 3: RUTE PERJALANAN (ROUTING) - DESAIN UI RAPI -->
                             <div id="s-route" class="s-panel">
                                 <div class="control-group">
                                     <div class="control-title">Kalkulasi Rute Jaringan Jalan</div>
@@ -726,7 +715,6 @@
                                     <button class="btn-map-action" onclick="calculateRouteNow()" style="background: #10b981; color: white; padding: 12px; font-size: 13px; margin-top: 5px;"><i class="fa-solid fa-route"></i> Hitung Rute</button>
                                     <button class="btn-map-action" onclick="clearRoute()" style="background: #fff5f5; color: #ef4444; border: 1px solid #fecaca; padding: 12px; font-size: 13px;"><i class="fa-solid fa-eraser"></i> Bersihkan Rute</button>
                                     
-                                    <!-- PANDUAN PERJALANAN (HASIL ROUTING) -->
                                     <div style="margin-top: 20px; border-top: 1px dashed #cbd5e1; padding-top: 15px;">
                                         <h4 style="font-size: 11px; color: var(--terracotta); margin: 0 0 10px; text-transform: uppercase;">PANDUAN PERJALANAN</h4>
                                         <div id="itinerary-box" style="font-size: 11px; color: var(--text-body); max-height: 250px; overflow-y: auto; padding-right: 5px;">
@@ -736,7 +724,6 @@
                                 </div>
                             </div>
 
-                            <!-- PANEL 4: FITUR DIGITASI -->
                             <div id="s-digitize" class="s-panel">
                                 <div class="control-group">
                                     <div class="control-title">Alat Digitasi dan Ekspor Atribut</div>
@@ -754,7 +741,6 @@
                                         <button class="btn-map-action" onclick="saveAttributes()" style="margin-bottom: 0;"><i class="fa-solid fa-floppy-disk"></i> SIMPAN DATA ATRIBUT</button>
                                     </div>
                                     
-                                    <!-- Daftar Hasil Digitasi -->
                                     <div id="digitized-list-container" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px; display: none;">
                                         <div style="font-size: 11px; font-weight: 700; color: var(--deep-navy); margin-bottom: 10px;">DAFTAR HASIL DIGITASI:</div>
                                         <ul id="digitized-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px; max-height: 120px; overflow-y: auto;"></ul>
@@ -770,7 +756,6 @@
                         </div>
                     </div>
 
-                    <!-- LEGENDA PETA KANAN BAWAH -->
                     <div id="slide-legend" class="legend-bottom-wrapper">
                         <div class="legend-content">
                             <div style="font-size: 0.8rem; font-weight: 700; color: var(--terracotta); margin-bottom: 10px; text-align: center;">KETERANGAN PETA</div>
@@ -779,14 +764,12 @@
                         <button class="legend-toggle-btn" onclick="toggleLegendPanel()"><i class="fa-solid fa-list" id="legend-icon"></i> Tampilkan Legenda Peta</button>
                     </div>
 
-                    <!-- KONTROL NAVIGASI PETA -->
                     <div class="right-controls">
                         <button class="btn-icon" onclick="goHome()" title="Kembali ke Titik Awal Desa Wunut"><i class="fa-solid fa-house"></i></button>
                         <button class="btn-icon" onclick="findLocation()" title="Lacak Lokasi Saya Saat Ini"><i class="fa-solid fa-location-crosshairs"></i></button>
                         <button class="btn-icon" onclick="toggleFullScreen()" title="Beralih ke Layar Penuh"><i class="fa-solid fa-expand"></i></button>
                     </div>
 
-                    <!-- INDIKATOR ARAH MATA ANGIN -->
                     <div class="north-arrow">
                         <i class="fa-solid fa-caret-up" style="color: var(--terracotta); font-size: 20px;"></i>
                         <div style="font-weight: 800; font-size: 12px; margin-top: -5px; color:var(--deep-navy);">U</div>
@@ -794,7 +777,6 @@
                 </div>
             </div>
 
-            <!-- HALAMAN TENTANG KAMI / TIM PENYUSUN -->
             <div id="profil" class="content-section">
                 <div class="container">
                     <h2 class="section-title" data-aos="fade-up" style="margin-bottom: 20px;">Tentang Kami</h2>
@@ -805,7 +787,6 @@
                     <h3 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--deep-navy); margin-bottom: 10px; text-align: center;" data-aos="fade-up" data-aos-delay="200">Tim Penyusun</h3>
                     <p style="text-align: center; color: var(--terracotta); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 40px;" data-aos="fade-up" data-aos-delay="300">Universitas Diponegoro</p>
                     
-                    <!-- Hierarki Tim Penyusun -->
                     <div class="team-leader-wrapper" data-aos="fade-up" data-aos-delay="400">
                         <div class="team-card team-leader-card" onclick="openLightbox('quinn.jpeg', 'Maharani Quinn Qonita', '40030623620004')">
                             <div class="team-img-wrapper">
@@ -888,7 +869,6 @@
         </footer>
     </div>
 
-    <!-- Integrasi Firebase Keseluruhan (Auth & Firestore) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } 
@@ -918,7 +898,6 @@
         window.getDoc = getDoc;
     </script>
 
-    <!-- Skrip Utama Pengendali Sistem -->
     <script>
         // PUSTAKA NOTIFIKASI ELEGAN (Diperbaiki Z-Index & Posisi Float Top, Cepat Hilang)
         function showToast(message, iconType = 'success') {
@@ -1235,7 +1214,7 @@
                 list.innerHTML = '<li style="padding: 10px; text-align: center; color: var(--text-body); font-style: italic; background: rgba(0,0,0,0.02); border-radius: 4px;">Belum ada data referensi yang diunggah.</li>';
             }
             
-            container.style.display = 'block'; // Selalu tampilkan container
+            container.style.display = 'block'; 
         }
 
         function toggleUploadedLayer(id) {
@@ -1547,8 +1526,8 @@
             
             if(routingControl) map.removeControl(routingControl);
             
-            showToast('Mencari alternatif rute jalan terdekat (OSRM)...', 'info');
-            document.getElementById('itinerary-box').innerHTML = '<div style="text-align:center; padding:20px;"><i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--terracotta);"></i><br><br>Menghitung jarak dan kalkulasi rute OpenStreetMap...</div>';
+            showToast('Mencari alternatif rute jalan terdekat...', 'info');
+            document.getElementById('itinerary-box').innerHTML = '<div style="text-align:center; padding:20px;"><i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--terracotta);"></i><br><br>Menghitung jarak dan kalkulasi rute...</div>';
             
             try {
                 routingControl = L.Routing.control({
@@ -1611,12 +1590,12 @@
                         console.error(err); document.getElementById('itinerary-box').innerHTML = '<div style="color:#ef4444; padding:10px;">Terjadi kesalahan sistem saat memuat detail arah rute.</div>';
                     }
                 }).on('routingerror', function(err) {
-                    console.error(err);
-                    showToast('Gagal memproses rute. Pastikan titik berada di area jalan.', 'error');
-                    document.getElementById('itinerary-box').innerHTML = '<div style="background:#fef2f2; border:1px solid #fecaca; color:#ef4444; padding:15px; border-radius:8px; text-align:center;"><i class="fa-solid fa-triangle-exclamation fa-2x" style="margin-bottom:10px;"></i><br>Gagal menemukan rute antar titik.<br>Silakan geser titik awal atau akhir mendekati jaringan jalan umum utama.</div>';
+                    console.error("Routing Error Detail: ", err);
+                    showToast('Titik terlalu jauh dari jaringan jalan.', 'error');
+                    document.getElementById('itinerary-box').innerHTML = '<div style="background:#fef2f2; border:1px solid #fecaca; color:#ef4444; padding:15px; border-radius:8px; text-align:center;"><i class="fa-solid fa-triangle-exclamation fa-2x" style="margin-bottom:10px;"></i><br>Gagal mengalkulasi rute.<br>Titik yang Tuan Putri pilih terlalu jauh dari jalan raya (OSM). Silakan geser titik sedikit.</div>';
                 }).addTo(map);
             } catch (error) {
-                showToast('Mesin routing mengalami gangguan jaringan.', 'error');
+                showToast('Mesin routing mengalami gangguan.', 'error');
             }
         }
 
