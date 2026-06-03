@@ -731,24 +731,6 @@
 
                             <div id="s-digitize" class="s-panel">
                                 <div class="control-group">
-                                    <div class="control-title"><i class="fa-solid fa-satellite-dish"></i> Analisis Jangkauan Fasilitas (Buffer)</div>
-                                    <p style="font-size: 11px; color: var(--text-body); margin-top: 0;">Tampilkan radius area pelayanan fasilitas umum untuk analisis spasial.</p>
-                                    
-                                    <label class="control-label"><input type="checkbox" id="check-kesehatan" checked onchange="toggleLayers()"> Jangkauan Fasilitas Kesehatan</label>
-                                    <div style="padding-left: 25px; margin-bottom: 10px;">
-                                        <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:700;"><span>Transparansi Area</span><span id="val-op-kesehatan">15%</span></div>
-                                        <input type="range" id="opacity-kesehatan" min="0" max="1" step="0.1" value="0.15" oninput="changeOpacity(kesehatanBufferLayer, this.value, 'val-op-kesehatan')">
-                                    </div>
-
-                                    <label class="control-label"><input type="checkbox" id="check-pendidikan" checked onchange="toggleLayers()"> Jangkauan Fasilitas Pendidikan</label>
-                                    <div style="padding-left: 25px; margin-bottom: 10px;">
-                                        <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:700;"><span>Transparansi Area</span><span id="val-op-pendidikan">15%</span></div>
-                                        <input type="range" id="opacity-pendidikan" min="0" max="1" step="0.1" value="0.15" oninput="changeOpacity(pendidikanBufferLayer, this.value, 'val-op-pendidikan')">
-                                    </div>
-                                </div>
-                                <hr style="border-top:1px solid rgba(0,0,0,0.1); margin:15px 0;">
-
-                                <div class="control-group">
                                     <div class="control-title"><i class="fa-solid fa-object-ungroup"></i> Analisis Tumpang Tindih (Intersect)</div>
                                     <p style="font-size: 11px; color: var(--text-body); margin-top: 0;">Deteksi dan potong area yang saling bertumpukan antar dua lapisan data spasial.</p>
                                     
@@ -1308,18 +1290,18 @@
         fetch('kp2bwunut.geojson').then(res => res.json()).then(data => { rawKp2bData = data; kp2bLayer = L.geoJSON(data, { style: styleKp2b, onEachFeature: (f, l) => { l.on('click', interceptLayerClick); } }); });
         fetch('lsdwunut.geojson').then(res => res.json()).then(data => { rawLsdData = data; lsdLayer = L.geoJSON(data, { style: styleLsd, onEachFeature: (f, l) => { l.on('click', interceptLayerClick); } }); });
 
-        // FETCH DATA FASILITAS DENGAN TURF BUFFER (Otomatis Tampil)
-        fetch('kesehatan.geojson').then(res => res.json()).then(data => {
+        // FETCH DATA FASILITAS DENGAN TURF BUFFER
+        fetch('kesehatanfix.geojson').then(res => res.json()).then(data => {
             let p = processFasilitasGeoJSON(data, 'Fasilitas Kesehatan');
             rawKesehatanData = p.rawData; kesehatanBufferLayer = p.bufferLayer; kesehatanLayer = p.combinedLayer;
             if(document.getElementById('check-kesehatan').checked) map.addLayer(kesehatanLayer);
-        }).catch(e => console.log('Tidak ada kesehatan.geojson'));
+        }).catch(e => console.log('Tidak ada kesehatanfix.geojson'));
         
-        fetch('pendidikan.geojson').then(res => res.json()).then(data => {
+        fetch('pendidikanfix.geojson').then(res => res.json()).then(data => {
             let p = processFasilitasGeoJSON(data, 'Fasilitas Pendidikan');
             rawPendidikanData = p.rawData; pendidikanBufferLayer = p.bufferLayer; pendidikanLayer = p.combinedLayer;
             if(document.getElementById('check-pendidikan').checked) map.addLayer(pendidikanLayer);
-        }).catch(e => console.log('Tidak ada pendidikan.geojson'));
+        }).catch(e => console.log('Tidak ada pendidikanfix.geojson'));
 
         function toggleLayers() {
             const checks = { pola: document.getElementById('check-polaruang').checked, bidang: document.getElementById('check-bidangtanah').checked, jalan: document.getElementById('check-jalan').checked, kesehatan: document.getElementById('check-kesehatan')?.checked, pendidikan: document.getElementById('check-pendidikan')?.checked, znt: document.getElementById('check-znt').checked, penggunaan: document.getElementById('check-penggunaan').checked, kp2b: document.getElementById('check-kp2b').checked, lsd: document.getElementById('check-lsd').checked };
@@ -1628,7 +1610,7 @@
             showToast("Pencarian diatur ulang.", "info");
         }
 
-        // --- SISTEM RUTE PERJALANAN (OSRM MULTI-SERVER JALAN ASPAL) ---
+        // --- SISTEM RUTE PERJALANAN MURNI ASPAL (Routing Machine) ---
         L.Routing.Localization['id'] = {
             directions: { 
                 N: 'utara', NE: 'timur laut', E: 'timur', SE: 'tenggara', S: 'selatan', SW: 'barat daya', W: 'barat', NW: 'barat laut', 
@@ -1641,7 +1623,10 @@
             ui: { startPlaceholder: 'Awal', viaPlaceholder: 'Singgah', endPlaceholder: 'Tujuan' }
         };
 
-        function setRuteDariPeta(jenis) {
+        var routingControl = null;
+        var highlightRuteLayer = null;
+
+        function startSetRoute(jenis) {
             document.getElementById('btn-set-start').classList.remove('active');
             document.getElementById('btn-set-end').classList.remove('active');
             
@@ -1654,7 +1639,6 @@
                 document.getElementById('btn-set-end').classList.add('active');
                 showToast('Klik lokasi pada peta untuk menetapkan Titik Tujuan', 'info'); 
             }
-            // Aktifkan bypass layer agar kursor tembus ke peta dasar
             document.getElementById('map').classList.add('map-picking');
         }
 
@@ -1680,6 +1664,16 @@
             }, () => {
                 showToast("Gagal melacak lokasi. Mohon izinkan akses lokasi browser.", "error");
             });
+        }
+
+        function setRouteDestFromPopup(lat, lng) {
+            coordB = L.latLng(lat, lng);
+            if(markerEnd) map.removeLayer(markerEnd);
+            markerEnd = L.marker(coordB).addTo(map).bindPopup("Titik Tujuan (Objek)").openPopup();
+            document.getElementById('route-end-display').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            showToast('Titik Tujuan diarahkan ke objek ini.', 'success');
+            openSidebarTab('s-route', document.querySelectorAll('.s-tab')[2]);
+            if(coordA) { hitungRute(); } 
         }
 
         // Tiga Server Routing OSRM Publik Jalan Aspal
