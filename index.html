@@ -7,6 +7,7 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@700&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     
+    <!-- Pustaka Spasial & UI -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
@@ -19,6 +20,7 @@
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     
+    <!-- Pustaka Utility -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -224,12 +226,13 @@
         .sidebar-input { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 12px; outline: none; background: white; transition: var(--transition); }
         .sidebar-input:focus { border-color: var(--terracotta); box-shadow: 0 0 0 2px rgba(188, 108, 71, 0.2); }
 
+        /* AREA UNGGAH DESAIN BARU */
         .upload-zone { border: 2px dashed #cbd5e1; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s; background: rgba(255,255,255,0.5); }
         .upload-zone:hover { border-color: var(--terracotta); background: #fff7ed; }
         .upload-zone i { font-size: 30px; color: var(--terracotta); margin-bottom: 10px; }
         .upload-zone p { font-size: 11px; color: var(--text-body); font-weight: 600; margin: 0; line-height: 1.5; }
 
-        /* DESAIN INPUT RUTE PANDUAN REFERENSI */
+        /* DESAIN INPUT RUTE PANDUAN BPN */
         .route-input-box { background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .route-input-box h4 { margin: 0 0 8px; font-size: 10px; color: var(--deep-navy); font-weight: 800; text-transform: uppercase; }
         .route-input-display { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: var(--text-body); margin-bottom: 8px; cursor: default; }
@@ -237,8 +240,6 @@
         .route-btn { flex: 1; background: white; border: 1px solid #cbd5e1; color: var(--deep-navy); padding: 8px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 5px; }
         .route-btn:hover { border-color: var(--terracotta); color: var(--terracotta); background: #fff7ed; }
         .route-btn.active { background: var(--terracotta); color: white; border-color: var(--terracotta); }
-        
-        .glowing-route { filter: drop-shadow(0 0 4px rgba(29, 158, 117, 0.8)); }
 
         /* KONTROL KANAN PETA */
         .right-controls { 
@@ -285,16 +286,8 @@
         .legend-content::-webkit-scrollbar { width: 4px; }
         .legend-content::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 4px; }
 
-        /* Menyembunyikan Itinerary Default Leaflet Routing - Diambil Alih ke Sidebar Custom */
+        /* Menyembunyikan Itinerary Default Leaflet Routing - Kita pakai UI Sidebar */
         .leaflet-routing-container { display: none !important; }
-
-        .leaflet-routing-alt {
-            background: white; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 10px; overflow: hidden;
-        }
-        .leaflet-routing-alt table { width: 100%; border-collapse: collapse; }
-        .leaflet-routing-alt tr { border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: all 0.2s; }
-        .leaflet-routing-alt tr:hover { background: #f8fafc; }
-        .leaflet-routing-alt td { padding: 10px; font-size: 11px; color: var(--deep-navy); }
 
         /* ======== TATA LETAK PERANGKAT SELULER (RESPONSIF) ======== */
         @media (max-width: 768px) {
@@ -385,6 +378,7 @@
 </head>
 <body>
 
+    <!-- Antarmuka Autentikasi -->
     <div id="login-overlay">
         <div class="login-card" id="login-box">
             <button class="close-btn" onclick="closeLogin()"><i class="fa-solid fa-xmark"></i></button>
@@ -406,6 +400,7 @@
         </div>
     </div>
 
+    <!-- Lightbox Foto Profil -->
     <div id="lightbox-overlay" onclick="closeLightbox(event)">
         <div class="lightbox-content">
             <button class="lightbox-close" onclick="closeLightbox(event)"><i class="fa-solid fa-xmark"></i></button>
@@ -431,6 +426,7 @@
         </header>
 
         <main>
+            <!-- HALAMAN BERANDA -->
             <div id="beranda" class="content-section active-section">
                 <div class="hero">
                     <div class="hero-img" style="background: url('header.jpg') center/cover;"></div>
@@ -585,10 +581,12 @@
                 </div>
             </div>
 
+            <!-- HALAMAN WEBGIS SPASIAL -->
             <div id="peta" class="content-section">
                 <div class="map-wrapper">
                     <div id="map"></div>
 
+                    <!-- PENGATURAN PANEL KIRI WEBGIS -->
                     <div class="floating-sidebar">
                         <div class="sidebar-tabs-nav">
                             <button class="s-tab active" onclick="openSidebarTab('s-layers', this)"><i class="fa-solid fa-layer-group"></i> Layer</button>
@@ -598,6 +596,7 @@
                         </div>
 
                         <div class="sidebar-content-wrapper">
+                            <!-- PANEL 1: PENGATURAN LAPISAN (LAYER) -->
                             <div id="s-layers" class="s-panel active">
                                 <div class="control-group">
                                     <div class="control-title">Peta Dasar Terapan</div>
@@ -651,6 +650,7 @@
                                     </div>
                                 </div>
 
+                                <!-- MANAJEMEN LAYER UNGGAHAN -->
                                 <div class="control-group">
                                     <hr style="border-top:1px solid rgba(0,0,0,0.1); margin:15px 0;">
                                     <div class="control-title"><i class="fa-solid fa-cloud-arrow-up"></i> Data Referensi Eksternal (Unggahan)</div>
@@ -668,6 +668,7 @@
                                 </div>
                             </div>
 
+                            <!-- PANEL 2: PENCARIAN ATRIBUT SPASIAL -->
                             <div id="s-search" class="s-panel">
                                 <div class="control-group">
                                     <div class="control-title">Pencarian Data Spasial</div>
@@ -698,6 +699,7 @@
                                 </div>
                             </div>
                             
+                            <!-- PANEL 3: RUTE PERJALANAN (ROUTING) - DESAIN UI RAPI -->
                             <div id="s-route" class="s-panel">
                                 <div class="control-group">
                                     <div class="control-title">Kalkulasi Rute Jaringan Jalan</div>
@@ -724,6 +726,7 @@
                                     <button class="btn-map-action" onclick="hitungRute()" style="background: #10b981; color: white; padding: 12px; font-size: 13px; margin-top: 5px;"><i class="fa-solid fa-route"></i> Hitung Rute</button>
                                     <button class="btn-map-action" onclick="bersihkanRute()" style="background: #fff5f5; color: #ef4444; border: 1px solid #fecaca; padding: 12px; font-size: 13px;"><i class="fa-solid fa-eraser"></i> Bersihkan Rute</button>
                                     
+                                    <!-- PANDUAN PERJALANAN (HASIL ROUTING) -->
                                     <div style="margin-top: 20px; border-top: 1px dashed #cbd5e1; padding-top: 15px;">
                                         <h4 style="font-size: 11px; color: var(--terracotta); margin: 0 0 10px; text-transform: uppercase;">PANDUAN PERJALANAN</h4>
                                         <div id="routing-itinerary-container" style="font-size: 11px; color: var(--text-body); max-height: 250px; overflow-y: auto; padding-right: 5px; overflow-x: hidden;">
@@ -733,6 +736,7 @@
                                 </div>
                             </div>
 
+                            <!-- PANEL 4: FITUR DIGITASI -->
                             <div id="s-digitize" class="s-panel">
                                 <div class="control-group">
                                     <div class="control-title">Alat Digitasi dan Ekspor Atribut</div>
@@ -750,6 +754,7 @@
                                         <button class="btn-map-action" onclick="saveAttributes()" style="margin-bottom: 0;"><i class="fa-solid fa-floppy-disk"></i> SIMPAN DATA ATRIBUT</button>
                                     </div>
                                     
+                                    <!-- Daftar Hasil Digitasi -->
                                     <div id="digitized-list-container" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px; display: none;">
                                         <div style="font-size: 11px; font-weight: 700; color: var(--deep-navy); margin-bottom: 10px;">DAFTAR HASIL DIGITASI:</div>
                                         <ul id="digitized-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px; max-height: 120px; overflow-y: auto;"></ul>
@@ -765,6 +770,7 @@
                         </div>
                     </div>
 
+                    <!-- LEGENDA PETA KANAN BAWAH -->
                     <div id="slide-legend" class="legend-bottom-wrapper">
                         <div class="legend-content">
                             <div style="font-size: 0.8rem; font-weight: 700; color: var(--terracotta); margin-bottom: 10px; text-align: center;">KETERANGAN PETA</div>
@@ -773,12 +779,14 @@
                         <button class="legend-toggle-btn" onclick="toggleLegendPanel()"><i class="fa-solid fa-list" id="legend-icon"></i> Tampilkan Legenda Peta</button>
                     </div>
 
+                    <!-- KONTROL NAVIGASI PETA -->
                     <div class="right-controls">
                         <button class="btn-icon" onclick="goHome()" title="Kembali ke Titik Awal Desa Wunut"><i class="fa-solid fa-house"></i></button>
                         <button class="btn-icon" onclick="findLocation()" title="Lacak Lokasi Saya Saat Ini"><i class="fa-solid fa-location-crosshairs"></i></button>
                         <button class="btn-icon" onclick="toggleFullScreen()" title="Beralih ke Layar Penuh"><i class="fa-solid fa-expand"></i></button>
                     </div>
 
+                    <!-- INDIKATOR ARAH MATA ANGIN -->
                     <div class="north-arrow">
                         <i class="fa-solid fa-caret-up" style="color: var(--terracotta); font-size: 20px;"></i>
                         <div style="font-weight: 800; font-size: 12px; margin-top: -5px; color:var(--deep-navy);">U</div>
@@ -786,6 +794,7 @@
                 </div>
             </div>
 
+            <!-- HALAMAN TENTANG KAMI / TIM PENYUSUN -->
             <div id="profil" class="content-section">
                 <div class="container">
                     <h2 class="section-title" data-aos="fade-up" style="margin-bottom: 20px;">Tentang Kami</h2>
@@ -796,6 +805,7 @@
                     <h3 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--deep-navy); margin-bottom: 10px; text-align: center;" data-aos="fade-up" data-aos-delay="200">Tim Penyusun</h3>
                     <p style="text-align: center; color: var(--terracotta); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 40px;" data-aos="fade-up" data-aos-delay="300">Universitas Diponegoro</p>
                     
+                    <!-- Hierarki Tim Penyusun -->
                     <div class="team-leader-wrapper" data-aos="fade-up" data-aos-delay="400">
                         <div class="team-card team-leader-card" onclick="openLightbox('quinn.jpeg', 'Maharani Quinn Qonita', '40030623620004')">
                             <div class="team-img-wrapper">
@@ -878,6 +888,7 @@
         </footer>
     </div>
 
+    <!-- Integrasi Firebase Keseluruhan (Auth & Firestore) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } 
@@ -907,6 +918,7 @@
         window.getDoc = getDoc;
     </script>
 
+    <!-- Skrip Utama Pengendali Sistem -->
     <script>
         // PUSTAKA NOTIFIKASI ELEGAN (Perbaikan Desain Float Tengah Atas Cepat Hilang)
         function showToast(message, iconType = 'success') {
@@ -1126,6 +1138,45 @@
             } 
         }
 
+        // --- CEGATAN KLIK PETA UNTUK ROUTING ---
+        let modePilihPeta = null;
+
+        function handleMapClick(e) {
+            if (modePilihPeta) {
+                const lat = e.latlng.lat;
+                const lng = e.latlng.lng;
+
+                if (modePilihPeta === 'start') {
+                    routeStart = e.latlng;
+                    if(markerStart) map.removeLayer(markerStart);
+                    markerStart = L.marker(routeStart).addTo(map).bindPopup("Titik Awal (A)").openPopup();
+                    document.getElementById('route-start-display').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    document.getElementById('btn-set-start').classList.remove('active');
+                    showToast('Titik Awal berhasil ditetapkan.', 'success');
+                } else if (modePilihPeta === 'end') {
+                    routeEnd = e.latlng;
+                    if(markerEnd) map.removeLayer(markerEnd);
+                    markerEnd = L.marker(routeEnd).addTo(map).bindPopup("Titik Tujuan (B)").openPopup();
+                    document.getElementById('route-end-display').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    document.getElementById('btn-set-end').classList.remove('active');
+                    showToast('Titik Tujuan berhasil ditetapkan.', 'success');
+                }
+                
+                modePilihPeta = null;
+                document.getElementById('map').style.cursor = '';
+            }
+        }
+        // Tangkap klik di atas peta kosong
+        map.on('click', handleMapClick);
+
+        function handleLayerClick(e) {
+            if(modePilihPeta) {
+                map.closePopup(); // Mencegah popup layer terbuka
+                handleMapClick(e);
+            }
+        }
+
+        // Pembentukan Gaya dan Injeksi Klik Layer
         function stylePolaRuang(feature) { let val = getPropValue(feature.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona'); return { fillColor: subZonaColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: 0.8 }; }
         function styleBidangTanah(feature) { let val = getPropValue(feature.properties, 'STATUS', 'Status', 'status'); return { fillColor: statusColors[val] || '#cccccc', weight: 1.2, opacity: 1, color: '#444444', fillOpacity: 0.8 }; }
         function styleJalan(feature) { let val = getPropValue(feature.properties, 'fungsi', 'FUNGSI'); return { color: fungsiJalanColors[val] || '#94a3b8', weight: 3, opacity: 0.8 }; }
@@ -1135,13 +1186,13 @@
         function styleLsd(feature) { return { fillColor: colorLsd, weight: 1.2, color: '#ffffff', fillOpacity: 0.8 }; }
 
         // Penarikan Data (Fetch Data Utama)
-        fetch('polaruangwunutbaru.geojson').then(res => res.json()).then(data => { rawPolaRuangData = data; polaRuangLayer = L.geoJSON(data, { style: stylePolaRuang, onEachFeature: (f, l) => { l.bindPopup(`<b>Pola Ruang</b><br>Sub Zona: ${getPropValue(f.properties, 'SUB_ZONA')}`); l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); l.on('mouseout', e => polaRuangLayer.resetStyle(e.target)); } }); if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer); });
-        fetch('bidangtanahwunut.geojson').then(res => res.json()).then(data => { rawBidangTanahData = data; bidangTanahLayer = L.geoJSON(data, { style: styleBidangTanah, onEachFeature: (f, l) => { l.bindPopup(`<b>Bidang Tanah</b><br>Status: ${getPropValue(f.properties, 'STATUS')}<br>Luas: ${getPropValue(f.properties, 'Luas')} m²`); l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); l.on('mouseout', e => bidangTanahLayer.resetStyle(e.target)); } }); if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer); });
-        fetch('jalanwunut.geojson').then(res => res.json()).then(data => { rawJalanData = data; jalanLayer = L.geoJSON(data, { style: styleJalan, onEachFeature: (f, l) => { l.bindPopup(`<b>Jaringan Jalan</b><br>Fungsi: ${getPropValue(f.properties, 'fungsi')}`); l.on('mouseover', e => e.target.setStyle({weight: 5, color: '#000'})); l.on('mouseout', e => jalanLayer.resetStyle(e.target)); } }); }); 
-        fetch('zntwunut.geojson').then(res => res.json()).then(data => { rawZntData = data; zntLayer = L.geoJSON(data, { style: styleZnt }); });
-        fetch('penggunaanlahan.geojson').then(res => res.json()).then(data => { rawPenggunaanData = data; penggunaanLayer = L.geoJSON(data, { style: stylePenggunaan }); });
-        fetch('kp2bwunut.geojson').then(res => res.json()).then(data => { rawKp2bData = data; kp2bLayer = L.geoJSON(data, { style: styleKp2b }); });
-        fetch('lsdwunut.geojson').then(res => res.json()).then(data => { rawLsdData = data; lsdLayer = L.geoJSON(data, { style: styleLsd }); });
+        fetch('polaruangwunutbaru.geojson').then(res => res.json()).then(data => { rawPolaRuangData = data; polaRuangLayer = L.geoJSON(data, { style: stylePolaRuang, onEachFeature: (f, l) => { l.bindPopup(`<b>Pola Ruang</b><br>Sub Zona: ${getPropValue(f.properties, 'SUB_ZONA')}`); l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); l.on('mouseout', e => polaRuangLayer.resetStyle(e.target)); l.on('click', handleLayerClick); } }); if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer); });
+        fetch('bidangtanahwunut.geojson').then(res => res.json()).then(data => { rawBidangTanahData = data; bidangTanahLayer = L.geoJSON(data, { style: styleBidangTanah, onEachFeature: (f, l) => { l.bindPopup(`<b>Bidang Tanah</b><br>Status: ${getPropValue(f.properties, 'STATUS')}<br>Luas: ${getPropValue(f.properties, 'Luas')} m²`); l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); l.on('mouseout', e => bidangTanahLayer.resetStyle(e.target)); l.on('click', handleLayerClick); } }); if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer); });
+        fetch('jalanwunut.geojson').then(res => res.json()).then(data => { rawJalanData = data; jalanLayer = L.geoJSON(data, { style: styleJalan, onEachFeature: (f, l) => { l.bindPopup(`<b>Jaringan Jalan</b><br>Fungsi: ${getPropValue(f.properties, 'fungsi')}`); l.on('mouseover', e => e.target.setStyle({weight: 5, color: '#000'})); l.on('mouseout', e => jalanLayer.resetStyle(e.target)); l.on('click', handleLayerClick); } }); }); 
+        fetch('zntwunut.geojson').then(res => res.json()).then(data => { rawZntData = data; zntLayer = L.geoJSON(data, { style: styleZnt, onEachFeature: (f, l) => { l.on('click', handleLayerClick); } }); });
+        fetch('penggunaanlahan.geojson').then(res => res.json()).then(data => { rawPenggunaanData = data; penggunaanLayer = L.geoJSON(data, { style: stylePenggunaan, onEachFeature: (f, l) => { l.on('click', handleLayerClick); } }); });
+        fetch('kp2bwunut.geojson').then(res => res.json()).then(data => { rawKp2bData = data; kp2bLayer = L.geoJSON(data, { style: styleKp2b, onEachFeature: (f, l) => { l.on('click', handleLayerClick); } }); });
+        fetch('lsdwunut.geojson').then(res => res.json()).then(data => { rawLsdData = data; lsdLayer = L.geoJSON(data, { style: styleLsd, onEachFeature: (f, l) => { l.on('click', handleLayerClick); } }); });
 
         function toggleLayers() {
             const checks = { pola: document.getElementById('check-polaruang').checked, bidang: document.getElementById('check-bidangtanah').checked, jalan: document.getElementById('check-jalan').checked, znt: document.getElementById('check-znt').checked, penggunaan: document.getElementById('check-penggunaan').checked, kp2b: document.getElementById('check-kp2b').checked, lsd: document.getElementById('check-lsd').checked };
@@ -1298,7 +1349,7 @@
                             if(alreadyLoaded) return;
 
                             const geojson = JSON.parse(upload.data);
-                            const layer = L.geoJSON(geojson, { style: { color: '#8b5cf6', weight: 3, fillOpacity: 0.3 } }).addTo(map);
+                            const layer = L.geoJSON(geojson, { style: { color: '#8b5cf6', weight: 3, fillOpacity: 0.3 }, onEachFeature: (f, l) => l.on('click', handleLayerClick) }).addTo(map);
                             addLayerToManagement(layer, upload.fileName, true);
                         });
                         showToast(`Data spasial personal dimuat dari Cloud.`, "info");
@@ -1317,7 +1368,7 @@
             if (fileName.endsWith('.zip')) {
                 reader.onload = function(e) {
                     shp(e.target.result).then(function(geojson) {
-                        const shpLayer = L.geoJSON(geojson, { style: { color: '#0284c7', weight: 3, fillOpacity: 0.3 } }).addTo(map);
+                        const shpLayer = L.geoJSON(geojson, { style: { color: '#0284c7', weight: 3, fillOpacity: 0.3 }, onEachFeature: (f, l) => l.on('click', handleLayerClick) }).addTo(map);
                         map.fitBounds(shpLayer.getBounds(), { padding: [30, 30] });
                         addLayerToManagement(shpLayer, file.name, false);
                         showToast(`Shapefile '${file.name}' sukses diekstraksi.`, "success");
@@ -1330,7 +1381,7 @@
                 reader.onload = function(e) {
                     try {
                         const geojson = JSON.parse(e.target.result);
-                        const layer = L.geoJSON(geojson, { style: { color: '#10b981', weight: 3, fillOpacity: 0.3 } }).addTo(map);
+                        const layer = L.geoJSON(geojson, { style: { color: '#10b981', weight: 3, fillOpacity: 0.3 }, onEachFeature: (f, l) => l.on('click', handleLayerClick) }).addTo(map);
                         map.fitBounds(layer.getBounds(), { padding: [30, 30] });
                         addLayerToManagement(layer, file.name, false);
                         showToast(`File GeoJSON '${file.name}' berhasil dimuat.`, "success");
@@ -1340,11 +1391,15 @@
                 reader.readAsText(file);
             } 
             else if (fileName.endsWith('.kml')) {
-                // PERBAIKAN BUG OMNIVORE KML -> Blob URL Strategy for large KMLs
+                // PERBAIKAN BUG OMNIVORE KML -> Blob URL Strategy 
                 try {
                     const objectUrl = URL.createObjectURL(file);
                     const customLayer = omnivore.kml(objectUrl).on('ready', function() {
                         this.setStyle({ color: '#38bdf8', weight: 3, fillOpacity: 0.3 });
+                        
+                        // Attach map click interceptor to KML layers too
+                        this.eachLayer(function(l) { l.on('click', handleLayerClick); });
+
                         map.fitBounds(this.getBounds(), { padding: [30, 30] });
                         addLayerToManagement(this, file.name, false);
                         showToast(`Berkas KML '${file.name}' sukses direfleksikan ke peta.`, "success");
@@ -1445,8 +1500,7 @@
             showToast("Pencarian diatur ulang.", "info");
         }
 
-        // --- SISTEM RUTE PERJALANAN (OSRM FAILSAFE IMPLEMENTATION) ---
-        // Konfigurasi Lokalisasi Bahasa Indonesia untuk Itinerary
+        // --- SISTEM RUTE PERJALANAN (Routing Machine dengan 2 Server Failover API Publik Lainnya) ---
         L.Routing.Localization['id'] = {
             directions: { 
                 N: 'utara', NE: 'timur laut', E: 'timur', SE: 'tenggara', S: 'selatan', SW: 'barat daya', W: 'barat', NW: 'barat laut', 
@@ -1459,200 +1513,205 @@
             ui: { startPlaceholder: 'Awal', viaPlaceholder: 'Singgah', endPlaceholder: 'Tujuan' }
         };
 
-        let coordA = null; 
-        let coordB = null; 
-        let ruteMemilihPeta = null; 
-        let routingControl = null; 
-        let highlightRuteLayer = null;
+        var routingControl = null;
+        var routeStart = null; var routeEnd = null;
+        var markerStart = null; var markerEnd = null;
 
-        function setRuteDariPeta(titik) {
-            ruteMemilihPeta = titik; 
-            map.getContainer().style.cursor = 'crosshair';
+        function setRuteDariPeta(jenis) {
+            modePilihPeta = jenis;
+            document.getElementById('btn-set-start').classList.remove('active');
+            document.getElementById('btn-set-end').classList.remove('active');
             
-            document.querySelectorAll('.route-btn').forEach(b => b.classList.remove('active'));
-            if(titik === 'A') document.getElementById('btn-set-start').classList.add('active');
-            if(titik === 'B') document.getElementById('btn-set-end').classList.add('active');
-            
-            showToast(`Silakan letakkan kursor pada sembarang titik di atas peta untuk Titik ${titik === 'A' ? 'Awal' : 'Tujuan'}.`, 'info');
+            if(jenis === 'start') { 
+                document.getElementById('btn-set-start').classList.add('active');
+                showToast('Klik lokasi pada peta untuk menetapkan Titik Awal', 'info'); 
+            }
+            if(jenis === 'end') { 
+                document.getElementById('btn-set-end').classList.add('active');
+                showToast('Klik lokasi pada peta untuk menetapkan Titik Tujuan', 'info'); 
+            }
+            document.getElementById('map').style.cursor = 'crosshair';
         }
 
-        function setRuteLokasiSaya(titik) {
-            if (!navigator.geolocation) { 
-                showToast('Layanan GPS tidak tersedia pada perangkat Anda.', 'warning'); 
-                return; 
-            }
-            showToast("Meminta izin pelacakan lokasi...", "info");
-            navigator.geolocation.getCurrentPosition((pos) => {
-                const latlng = L.latLng(pos.coords.latitude, pos.coords.longitude);
-                if (titik === 'A') { 
-                    coordA = latlng; 
-                    document.getElementById('rute-awal').value = `GPS (${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)})`; 
-                } else { 
-                    coordB = latlng; 
-                    document.getElementById('rute-tujuan').value = `GPS (${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)})`; 
+        function setRuteLokasiSaya(jenis) {
+            if (!navigator.geolocation) { return showToast("Browser tidak mendukung geolokasi", "error"); }
+            showToast("Melacak lokasi Anda...", "info");
+            navigator.geolocation.getCurrentPosition(position => {
+                const latlng = L.latLng(position.coords.latitude, position.coords.longitude);
+                if (jenis === 'start') {
+                    routeStart = latlng;
+                    if(markerStart) map.removeLayer(markerStart);
+                    markerStart = L.marker(routeStart).addTo(map).bindPopup("Lokasi Saya (Awal)").openPopup();
+                    document.getElementById('route-start-display').value = `GPS (${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)})`;
+                    showToast("Titik awal menggunakan lokasi Anda", "success");
+                } else {
+                    routeEnd = latlng;
+                    if(markerEnd) map.removeLayer(markerEnd);
+                    markerEnd = L.marker(routeEnd).addTo(map).bindPopup("Lokasi Saya (Tujuan)").openPopup();
+                    document.getElementById('route-end-display').value = `GPS (${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)})`;
+                    showToast("Titik tujuan menggunakan lokasi Anda", "success");
                 }
-                map.flyTo(latlng, 16);
-                showToast(`Koordinat ${titik === 'A' ? 'Awal' : 'Tujuan'} berhasil direkam via GPS.`, 'success');
-            }, (err) => { 
-                showToast('Akses lokasi perangkat ditolak.', 'error'); 
+                map.setView(latlng, 16);
+            }, () => {
+                showToast("Gagal melacak lokasi. Mohon izinkan akses lokasi browser.", "error");
             });
         }
 
-        // Tangkapan Titik Klik pada Peta
-        map.on('click', function(e) {
-            if (ruteMemilihPeta) {
-                const lat = e.latlng.lat, lng = e.latlng.lng;
-                if (ruteMemilihPeta === 'A') {
-                    coordA = e.latlng; 
-                    document.getElementById('rute-awal').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-                    document.getElementById('btn-set-start').classList.remove('active');
-                } else {
-                    coordB = e.latlng; 
-                    document.getElementById('rute-tujuan').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-                    document.getElementById('btn-set-end').classList.remove('active');
-                }
-                
-                L.popup().setLatLng(e.latlng).setContent(`<div style="font-family:'Inter', sans-serif; font-size:12px; font-weight:700; color:var(--deep-navy); text-align:center;">Koordinat ${ruteMemilihPeta === 'A' ? 'Awal (A)' : 'Tujuan (B)'} Ditetapkan</div>`).openOn(map);
-                ruteMemilihPeta = null; 
-                map.getContainer().style.cursor = '';
-            }
-        });
-
-        // Menetapkan rute langsung dari objek digitasi
+        // Menetapkan rute langsung dari objek digitasi popup
         function setRouteDestFromPopup(lat, lng) {
-            coordB = L.latLng(lat, lng);
-            document.getElementById('rute-tujuan').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+            routeEnd = L.latLng(lat, lng);
+            if(markerEnd) map.removeLayer(markerEnd);
+            markerEnd = L.marker(routeEnd).addTo(map).bindPopup("Titik Tujuan (Objek)").openPopup();
+            document.getElementById('route-end-display').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
             showToast('Titik Tujuan diarahkan ke objek ini.', 'success');
             openSidebarTab('s-route', document.querySelectorAll('.s-tab')[2]);
-            if(coordA) { hitungRute(); } else { showToast('Silakan tetapkan Titik Awal (A) untuk memulai rute.', 'info'); }
+            if(routeStart) { hitungRute(); } 
         }
+
+        // --- MANAJEMEN SERVER ROUTING ---
+        // Jika server 1 gagal (biasanya public OSM dibatasi), kita pindah ke OSRM FOSSGIS atau server 3
+        const routeServers = [
+            'https://router.project-osrm.org/route/v1',
+            'https://routing.openstreetmap.de/routed-car/route/v1' // Server routing tangguh komunitas FOSSGIS
+        ];
+        let currentServerIndex = 0;
 
         function hitungRute() {
-            if (!coordA || !coordB) { 
-                showToast('Data koordinat Titik Awal dan Titik Tujuan belum terisi penuh.', 'warning'); 
-                return; 
-            }
-            
-            document.getElementById('routing-itinerary-container').innerHTML = '<div style="text-align:center; padding:20px;"><i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--terracotta);"></i><br><br>Menghitung jarak dan kalkulasi rute OSRM...</div>';
-            
-            if (!routingControl) {
-                routingControl = L.Routing.control({
-                    waypoints: [coordA, coordB], 
-                    routeWhileDragging: false, 
-                    lineOptions: { styles: [{color: '#10b981', opacity: 0.9, weight: 6}] },
-                    altLineOptions: { styles: [{color: '#94a3b8', weight: 4, opacity: 0.6 }] },
-                    createMarker: function(i, wp) {
-                        const iconHtml = i === 0 
-                            ? '<i class="fa-solid fa-location-dot" style="color:var(--deep-navy); font-size:36px; text-shadow:0 4px 8px rgba(0,0,0,0.3);"></i>' 
-                            : '<i class="fa-solid fa-flag-checkered" style="color:var(--terracotta); font-size:36px; text-shadow:0 4px 8px rgba(0,0,0,0.3);"></i>';
-                        return L.marker(wp.latLng, { 
-                            icon: L.divIcon({ className: 'custom-rute-marker', html: iconHtml, iconSize: [36, 36], iconAnchor: [18, 36], bgPos: [0, 0] }), 
-                            draggable: true 
-                        });
-                    }, 
-                    show: true, 
-                    addWaypoints: false, 
-                    fitSelectedRoutes: true, 
-                    showAlternatives: true, 
-                    language: 'id',
-                    router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' })
-                }).on('routeselected', function(e) {
-                    // Inject the Leaflet Routing Machine Panel natively into our sidebar cleanly
-                    setTimeout(() => { 
-                        try { 
-                            const container = routingControl.getContainer();
-                            if(container) {
-                                document.getElementById('routing-itinerary-container').innerHTML = ''; 
-                                document.getElementById('routing-itinerary-container').appendChild(container); 
-                                
-                                // Setup Segment Highlighting logic
-                                const rows = container.querySelectorAll('.leaflet-routing-alt tr');
-                                rows.forEach((row, index) => {
-                                    row.addEventListener('click', () => {
-                                        if (highlightRuteLayer) map.removeLayer(highlightRuteLayer);
-                                        
-                                        rows.forEach(r => { r.style.background = ''; r.style.borderLeft = 'none'; });
-                                        row.style.background = 'rgba(16, 185, 129, 0.1)'; 
-                                        row.style.borderLeft = '4px solid var(--accent-primary)';
-                                        
-                                        const instr = e.route.instructions[index]; 
-                                        if (!instr) return;
-                                        
-                                        const coords = []; 
-                                        const startIdx = instr.index; 
-                                        const endIdx = index < e.route.instructions.length - 1 ? e.route.instructions[index+1].index : e.route.coordinates.length - 1;
-                                        
-                                        for (let i = startIdx; i <= endIdx; i++) { coords.push(e.route.coordinates[i]); }
-                                        
-                                        highlightRuteLayer = L.polyline(coords, { color: '#0ea5e9', opacity: 1, weight: 8, className: 'glowing-route' }).addTo(map);
-                                        highlightRuteLayer.bringToFront();
-                                    });
-                                });
-                            }
-                        } catch(err) {} 
-                    }, 500);
-                    showToast('Rute optimal OSRM berhasil dikalkulasi.', 'success');
-                }).on('routingerror', function(err) {
-                    executeFallbackRoute();
-                }).addTo(map);
-            } else { 
-                routingControl.setWaypoints([coordA, coordB]); 
-            }
+            if(!routeStart || !routeEnd) { return showToast('Mohon lengkapi Titik Awal (A) dan Titik Tujuan (B).', 'warning'); }
+            attemptRouting(currentServerIndex);
         }
 
-        // PENGAMAN JIKA OSRM GAGAL -> BUAT GARIS MANUAL
-        var fallbackPolyline = null;
-        var fallbackMarkers = L.featureGroup().addTo(map);
-        
-        function executeFallbackRoute() {
+        function attemptRouting(serverIdx) {
+            if(routingControl) map.removeControl(routingControl);
+            
+            showToast(`Mengalkulasi rute jalan (Server ${serverIdx + 1})...`, 'info');
+            document.getElementById('routing-itinerary-container').innerHTML = '<div style="text-align:center; padding:20px;"><i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--terracotta);"></i><br><br>Menghitung jarak dan kalkulasi rute...</div>';
+            
+            routingControl = L.Routing.control({
+                waypoints: [routeStart, routeEnd],
+                routeWhileDragging: false,
+                language: 'id',
+                show: false, // Kita buat UI Itinerary Kustom
+                addWaypoints: false,
+                fitSelectedRoutes: true,
+                showAlternatives: true, 
+                lineOptions: { styles: [{color: '#10b981', weight: 6, opacity: 0.9 }] },
+                altLineOptions: { styles: [{color: '#94a3b8', weight: 4, opacity: 0.6 }] },
+                createMarker: function() { return null; }, 
+                router: L.Routing.osrmv1({
+                    serviceUrl: routeServers[serverIdx],
+                    profile: 'driving'
+                })
+            }).on('routesfound', function(e) {
+                // Jika Berhasil
+                var routes = e.routes;
+                var summary = routes[0].summary;
+                var distance = (summary.totalDistance / 1000).toFixed(2); 
+                var time = Math.round(summary.totalTime / 60); 
+                
+                showToast(`Rute Jalan ditemukan: ${distance} KM.`, 'success');
+                
+                var instrs = routes[0].instructions || [];
+                var html = `<div style="background: #f0fdf4; border:1px solid #86efac; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                                <div style="font-weight: 800; color: #166534; font-size:14px; margin-bottom:5px;"><i class="fa-solid fa-car"></i> Rute Jalan Raya</div>
+                                <div style="color: #15803d; font-weight:600; display:flex; justify-content:space-between;">
+                                    <span><i class="fa-solid fa-road"></i> ${distance} KM</span>
+                                    <span><i class="fa-solid fa-clock"></i> ${time} Menit</span>
+                                </div>
+                            </div>
+                            <ul style="list-style:none; padding:0; margin:0;">`;
+                
+                if(instrs.length > 0) {
+                    instrs.forEach(function(inst) {
+                        var dist = inst.distance > 1000 ? (inst.distance/1000).toFixed(2) + ' km' : Math.round(inst.distance) + ' m';
+                        var icon = "fa-arrow-up";
+                        if(inst.type === "Left" || inst.type === "SlightLeft" || inst.type === "SharpLeft") icon = "fa-arrow-turn-up fa-flip-horizontal";
+                        else if(inst.type === "Right" || inst.type === "SlightRight" || inst.type === "SharpRight") icon = "fa-arrow-turn-up";
+                        else if(inst.type === "TurnAround") icon = "fa-arrow-rotate-left";
+                        else if(inst.type === "DestinationReached") icon = "fa-flag-checkered";
+                        else if(inst.type === "Roundabout") icon = "fa-arrows-spin";
+                        
+                        html += `<li style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; display:flex; gap:12px; align-items:flex-start;">
+                                    <div style="flex:0 0 20px; color:var(--deep-navy); font-size:14px; padding-top:2px; text-align:center;"><i class="fa-solid ${icon}"></i></div>
+                                    <div style="flex:1;">
+                                        <div style="font-weight:600; color:var(--deep-navy); margin-bottom:3px; line-height:1.4;">${inst.text}</div>
+                                        ${inst.distance > 0 ? `<div style="color:var(--terracotta); font-size:10px; font-weight:700;">${dist}</div>` : ''}
+                                    </div>
+                                 </li>`;
+                    });
+                } else {
+                    html += `<li style="padding: 12px 0; color:var(--text-body); font-style:italic;">Ikuti jalur utama menuju tujuan.</li>`;
+                }
+                html += `</ul>`;
+                document.getElementById('routing-itinerary-container').innerHTML = html;
+                
+            }).on('routingerror', function(err) {
+                // JIKA SERVER GAGAL ATAU DOWN, PINDAH KE SERVER BERIKUTNYA
+                console.warn(`Server routing ${serverIdx + 1} gagal. Mengalihkan...`);
+                let nextIdx = serverIdx + 1;
+                if (nextIdx < routeServers.length) {
+                    attemptRouting(nextIdx); // Coba pakai server ke-2
+                } else {
+                    // Kalau semua server rute FOSS gagal, tampilkan error dan buat garis matematis
+                    jalankanRuteMatematisFailSafe();
+                }
+            }).addTo(map);
+        }
+
+        let fallbackPolyline = null;
+        let fallbackMarkers = L.featureGroup().addTo(map);
+
+        function jalankanRuteMatematisFailSafe() {
             if(routingControl) { map.removeControl(routingControl); routingControl = null; }
             if(fallbackPolyline) map.removeLayer(fallbackPolyline);
             fallbackMarkers.clearLayers();
             
-            showToast('Server rute jalan OSRM merespon sibuk. Menampilkan kalkulasi jarak udara matematis...', 'warning');
+            showToast('Server rute jalan sedang sibuk. Menampilkan jarak matematis lurus...', 'warning');
             
-            var distanceMeters = map.distance(coordA, coordB);
+            var distanceMeters = map.distance(routeStart, routeEnd);
             var distanceKm = (distanceMeters / 1000).toFixed(2);
             
-            // Gambar Garis Lurus
-            fallbackPolyline = L.polyline([coordA, coordB], {
+            // Gambar Garis Lurus (Dasher) Anti-Gagal
+            fallbackPolyline = L.polyline([routeStart, routeEnd], {
                 color: '#ef4444', weight: 5, opacity: 0.8, dashArray: '10, 10'
             }).addTo(map);
             
-            // Gambar Marker Manual
-            L.marker(coordA, { icon: L.divIcon({ className: 'custom-rute-marker', html: '<i class="fa-solid fa-location-dot" style="color:var(--deep-navy); font-size:36px; text-shadow:0 4px 8px rgba(0,0,0,0.3);"></i>', iconSize: [36, 36], iconAnchor: [18, 36] }) }).addTo(fallbackMarkers).bindPopup("Titik Awal");
-            L.marker(coordB, { icon: L.divIcon({ className: 'custom-rute-marker', html: '<i class="fa-solid fa-flag-checkered" style="color:var(--terracotta); font-size:36px; text-shadow:0 4px 8px rgba(0,0,0,0.3);"></i>', iconSize: [36, 36], iconAnchor: [18, 36] }) }).addTo(fallbackMarkers).bindPopup("Titik Tujuan");
+            // Re-render marker in featuregroup so we can manage them together with polyline
+            if(markerStart) { map.removeLayer(markerStart); markerStart = L.marker(routeStart).addTo(fallbackMarkers).bindPopup("Titik Awal"); }
+            if(markerEnd) { map.removeLayer(markerEnd); markerEnd = L.marker(routeEnd).addTo(fallbackMarkers).bindPopup("Titik Tujuan"); }
             
             map.fitBounds(fallbackPolyline.getBounds(), {padding: [50, 50]});
             
-            // Tampilkan Info Jarak di Panel
             var html = `<div style="background: #fef2f2; border:1px solid #fecaca; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-                            <div style="font-weight: 800; color: #b91c1c; font-size:14px; margin-bottom:5px;"><i class="fa-solid fa-ruler"></i> Estimasi Jarak Udara</div>
+                            <div style="font-weight: 800; color: #b91c1c; font-size:14px; margin-bottom:5px;"><i class="fa-solid fa-ruler"></i> Jarak Lurus Terdekat</div>
                             <div style="color: #b91c1c; font-weight:600; display:flex; justify-content:space-between;">
                                 <span><i class="fa-solid fa-road"></i> ${distanceKm} KM</span>
-                                <span><i class="fa-solid fa-triangle-exclamation"></i> Jalur OSRM Offline</span>
+                                <span><i class="fa-solid fa-triangle-exclamation"></i> Jalur Offline</span>
                             </div>
                         </div>
-                        <div style="padding: 10px; color:var(--text-body); font-style:italic; text-align:center; font-size:11px; line-height: 1.5;">
-                            Catatan: Karena titik berada di luar cakupan jaringan aspal, terlalu jauh dari jalan raya, atau server OSRM menolak sambungan, sistem menggunakan proyeksi rumus Haversine untuk menarik garis lurus secara matematis.
+                        <div style="padding: 10px; color:var(--text-body); font-style:italic; text-align:center; font-size:11px;">
+                            Peringatan: Seluruh jaringan peladen OSRM publik saat ini sedang menolak koneksi / kelebihan antrean. Sistem otomatis beralih menampilkan jarak lintasan matematis garis lurus.
                         </div>`;
             document.getElementById('routing-itinerary-container').innerHTML = html;
         }
 
         function bersihkanRute() {
-            if (routingControl) { map.removeControl(routingControl); routingControl = null; }
-            if (highlightRuteLayer) { map.removeLayer(highlightRuteLayer); highlightRuteLayer = null; }
-            if (fallbackPolyline) { map.removeLayer(fallbackPolyline); fallbackPolyline = null; }
+            if(routingControl) { map.removeControl(routingControl); routingControl = null; }
+            if(fallbackPolyline) { map.removeLayer(fallbackPolyline); fallbackPolyline = null; }
+            if(markerStart) { map.removeLayer(markerStart); markerStart = null; }
+            if(markerEnd) { map.removeLayer(markerEnd); markerEnd = null; }
             fallbackMarkers.clearLayers();
             
-            coordA = null; coordB = null; ruteMemilihPeta = null; map.getContainer().style.cursor = '';
+            routeStart = null; routeEnd = null; modePilihPeta = null;
+            document.getElementById('map').style.cursor = '';
             
-            document.querySelectorAll('.route-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('rute-awal').value = ''; 
-            document.getElementById('rute-tujuan').value = ''; 
-            document.getElementById('routing-itinerary-container').innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); text-align: center; font-style: italic; padding: 16px; opacity:0.7;">Silakan kalkulasi rute terlebih dahulu.</p>'; 
+            document.getElementById('btn-set-start').classList.remove('active');
+            document.getElementById('btn-set-end').classList.remove('active');
+            document.getElementById('route-start-display').value = '';
+            document.getElementById('route-end-display').value = '';
+            document.getElementById('routing-itinerary-container').innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); text-align: center; font-style: italic; padding: 16px; opacity:0.7;">Silakan kalkulasi rute terlebih dahulu.</p>';
             
-            showToast('Kalkulasi rute telah dibersihkan.', 'info');
+            showToast('Kalkulasi rute telah dibersihkan.', 'success');
         }
 
         // --- SISTEM DIGITASI DAN PENYIMPANAN ATRIBUT ---
@@ -1703,6 +1762,8 @@
             drawnItems.addLayer(layer);
             
             layer.on('click', function(evt) {
+                if(modePilihPeta) { map.closePopup(); handleMapClick(evt); return; } // Cegat jika mode rute
+
                 selectedDrawnLayer = evt.target;
                 document.getElementById('digi-nama').value = layer.feature.properties.nama || '';
                 document.getElementById('digi-ket').value = layer.feature.properties.keterangan || '';
@@ -1735,7 +1796,6 @@
             selectedDrawnLayer.feature.properties.nama = nama;
             selectedDrawnLayer.feature.properties.keterangan = ket;
             
-            // Pop-up dilengkapi tombol Rute ke Objek Ini menggunakan fungsi setRouteDestFromPopup yang baru
             selectedDrawnLayer.bindPopup(`
                 <div style="font-family:'Inter', sans-serif;">
                     <b style="color:var(--deep-navy); font-size:14px;">${nama}</b>
