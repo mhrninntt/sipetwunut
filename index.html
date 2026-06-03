@@ -44,6 +44,9 @@
         html { scroll-behavior: smooth; }
         body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--soft-sand); color: var(--deep-navy); overflow-x: hidden; }
 
+        /* KURSOR TEMBUS PANDANG SAAT MEMILIH TITIK RUTE */
+        .map-picking, .map-picking * { cursor: crosshair !important; }
+
         /* PERBAIKAN NOTIFIKASI: FLOAT TENGAH ATAS, KECIL, ELEGAN & CEPAT HILANG */
         .swal2-container { z-index: 9999999 !important; }
         .custom-toast-center { 
@@ -225,6 +228,7 @@
         .sidebar-input { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 12px; outline: none; background: white; transition: var(--transition); }
         .sidebar-input:focus { border-color: var(--terracotta); box-shadow: 0 0 0 2px rgba(188, 108, 71, 0.2); }
 
+        /* AREA UNGGAH DESAIN BARU */
         .upload-zone { border: 2px dashed #cbd5e1; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s; background: rgba(255,255,255,0.5); }
         .upload-zone:hover { border-color: var(--terracotta); background: #fff7ed; }
         .upload-zone i { font-size: 30px; color: var(--terracotta); margin-bottom: 10px; }
@@ -1068,6 +1072,13 @@
         }
 
         function openSidebarTab(tabId, btnContext) {
+            // Matikan fungsi bypass kursor jika user pindah tab dari menu rute
+            if(modePilihPeta) {
+                modePilihPeta = null;
+                document.getElementById('map').classList.remove('map-picking');
+                document.querySelectorAll('.route-btn').forEach(b => b.classList.remove('active'));
+            }
+
             document.querySelectorAll('.s-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
@@ -1099,7 +1110,6 @@
         var osmMain = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' });
         var satelitMain = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Esri Satelit' });
 
-        // Pane khusus agar kursor bisa tembus lapisan poligon untuk Routing (Z-Index Trick)
         var map = L.map('map', { center: WUNUT_CENTER, zoom: DEFAULT_ZOOM, layers: [osmMain], zoomControl: false });
         L.control.zoom({ position: 'bottomright' }).addTo(map); 
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
@@ -1144,6 +1154,51 @@
         function stylePenggunaan(feature) { return { fillColor: penggunaanColors[getPropValue(feature.properties, 'penggunaan', 'PENGGUNAAN')] || '#dddddd', weight: 1.2, color: '#444444', fillOpacity: 0.8 }; }
         function styleKp2b(feature) { return { fillColor: colorKp2b, weight: 1.2, color: '#ffffff', fillOpacity: 0.8 }; }
         function styleLsd(feature) { return { fillColor: colorLsd, weight: 1.2, color: '#ffffff', fillOpacity: 0.8 }; }
+
+        // --- CEGATAN KLIK PETA UNTUK ROUTING (BYPASS KURSOR 100% TEMBUS LAYER) ---
+        let coordA = null; 
+        let coordB = null; 
+        let modePilihPeta = null; 
+        let markerStart = null; 
+        let markerEnd = null;
+
+        // Kami menangkap event dari DOM secara langsung pada fase 'capture'
+        // Sehingga ia mem-bypass layer spasial manapun yang menghalangi!
+        document.getElementById('map').addEventListener('click', function(e) {
+            if (modePilihPeta) {
+                // Jangan cegat klik pada control zoom Leaflet
+                if (e.target.closest('.leaflet-control')) return;
+                
+                e.stopPropagation(); // Matikan interaksi popup layer di bawah kursor
+                e.preventDefault();
+                
+                map.closePopup();
+
+                const latlng = map.mouseEventToLatLng(e);
+                const lat = latlng.lat;
+                const lng = latlng.lng;
+
+                if (modePilihPeta === 'start') {
+                    coordA = latlng;
+                    if(markerStart) map.removeLayer(markerStart);
+                    markerStart = L.marker(coordA).addTo(map).bindPopup("Titik Awal (A)").openPopup();
+                    document.getElementById('route-start-display').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    document.getElementById('btn-set-start').classList.remove('active');
+                    showToast('Titik Awal berhasil ditetapkan.', 'success');
+                } else if (modePilihPeta === 'end') {
+                    coordB = latlng;
+                    if(markerEnd) map.removeLayer(markerEnd);
+                    markerEnd = L.marker(coordB).addTo(map).bindPopup("Titik Tujuan (B)").openPopup();
+                    document.getElementById('route-end-display').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    document.getElementById('btn-set-end').classList.remove('active');
+                    showToast('Titik Tujuan berhasil ditetapkan.', 'success');
+                }
+                
+                // KEMBALIKAN KONDISI NORMAL
+                modePilihPeta = null;
+                document.getElementById('map').classList.remove('map-picking');
+            }
+        }, true); // parameter true = Capture Phase (Paling Ampuh)
 
         // Penarikan Data (Fetch Data Utama)
         fetch('polaruangwunutbaru.geojson').then(res => res.json()).then(data => { rawPolaRuangData = data; polaRuangLayer = L.geoJSON(data, { style: stylePolaRuang, onEachFeature: (f, l) => { l.bindPopup(`<b>Pola Ruang</b><br>Sub Zona: ${getPropValue(f.properties, 'SUB_ZONA')}`); l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); l.on('mouseout', e => polaRuangLayer.resetStyle(e.target)); } }); if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer); });
@@ -1351,7 +1406,6 @@
                 reader.readAsText(file);
             } 
             else if (fileName.endsWith('.kml')) {
-                // PERBAIKAN BUG OMNIVORE KML -> Blob URL Strategy 
                 try {
                     const objectUrl = URL.createObjectURL(file);
                     const customLayer = omnivore.kml(objectUrl).on('ready', function() {
@@ -1374,7 +1428,6 @@
             event.target.value = ''; // Reset input agar bisa upload file yang sama lagi jika dihapus
         }
 
-        // Jalankan render list default saat halaman dimuat
         renderUploadedLayersList();
 
         // --- SISTEM PENCARIAN ATRIBUT ---
@@ -1456,7 +1509,7 @@
             showToast("Pencarian diatur ulang.", "info");
         }
 
-        // --- SISTEM RUTE PERJALANAN (ANTI GAGAL - TANGKAPAN KURSOR TEMBUS LAYER) ---
+        // --- SISTEM RUTE PERJALANAN (ANTI GAGAL MURNI JALAN RAYA MULTI-SERVER) ---
         L.Routing.Localization['id'] = {
             directions: { 
                 N: 'utara', NE: 'timur laut', E: 'timur', SE: 'tenggara', S: 'selatan', SW: 'barat daya', W: 'barat', NW: 'barat laut', 
@@ -1471,19 +1524,11 @@
 
         var routingControl = null;
         var highlightRuteLayer = null;
-        let coordA = null; 
-        let coordB = null; 
-        let modePilihPeta = null; 
-        let markerStart = null; 
-        let markerEnd = null;
 
-        // FUNGSI INTI: BYPASS KURSOR TEMBUS POLIGON
         function startSetRoute(jenis) {
-            // Jika mode rute sedang aktif sebelumnya, pastikan poligon di-unblock dulu
-            if(modePilihPeta) { map.getPane('overlayPane').style.pointerEvents = 'auto'; }
-            
             modePilihPeta = jenis;
-            document.querySelectorAll('.route-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-set-start').classList.remove('active');
+            document.getElementById('btn-set-end').classList.remove('active');
             
             if(jenis === 'start') { 
                 document.getElementById('btn-set-start').classList.add('active');
@@ -1494,39 +1539,9 @@
                 showToast('Klik lokasi pada peta untuk menetapkan Titik Tujuan', 'info'); 
             }
             
-            // JADIKAN POLIGON TEMBUS PANDANG KLIK SEMENTARA AGAR PETA BISA DIKLIK!
-            document.getElementById('map').style.cursor = 'crosshair';
-            map.getPane('overlayPane').style.pointerEvents = 'none';
+            // Bypass kursor agar tembus layer poligon
+            document.getElementById('map').classList.add('map-picking');
         }
-
-        // TANGKAP KLIK PETA
-        map.on('click', function(e) {
-            if (modePilihPeta) {
-                const lat = e.latlng.lat;
-                const lng = e.latlng.lng;
-
-                if (modePilihPeta === 'start') {
-                    coordA = e.latlng;
-                    if(markerStart) map.removeLayer(markerStart);
-                    markerStart = L.marker(coordA).addTo(map).bindPopup("Titik Awal (A)").openPopup();
-                    document.getElementById('route-start-display').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-                    document.getElementById('btn-set-start').classList.remove('active');
-                    showToast('Titik Awal berhasil ditetapkan.', 'success');
-                } else if (modePilihPeta === 'end') {
-                    coordB = e.latlng;
-                    if(markerEnd) map.removeLayer(markerEnd);
-                    markerEnd = L.marker(coordB).addTo(map).bindPopup("Titik Tujuan (B)").openPopup();
-                    document.getElementById('route-end-display').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-                    document.getElementById('btn-set-end').classList.remove('active');
-                    showToast('Titik Tujuan berhasil ditetapkan.', 'success');
-                }
-                
-                // KEMBALIKAN KONDISI NORMAL
-                modePilihPeta = null;
-                document.getElementById('map').style.cursor = '';
-                map.getPane('overlayPane').style.pointerEvents = 'auto'; // Poligon bisa diklik lagi
-            }
-        });
 
         function setRuteLokasiSaya(jenis) {
             if (!navigator.geolocation) { return showToast("Browser tidak mendukung geolokasi", "error"); }
@@ -1562,16 +1577,16 @@
             if(coordA) { hitungRute(); } 
         }
 
-        // DAFTAR SERVER ROUTING OSRM JALAN ASPAL MULTI-FALLBACK
+        // Tiga Server Routing FOSSGIS Terkemuka
         const routeServers = [
             'https://router.project-osrm.org/route/v1',
             'https://routing.openstreetmap.de/routed-car/route/v1',
-            'https://routing.openstreetmap.de/routed-bike/route/v1' // Jika jalan desa terlalu sempit, fallback ke jalur sepeda agar tetap ketemu jalan
+            'https://routing.openstreetmap.de/routed-bike/route/v1' // Jika jalan desa terlalu sempit (tercatat sbg jalan setapak/sepeda di OSM)
         ];
 
         function hitungRute() {
             if(!coordA || !coordB) { return showToast('Mohon lengkapi Titik Awal (A) dan Titik Tujuan (B).', 'warning'); }
-            attemptRouting(0); // Mulai dari server utama
+            attemptRouting(0); // Mulai dari server index 0
         }
 
         function attemptRouting(serverIdx) {
@@ -1580,7 +1595,7 @@
             
             const pfo = serverIdx === 2 ? 'bike' : 'driving';
             showToast(`Mengalkulasi rute jalan...`, 'info');
-            document.getElementById('routing-itinerary-container').innerHTML = '<div style="text-align:center; padding:20px;"><i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--terracotta);"></i><br><br>Menghitung jarak dan kalkulasi rute...</div>';
+            document.getElementById('routing-itinerary-container').innerHTML = '<div style="text-align:center; padding:20px;"><i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--terracotta);"></i><br><br>Menghitung jarak dan kalkulasi rute aspal...</div>';
             
             routingControl = L.Routing.control({
                 waypoints: [coordA, coordB],
@@ -1592,7 +1607,7 @@
                 showAlternatives: true, 
                 lineOptions: { styles: [{color: '#10b981', weight: 6, opacity: 0.9 }] },
                 altLineOptions: { styles: [{color: '#94a3b8', weight: 4, opacity: 0.6 }] },
-                createMarker: function() { return null; }, // Marker kustom ditangani di luar plugin ini
+                createMarker: function() { return null; }, 
                 router: L.Routing.osrmv1({
                     serviceUrl: routeServers[serverIdx],
                     profile: pfo
@@ -1641,7 +1656,7 @@
                     html += `</ul>`;
                     document.getElementById('routing-itinerary-container').innerHTML = html;
 
-                    // Tambahkan interaksi klik pada teks rute (highlight segmen jalan)
+                    // Tambahkan interaksi klik rute (highlight segmen jalan)
                     const navItems = document.querySelectorAll('.nav-step');
                     navItems.forEach(item => {
                         item.addEventListener('click', function() {
@@ -1665,19 +1680,19 @@
                     });
                 } catch(err) { console.error("UI Routing Error: ", err); }
             }).on('routingerror', function(err) {
-                // JIKA SERVER GAGAL ATAU DOWN, COBA SERVER BERIKUTNYA YANG MURNI JALAN
+                // JIKA SERVER GAGAL ATAU DOWN, PINDAH KE SERVER BERIKUTNYA YANG MURNI JALAN
                 let nextIdx = serverIdx + 1;
                 if (nextIdx < routeServers.length) {
                     attemptRouting(nextIdx); 
                 } else {
-                    // Kalau SEMUA peladen jalan gagal total
+                    // Kalau SEMUA server rute FOSSGIS gagal mencari jalan aspal
                     if(routingControl) { map.removeControl(routingControl); routingControl = null; }
-                    showToast('Gagal menemukan rute jalan aspal.', 'error');
+                    showToast('Gagal menemukan rute jalan. Pastikan titik berada dekat dengan jaringan aspal.', 'error');
                     document.getElementById('routing-itinerary-container').innerHTML = `
                         <div style="background:#fef2f2; border:1px solid #fecaca; color:#ef4444; padding:15px; border-radius:8px; text-align:center;">
                             <i class="fa-solid fa-road-circle-xmark fa-2x" style="margin-bottom:10px;"></i><br>
                             <b style="font-size:12px;">Rute Gagal Dikalkulasi</b><br>
-                            <span style="font-size:11px; display:block; margin-top:5px; line-height:1.4;">Seluruh jaringan peladen jalan raya gagal memproses. Hal ini disebabkan titik koordinat berada terlalu jauh dari akses jalan umum OSM. Silakan ubah titik lokasi Anda.</span>
+                            <span style="font-size:11px; display:block; margin-top:5px; line-height:1.4;">Seluruh jaringan peladen jalan raya OSRM menolak rute. Hal ini terjadi karena titik yang Anda letakkan berada terlalu jauh dari akses jalan umum. Silakan hapus rute dan geser sedikit posisi titik Anda.</span>
                         </div>`;
                 }
             }).addTo(map);
@@ -1689,9 +1704,7 @@
             if(markerStart) { map.removeLayer(markerStart); markerStart = null; }
             if(markerEnd) { map.removeLayer(markerEnd); markerEnd = null; }
             
-            coordA = null; coordB = null; 
-            modePilihPeta = null; document.getElementById('map').style.cursor = '';
-            map.getPane('overlayPane').style.pointerEvents = 'auto'; // Kembalikan bypass
+            coordA = null; coordB = null; modePilihPeta = null; document.getElementById('map').classList.remove('map-picking');
             
             document.getElementById('btn-set-start').classList.remove('active');
             document.getElementById('btn-set-end').classList.remove('active');
@@ -1750,7 +1763,7 @@
             drawnItems.addLayer(layer);
             
             layer.on('click', function(evt) {
-                if(modePilihPeta) return; // Cegah popup digitasi jika sedang bypass map routing
+                if(modePilihPeta) return; // Cegah popup terbuka jika sedang bypass kursor rute
 
                 selectedDrawnLayer = evt.target;
                 document.getElementById('digi-nama').value = layer.feature.properties.nama || '';
