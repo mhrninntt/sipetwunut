@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "kantor kelurahan",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32749" } },
+"features": [
+{ "type": "Feature", "properties": { "OBJECTID": 165, "X": 110.642161153, "Y": -7.5891305704500001, "KODE": "PTKPWN0001", "DESA": "Wunut", "Klasif_Top": "Toponim Pemerintahan", "Jenis": "Perkantoran", "Jenis_Utam": "Perkantoran dan Perdagangan-Jasa", "Keg_Objek": "Kantor Pemerintah", "Toponim": "Kantor Kelurahan Wunut", "KODE_JNS": "PT", "KODE_DS": "WN", "KODE_BGNN": "KP", "KODE_KEG": "PTKP", "FOTO": "PTKPWN0001.png", "ID_DESA": "3310192018", "SUMBER": "Geotagging dan Observasi Kelompok C2" }, "geometry": { "type": "Point", "coordinates": [ 460527.727400000207126, 9161107.6776, 0.0 ] } }
+]
+}
