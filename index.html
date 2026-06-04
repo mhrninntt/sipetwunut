@@ -708,7 +708,7 @@
                                         <h4>TITIK AWAL (A)</h4>
                                         <input type="text" id="route-start-display" class="route-input-display" style="width:100%; border:1px solid #e2e8f0; outline:none;" placeholder="Belum ditentukan" readonly>
                                         <div class="route-buttons-row">
-                                            <button class="route-btn" id="btn-set-start" onclick="startSetRoute('start')"><i class="fa-solid fa-crosshairs"></i> Titik Peta</button>
+                                            <button class="route-btn" id="btn-set-start" onclick="setRuteDariPeta('start')"><i class="fa-solid fa-crosshairs"></i> Titik Peta</button>
                                             <button class="route-btn" onclick="setRuteLokasiSaya('start')"><i class="fa-solid fa-location-arrow"></i> Lokasiku</button>
                                         </div>
                                     </div>
@@ -717,7 +717,7 @@
                                         <h4>TITIK TUJUAN (B)</h4>
                                         <input type="text" id="route-end-display" class="route-input-display" style="width:100%; border:1px solid #e2e8f0; outline:none;" placeholder="Belum ditentukan" readonly>
                                         <div class="route-buttons-row">
-                                            <button class="route-btn" id="btn-set-end" onclick="startSetRoute('end')"><i class="fa-solid fa-crosshairs"></i> Titik Peta</button>
+                                            <button class="route-btn" id="btn-set-end" onclick="setRuteDariPeta('end')"><i class="fa-solid fa-crosshairs"></i> Titik Peta</button>
                                             <button class="route-btn" onclick="setRuteLokasiSaya('end')"><i class="fa-solid fa-location-arrow"></i> Lokasiku</button>
                                         </div>
                                     </div>
@@ -1182,7 +1182,6 @@
                 document.getElementById('routing-overlay').style.display = 'none';
                 document.querySelectorAll('.route-btn').forEach(b => b.classList.remove('active'));
             }
-
             document.querySelectorAll('.s-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
@@ -1322,7 +1321,7 @@
                     let buff = turf.buffer(turfPt, s.r, {units: 'meters'});
                     buff.properties = { ...f.properties, radius_m: s.r, color: s.color, layer: layerName };
                     bufferFeatures.push(buff);
-                } catch(err) { console.error("Turf buffer error", err); }
+                } catch(err) { console.error("Turf process error", err); }
             });
 
             let rawBufferData = turf.featureCollection(bufferFeatures);
@@ -1670,8 +1669,20 @@
             showToast("Pencarian diatur ulang.", "info");
         }
 
-        // --- SISTEM RUTE PERJALANAN (OSRM MURNI DENGAN INSTRUKSI INDONESIA) ---
-        function setRuteDariPeta(jenis) {
+        // --- SISTEM RUTE PERJALANAN MURNI ASPAL (Routing Machine) ---
+        L.Routing.Localization['id'] = {
+            directions: { 
+                N: 'utara', NE: 'timur laut', E: 'timur', SE: 'tenggara', S: 'selatan', SW: 'barat daya', W: 'barat', NW: 'barat laut', 
+                SlightRight: 'Sedikit kanan', Right: 'Kanan', SharpRight: 'Tajam kanan', 
+                SlightLeft: 'Sedikit kiri', Left: 'Kiri', SharpLeft: 'Tajam kiri', 
+                Uturn: 'Putar balik', Straight: 'Lurus', Head: 'Menuju', 
+                DestinationReached: 'Tiba di tujuan', WaypointReached: 'Tiba di titik singgah', Roundabout: 'Ambil jalan keluar ke-{exit}' 
+            },
+            formatOrder: function(n) { return n + '.'; }, 
+            ui: { startPlaceholder: 'Awal', viaPlaceholder: 'Singgah', endPlaceholder: 'Tujuan' }
+        };
+
+        function startSetRoute(jenis) {
             document.getElementById('btn-set-start').classList.remove('active');
             document.getElementById('btn-set-end').classList.remove('active');
             
@@ -1684,6 +1695,7 @@
                 document.getElementById('btn-set-end').classList.add('active');
                 showToast('Klik lokasi pada peta untuk menetapkan Titik Tujuan', 'info'); 
             }
+            // Munculkan layar kaca penangkap klik (bypass poligon layer)
             document.getElementById('routing-overlay').style.display = 'block';
         }
 
@@ -1706,7 +1718,9 @@
                     showToast("Titik tujuan menggunakan lokasi Anda", "success");
                 }
                 map.setView(latlng, 16);
-            }, () => { showToast("Gagal melacak lokasi. Mohon izinkan akses.", "error"); });
+            }, () => {
+                showToast("Gagal melacak lokasi. Mohon izinkan akses lokasi browser.", "error");
+            });
         }
 
         function setRouteDestFromPopup(lat, lng) {
@@ -1719,6 +1733,7 @@
             if(coordA) { hitungRute(); } 
         }
 
+        // Tiga Server Routing OSRM Publik Jalan Aspal
         const routeServers = [
             'https://router.project-osrm.org/route/v1',
             'https://routing.openstreetmap.de/routed-car/route/v1',
@@ -1727,7 +1742,7 @@
 
         function hitungRute() {
             if(!coordA || !coordB) { return showToast('Mohon lengkapi Titik Awal (A) dan Titik Tujuan (B).', 'warning'); }
-            attemptRouting(0); 
+            attemptRouting(0); // Mulai dari server utama
         }
 
         function attemptRouting(serverIdx) {
@@ -1738,13 +1753,11 @@
             showToast(`Mengalkulasi rute jalan aspal...`, 'info');
             document.getElementById('routing-itinerary-container').innerHTML = '<div style="text-align:center; padding:20px;"><i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--terracotta);"></i><br><br>Menghitung jarak dan kalkulasi rute...</div>';
             
-            // KITA HARUS MENETAPKAN TRANSLASI MANUAL KARENA LEAFLET ROUTING V1 SERING TERPUTUS TRANSLASINYA
-            const idTranslation = { "Head": "Menuju ke", "Continue": "Lanjutkan di", "SlightRight": "Sedikit ke kanan di", "Right": "Belok kanan di", "SharpRight": "Tikungan tajam ke kanan di", "TurnAround": "Putar balik di", "SharpLeft": "Tikungan tajam ke kiri di", "Left": "Belok kiri di", "SlightLeft": "Sedikit ke kiri di", "WaypointReached": "Anda telah sampai di titik persinggahan", "Roundabout": "Di bundaran, ambil jalan keluar ke-", "DestinationReached": "Anda telah tiba di tujuan" };
-
             routingControl = L.Routing.control({
                 waypoints: [coordA, coordB],
                 routeWhileDragging: false,
-                show: true, 
+                language: 'id',
+                show: true, // PERBAIKAN BUG: INI WAJIB TRUE AGAR DATANYA TERAMBIL!
                 addWaypoints: false,
                 fitSelectedRoutes: true,
                 showAlternatives: true, 
@@ -1766,13 +1779,13 @@
                     
                     var instrs = routes[0].instructions || [];
                     var html = `<div style="background: #f0fdf4; border:1px solid #86efac; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-                                    <div style="font-weight: 800; color: #166534; font-size:14px; margin-bottom:5px;"><i class="fa-solid ${pfo === 'bike' ? 'fa-bicycle' : 'fa-car'}"></i> Rute Jalan Raya</div>
+                                    <div style="font-weight: 800; color: #166534; font-size:14px; margin-bottom:5px;"><i class="fa-solid ${pfo === 'bike' ? 'fa-bicycle' : 'fa-car'}"></i> Rute Optimal Ditemukan</div>
                                     <div style="color: #15803d; font-weight:600; display:flex; justify-content:space-between;">
                                         <span><i class="fa-solid fa-road"></i> ${distance} KM</span>
                                         <span><i class="fa-solid fa-clock"></i> ${time} Menit</span>
                                     </div>
                                 </div>
-                                <div style="margin-bottom: 10px; font-weight: 700; color: var(--deep-navy); font-size: 11px;">PANDUAN ARAH (BERDASARKAN OSRM):</div>
+                                <div style="margin-bottom: 10px; font-weight: 700; color: var(--deep-navy); font-size: 11px;">INSTRUKSI NAVIGASI:</div>
                                 <ul id="nav-instruction-list" style="list-style:none; padding:0; margin:0;">`;
                     
                     if(instrs.length > 0) {
@@ -1783,20 +1796,12 @@
                             else if(inst.type === "Right" || inst.type === "SlightRight" || inst.type === "SharpRight") icon = "fa-arrow-turn-up";
                             else if(inst.type === "TurnAround") icon = "fa-arrow-rotate-left";
                             else if(inst.type === "DestinationReached") icon = "fa-flag-checkered";
+                            else if(inst.type === "Roundabout") icon = "fa-arrows-spin";
                             
-                            // Translasi Manual Kata-kata Arah
-                            var teksArah = inst.text;
-                            for (var key in idTranslation) {
-                                if (teksArah.includes(key)) { teksArah = teksArah.replace(key, idTranslation[key]); }
-                            }
-                            // Fallback jika API bahasa Inggris
-                            if (inst.type === "Straight" || inst.type === "Continue") teksArah = "Terus lurus di " + (inst.road || "jalan ini");
-                            if (inst.type === "DestinationReached") teksArah = "Tiba di tujuan Anda";
-
                             html += `<li data-idx="${idx}" class="nav-step" style="padding: 12px 10px; border-bottom: 1px solid #e2e8f0; display:flex; gap:12px; align-items:flex-start; cursor:pointer; transition:background 0.2s; border-radius:4px;">
                                         <div style="flex:0 0 20px; color:var(--deep-navy); font-size:14px; padding-top:2px; text-align:center;"><i class="fa-solid ${icon}"></i></div>
                                         <div style="flex:1;">
-                                            <div style="font-weight:600; color:var(--deep-navy); margin-bottom:3px; line-height:1.4;">${teksArah}</div>
+                                            <div style="font-weight:600; color:var(--deep-navy); margin-bottom:3px; line-height:1.4;">${inst.text}</div>
                                             ${inst.distance > 0 ? `<div style="color:var(--terracotta); font-size:10px; font-weight:700;">${dist}</div>` : ''}
                                         </div>
                                      </li>`;
@@ -1806,12 +1811,13 @@
                     }
                     html += `</ul>`;
                     
-                    // Sembunyikan panel bawaan karena kita membuat yang baru
+                    // Suntikkan panduan ke sidebar khusus
                     document.getElementById('routing-itinerary-container').innerHTML = html;
                     
-                    setTimeout(() => { 
-                        var lc = document.querySelector('.leaflet-routing-container'); 
-                        if(lc) lc.style.display = 'none'; 
+                    // Sembunyikan pop-up bawaan Routing Machine agar tidak menumpuk!
+                    setTimeout(() => {
+                        let originalContainer = document.querySelector('.leaflet-routing-container');
+                        if (originalContainer) originalContainer.style.display = 'none';
                     }, 50);
 
                     const navItems = document.querySelectorAll('.nav-step');
@@ -1842,12 +1848,12 @@
                     attemptRouting(nextIdx); 
                 } else {
                     if(routingControl) { map.removeControl(routingControl); routingControl = null; }
-                    showToast('Gagal menemukan rute jalan.', 'error');
+                    showToast('Gagal menemukan rute jalan aspal.', 'error');
                     document.getElementById('routing-itinerary-container').innerHTML = `
                         <div style="background:#fef2f2; border:1px solid #fecaca; color:#ef4444; padding:15px; border-radius:8px; text-align:center;">
                             <i class="fa-solid fa-road-circle-xmark fa-2x" style="margin-bottom:10px;"></i><br>
                             <b style="font-size:12px;">Rute Gagal Dikalkulasi</b><br>
-                            <span style="font-size:11px; display:block; margin-top:5px; line-height:1.4;">Jaringan peladen OSRM menolak rute karena titik koordinat yang dipilih berada terlalu jauh dari jalan. Silakan geser titik A atau B agar mendekati jalan umum utama.</span>
+                            <span style="font-size:11px; display:block; margin-top:5px; line-height:1.4;">Seluruh jaringan peladen jalan raya OSRM menolak rute. Hal ini disebabkan titik koordinat berada terlalu jauh dari akses jalan umum OSM. Silakan hapus rute dan geser sedikit posisi titik Anda.</span>
                         </div>`;
                 }
             }).addTo(map);
@@ -1859,8 +1865,7 @@
             if(markerStart) { map.removeLayer(markerStart); markerStart = null; }
             if(markerEnd) { map.removeLayer(markerEnd); markerEnd = null; }
             
-            coordA = null; coordB = null; modePilihPeta = null; 
-            document.getElementById('routing-overlay').style.display = 'none';
+            coordA = null; coordB = null; modePilihPeta = null; document.getElementById('routing-overlay').style.display = 'none';
             
             document.getElementById('btn-set-start').classList.remove('active');
             document.getElementById('btn-set-end').classList.remove('active');
@@ -2023,7 +2028,10 @@
 
         function focusDrawnLayer(id) {
             const layer = drawnItems.getLayer(id);
-            if (layer) { map.fitBounds(layer.getBounds(), { padding: [30, 30] }); layer.fire('click'); }
+            if (layer) {
+                map.fitBounds(layer.getBounds(), { padding: [30, 30] });
+                layer.fire('click');
+            }
         }
 
         map.on('pm:create', function(e) {
@@ -2049,7 +2057,10 @@
             showToast("Area selesai disketsa. Silakan isi form atribut di panel Analisis.", "info");
         });
 
-        map.on('pm:remove', function(e) { drawnItems.removeLayer(e.layer); updateDigitizedList(); });
+        map.on('pm:remove', function(e) { 
+            drawnItems.removeLayer(e.layer);
+            updateDigitizedList(); 
+        });
 
         function enableDrawPolygon() { map.pm.enableDraw('Polygon'); showToast("Silakan klik di area peta untuk mulai menggambar batas poligon.", "info"); }
 
@@ -2086,7 +2097,8 @@
             if (!layer) return;
             const data = layer.toGeoJSON();
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-            const dl = document.createElement('a'); dl.href = dataStr;
+            const dl = document.createElement('a');
+            dl.href = dataStr;
             let fileName = layer.feature?.properties?.nama ? layer.feature.properties.nama.replace(/\s+/g, '_') : 'Objek';
             dl.download = `Digitasi_SIPET_${fileName}.geojson`;
             document.body.appendChild(dl); dl.click(); dl.remove();
@@ -2096,15 +2108,22 @@
         function deleteSingleDrawnData(id) {
             const layer = drawnItems.getLayer(id);
             if (!layer) return;
+            
             Swal.fire({
                 title: 'Hapus elemen ini?', text: "Tindakan penghapusan ini bersifat permanen!", icon: 'warning',
                 showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#cbd5e1',
                 confirmButtonText: 'Ya, hapus!', cancelButtonText: 'Batal', customClass: { popup: 'swal2-container' }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    drawnItems.removeLayer(layer); map.removeLayer(layer);
-                    if (selectedDrawnLayer === layer) { selectedDrawnLayer = null; document.getElementById('digi-nama').value = ''; document.getElementById('digi-ket').value = ''; }
-                    updateDigitizedList(); showToast("Elemen berhasil dihapus secara permanen.", "success");
+                    drawnItems.removeLayer(layer);
+                    map.removeLayer(layer);
+                    if (selectedDrawnLayer === layer) {
+                        selectedDrawnLayer = null;
+                        document.getElementById('digi-nama').value = '';
+                        document.getElementById('digi-ket').value = '';
+                    }
+                    updateDigitizedList();
+                    showToast("Elemen berhasil dihapus secara permanen.", "success");
                 }
             });
         }
@@ -2113,7 +2132,9 @@
             if (drawnItems.getLayers().length === 0) return showToast("Sistem mendeteksi belum adanya proses digitasi data pada kanvas peta.", "warning");
             var data = drawnItems.toGeoJSON();
             var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-            var dl = document.createElement('a'); dl.href = dataStr; dl.download = "Kompilasi_Digitasi_SIPET.geojson";
+            var dl = document.createElement('a');
+            dl.href = dataStr;
+            dl.download = "Kompilasi_Digitasi_SIPET.geojson";
             document.body.appendChild(dl); dl.click(); dl.remove();
             showToast("Sedang mengunduh seluruh data kolektif digitasi.", "success");
         }
