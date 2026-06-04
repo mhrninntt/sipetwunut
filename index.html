@@ -708,7 +708,7 @@
                                         <h4>TITIK AWAL (A)</h4>
                                         <input type="text" id="route-start-display" class="route-input-display" style="width:100%; border:1px solid #e2e8f0; outline:none;" placeholder="Belum ditentukan" readonly>
                                         <div class="route-buttons-row">
-                                            <button class="route-btn" id="btn-set-start" onclick="setRuteDariPeta('start')"><i class="fa-solid fa-crosshairs"></i> Titik Peta</button>
+                                            <button class="route-btn" id="btn-set-start" onclick="startSetRoute('start')"><i class="fa-solid fa-crosshairs"></i> Titik Peta</button>
                                             <button class="route-btn" onclick="setRuteLokasiSaya('start')"><i class="fa-solid fa-location-arrow"></i> Lokasiku</button>
                                         </div>
                                     </div>
@@ -717,7 +717,7 @@
                                         <h4>TITIK TUJUAN (B)</h4>
                                         <input type="text" id="route-end-display" class="route-input-display" style="width:100%; border:1px solid #e2e8f0; outline:none;" placeholder="Belum ditentukan" readonly>
                                         <div class="route-buttons-row">
-                                            <button class="route-btn" id="btn-set-end" onclick="setRuteDariPeta('end')"><i class="fa-solid fa-crosshairs"></i> Titik Peta</button>
+                                            <button class="route-btn" id="btn-set-end" onclick="startSetRoute('end')"><i class="fa-solid fa-crosshairs"></i> Titik Peta</button>
                                             <button class="route-btn" onclick="setRuteLokasiSaya('end')"><i class="fa-solid fa-location-arrow"></i> Lokasiku</button>
                                         </div>
                                     </div>
@@ -960,6 +960,7 @@
     </script>
 
     <script>
+        // Memuat Data CSV ITBX
         var itbxData = [];
         Papa.parse('itbx.csv', {
             download: true,
@@ -967,9 +968,7 @@
                 itbxData = results.data;
                 console.log("Sistem Matriks ITBX sukses dimuat secara background.");
             },
-            error: function(err) {
-                console.warn("Matriks ITBX belum tersedia. Pastikan itbx.csv ada di folder.");
-            }
+            error: function(err) { console.warn("Matriks ITBX belum tersedia. Pastikan itbx.csv ada di folder."); }
         });
 
         function getItbxTableHtml(kode, subZona) {
@@ -979,15 +978,14 @@
             let headerRowKode = itbxData[3] || [];
             let headerRowNama = itbxData[2] || [];
             
-            let targetK = kode ? String(kode).trim().toUpperCase() : '';
-            let targetS = subZona ? String(subZona).trim().toUpperCase() : '';
+            const sanitize = (str) => String(str || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+            let targetK = sanitize(kode);
+            let targetS = sanitize(subZona);
             
             for (let i = 2; i < headerRowKode.length; i++) {
-                let k = headerRowKode[i] ? headerRowKode[i].trim().toUpperCase() : '';
-                let s = headerRowNama[i] ? headerRowNama[i].trim().toUpperCase() : '';
-                
-                if (targetK && k === targetK) { colIndex = i; break; }
-                if (targetS && s === targetS) { colIndex = i; break; }
+                let csvKode = sanitize(headerRowKode[i]);
+                let csvNama = sanitize(headerRowNama[i]);
+                if ((targetK && csvKode === targetK) || (targetS && csvNama === targetS)) { colIndex = i; break; }
             }
             
             if (colIndex === -1) return `<p style="font-size:10px; color:#ef4444; font-style:italic; padding:5px;">Detail kegiatan ITBX untuk zona ini tidak terdaftar di database.</p>`;
@@ -1012,9 +1010,7 @@
                 
                 if (kegiatan !== '' && status !== '') {
                     hasData = true;
-                    let bg = '#fff'; let color = '#000';
-                    let tooltip = '';
-                    
+                    let bg = '#fff'; let color = '#000'; let tooltip = '';
                     if (status === 'I') { bg = '#10b981'; color = '#fff'; tooltip = 'Diizinkan'; }
                     else if (status === 'X') { bg = '#ef4444'; color = '#fff'; tooltip = 'Tidak Diizinkan'; }
                     else if (status.includes('T')) { bg = '#f59e0b'; color = '#fff'; tooltip = 'Bersyarat Terbatas'; }
@@ -1027,9 +1023,7 @@
                     </tr>`;
                 }
             }
-            
             if(!hasData) html += `<tr><td colspan="2" style="padding:5px; text-align:center; font-style:italic;">Tidak ada data kegiatan.</td></tr>`;
-            
             html += `</tbody></table></div>`;
             return html;
         }
@@ -1039,7 +1033,7 @@
             Swal.fire({
                 toast: true, position: 'top', 
                 icon: iconType, title: message,
-                showConfirmButton: false, timer: 2000, timerProgressBar: false,
+                showConfirmButton: false, timer: 1500, timerProgressBar: false,
                 background: '#ffffff', color: 'var(--deep-navy)',
                 customClass: { popup: 'swal2-container custom-toast-center' }
             });
@@ -1341,8 +1335,6 @@
                     l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); 
                     l.on('mouseout', e => polaRuangLayer.resetStyle(e.target)); 
                     l.on('click', function(e) {
-                        if (modePilihPeta) { setTimeout(() => map.closePopup(), 10); return; }
-                        
                         let zona = getPropValue(f.properties, 'ZONA', 'Zona', 'zona', 'NAMOBJ');
                         let subZona = getPropValue(f.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona', 'NAMOBJ');
                         let kode = getPropValue(f.properties, 'KODE', 'kode', 'Kode', 'KODE_ZONA');
@@ -1549,7 +1541,7 @@
                         addLayerToManagement(shpLayer, file.name, false);
                         showToast(`Shapefile '${file.name}' sukses diekstraksi.`, "success");
                         if(isUserLoggedIn && window.firebaseAuth.currentUser) saveToCloud(window.firebaseAuth.currentUser.uid, geojson, file.name);
-                    }).catch(function(err) { showToast("Gagal memproses Shapefile. Format arsip .zip bermasalah.", "error"); });
+                    }).catch(function(err) { showToast("Gagal memproses Shapefile.", "error"); });
                 };
                 reader.readAsArrayBuffer(file);
             } 
@@ -1670,19 +1662,7 @@
         }
 
         // --- SISTEM RUTE PERJALANAN MURNI ASPAL (Routing Machine) ---
-        L.Routing.Localization['id'] = {
-            directions: { 
-                N: 'utara', NE: 'timur laut', E: 'timur', SE: 'tenggara', S: 'selatan', SW: 'barat daya', W: 'barat', NW: 'barat laut', 
-                SlightRight: 'Sedikit kanan', Right: 'Kanan', SharpRight: 'Tajam kanan', 
-                SlightLeft: 'Sedikit kiri', Left: 'Kiri', SharpLeft: 'Tajam kiri', 
-                Uturn: 'Putar balik', Straight: 'Lurus', Head: 'Menuju', 
-                DestinationReached: 'Tiba di tujuan', WaypointReached: 'Tiba di titik singgah', Roundabout: 'Ambil jalan keluar ke-{exit}' 
-            },
-            formatOrder: function(n) { return n + '.'; }, 
-            ui: { startPlaceholder: 'Awal', viaPlaceholder: 'Singgah', endPlaceholder: 'Tujuan' }
-        };
-
-        function startSetRoute(jenis) {
+        function setRuteDariPeta(jenis) {
             document.getElementById('btn-set-start').classList.remove('active');
             document.getElementById('btn-set-end').classList.remove('active');
             
@@ -1695,7 +1675,6 @@
                 document.getElementById('btn-set-end').classList.add('active');
                 showToast('Klik lokasi pada peta untuk menetapkan Titik Tujuan', 'info'); 
             }
-            // Munculkan layar kaca penangkap klik (bypass poligon layer)
             document.getElementById('routing-overlay').style.display = 'block';
         }
 
@@ -1718,9 +1697,7 @@
                     showToast("Titik tujuan menggunakan lokasi Anda", "success");
                 }
                 map.setView(latlng, 16);
-            }, () => {
-                showToast("Gagal melacak lokasi. Mohon izinkan akses lokasi browser.", "error");
-            });
+            }, () => { showToast("Gagal melacak lokasi.", "error"); });
         }
 
         function setRouteDestFromPopup(lat, lng) {
@@ -1733,7 +1710,6 @@
             if(coordA) { hitungRute(); } 
         }
 
-        // Tiga Server Routing OSRM Publik Jalan Aspal
         const routeServers = [
             'https://router.project-osrm.org/route/v1',
             'https://routing.openstreetmap.de/routed-car/route/v1',
@@ -1742,7 +1718,7 @@
 
         function hitungRute() {
             if(!coordA || !coordB) { return showToast('Mohon lengkapi Titik Awal (A) dan Titik Tujuan (B).', 'warning'); }
-            attemptRouting(0); // Mulai dari server utama
+            attemptRouting(0); 
         }
 
         function attemptRouting(serverIdx) {
@@ -1753,11 +1729,12 @@
             showToast(`Mengalkulasi rute jalan aspal...`, 'info');
             document.getElementById('routing-itinerary-container').innerHTML = '<div style="text-align:center; padding:20px;"><i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--terracotta);"></i><br><br>Menghitung jarak dan kalkulasi rute...</div>';
             
+            const idTranslation = { "Head": "Menuju ke", "Continue": "Lanjutkan di", "SlightRight": "Sedikit ke kanan di", "Right": "Belok kanan di", "SharpRight": "Tikungan tajam ke kanan di", "TurnAround": "Putar balik di", "SharpLeft": "Tikungan tajam ke kiri di", "Left": "Belok kiri di", "SlightLeft": "Sedikit ke kiri di", "WaypointReached": "Anda telah sampai di titik persinggahan", "Roundabout": "Di bundaran, ambil jalan keluar ke-", "DestinationReached": "Anda telah tiba di tujuan" };
+
             routingControl = L.Routing.control({
                 waypoints: [coordA, coordB],
                 routeWhileDragging: false,
-                language: 'id',
-                show: true, // PERBAIKAN BUG: INI WAJIB TRUE AGAR DATANYA TERAMBIL!
+                show: true, // PERBAIKAN: Harus di-set True agar instuksi rute (directions) tetap diunduh oleh mesin
                 addWaypoints: false,
                 fitSelectedRoutes: true,
                 showAlternatives: true, 
@@ -1779,13 +1756,13 @@
                     
                     var instrs = routes[0].instructions || [];
                     var html = `<div style="background: #f0fdf4; border:1px solid #86efac; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-                                    <div style="font-weight: 800; color: #166534; font-size:14px; margin-bottom:5px;"><i class="fa-solid ${pfo === 'bike' ? 'fa-bicycle' : 'fa-car'}"></i> Rute Optimal Ditemukan</div>
+                                    <div style="font-weight: 800; color: #166534; font-size:14px; margin-bottom:5px;"><i class="fa-solid ${pfo === 'bike' ? 'fa-bicycle' : 'fa-car'}"></i> Rute Jalan Raya</div>
                                     <div style="color: #15803d; font-weight:600; display:flex; justify-content:space-between;">
                                         <span><i class="fa-solid fa-road"></i> ${distance} KM</span>
                                         <span><i class="fa-solid fa-clock"></i> ${time} Menit</span>
                                     </div>
                                 </div>
-                                <div style="margin-bottom: 10px; font-weight: 700; color: var(--deep-navy); font-size: 11px;">INSTRUKSI NAVIGASI:</div>
+                                <div style="margin-bottom: 10px; font-weight: 700; color: var(--deep-navy); font-size: 11px;">PANDUAN ARAH OSRM:</div>
                                 <ul id="nav-instruction-list" style="list-style:none; padding:0; margin:0;">`;
                     
                     if(instrs.length > 0) {
@@ -1796,12 +1773,16 @@
                             else if(inst.type === "Right" || inst.type === "SlightRight" || inst.type === "SharpRight") icon = "fa-arrow-turn-up";
                             else if(inst.type === "TurnAround") icon = "fa-arrow-rotate-left";
                             else if(inst.type === "DestinationReached") icon = "fa-flag-checkered";
-                            else if(inst.type === "Roundabout") icon = "fa-arrows-spin";
                             
+                            var teksArah = inst.text;
+                            for (var key in idTranslation) { if (teksArah.includes(key)) { teksArah = teksArah.replace(key, idTranslation[key]); } }
+                            if (inst.type === "Straight" || inst.type === "Continue") teksArah = "Terus lurus di " + (inst.road || "jalan ini");
+                            if (inst.type === "DestinationReached") teksArah = "Tiba di tujuan Anda";
+
                             html += `<li data-idx="${idx}" class="nav-step" style="padding: 12px 10px; border-bottom: 1px solid #e2e8f0; display:flex; gap:12px; align-items:flex-start; cursor:pointer; transition:background 0.2s; border-radius:4px;">
                                         <div style="flex:0 0 20px; color:var(--deep-navy); font-size:14px; padding-top:2px; text-align:center;"><i class="fa-solid ${icon}"></i></div>
                                         <div style="flex:1;">
-                                            <div style="font-weight:600; color:var(--deep-navy); margin-bottom:3px; line-height:1.4;">${inst.text}</div>
+                                            <div style="font-weight:600; color:var(--deep-navy); margin-bottom:3px; line-height:1.4;">${teksArah}</div>
                                             ${inst.distance > 0 ? `<div style="color:var(--terracotta); font-size:10px; font-weight:700;">${dist}</div>` : ''}
                                         </div>
                                      </li>`;
@@ -1811,13 +1792,12 @@
                     }
                     html += `</ul>`;
                     
-                    // Suntikkan panduan ke sidebar khusus
                     document.getElementById('routing-itinerary-container').innerHTML = html;
                     
-                    // Sembunyikan pop-up bawaan Routing Machine agar tidak menumpuk!
-                    setTimeout(() => {
-                        let originalContainer = document.querySelector('.leaflet-routing-container');
-                        if (originalContainer) originalContainer.style.display = 'none';
+                    // Sembunyikan panel bawaan karena kita membuat yang baru
+                    setTimeout(() => { 
+                        var lc = document.querySelector('.leaflet-routing-container'); 
+                        if(lc) lc.style.display = 'none'; 
                     }, 50);
 
                     const navItems = document.querySelectorAll('.nav-step');
@@ -1848,12 +1828,12 @@
                     attemptRouting(nextIdx); 
                 } else {
                     if(routingControl) { map.removeControl(routingControl); routingControl = null; }
-                    showToast('Gagal menemukan rute jalan aspal.', 'error');
+                    showToast('Gagal menemukan rute jalan.', 'error');
                     document.getElementById('routing-itinerary-container').innerHTML = `
                         <div style="background:#fef2f2; border:1px solid #fecaca; color:#ef4444; padding:15px; border-radius:8px; text-align:center;">
                             <i class="fa-solid fa-road-circle-xmark fa-2x" style="margin-bottom:10px;"></i><br>
                             <b style="font-size:12px;">Rute Gagal Dikalkulasi</b><br>
-                            <span style="font-size:11px; display:block; margin-top:5px; line-height:1.4;">Seluruh jaringan peladen jalan raya OSRM menolak rute. Hal ini disebabkan titik koordinat berada terlalu jauh dari akses jalan umum OSM. Silakan hapus rute dan geser sedikit posisi titik Anda.</span>
+                            <span style="font-size:11px; display:block; margin-top:5px; line-height:1.4;">Jaringan peladen OSRM menolak rute karena titik koordinat yang dipilih berada terlalu jauh dari jalan. Silakan geser sedikit titik A atau B agar mendekati jalan raya.</span>
                         </div>`;
                 }
             }).addTo(map);
@@ -2040,8 +2020,6 @@
             drawnItems.addLayer(layer);
             
             layer.on('click', function(evt) {
-                if(modePilihPeta) return; // Cegah popup digitasi jika sedang bypass map routing
-
                 selectedDrawnLayer = evt.target;
                 document.getElementById('digi-nama').value = layer.feature.properties.nama || '';
                 document.getElementById('digi-ket').value = layer.feature.properties.keterangan || '';
