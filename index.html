@@ -52,17 +52,18 @@
         /* KURSOR TEMBUS PANDANG SAAT MEMILIH TITIK RUTE */
         .map-picking, .map-picking * { cursor: crosshair !important; }
 
-        /* PERBAIKAN NOTIFIKASI: FLOAT TENGAH ATAS, KECIL, ELEGAN & CEPAT HILANG */
+        /* PERBAIKAN NOTIFIKASI: LEBIH KECIL DAN ELEGAN */
         .swal2-container { z-index: 9999999 !important; }
         .custom-toast-center { 
-            padding: 8px 16px !important; 
-            font-size: 13px !important;
-            border-radius: 30px !important;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15) !important;
+            padding: 5px 12px !important; 
+            font-size: 11px !important;
+            border-radius: 20px !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
             background: #ffffff !important;
             color: var(--deep-navy) !important;
             border: 1px solid var(--accent-gold) !important;
             width: auto !important;
+            max-width: 250px !important;
             margin-top: 10px !important;
         }
 
@@ -199,6 +200,34 @@
             transition: var(--transition);
         }
         
+        /* PANEL INFO KANAN (KHUSUS POLA RUANG) */
+        #info-panel-kanan {
+            position: absolute;
+            top: 20px;
+            right: -450px; /* Hidden initially */
+            width: 350px;
+            max-height: calc(100vh - 110px);
+            background: var(--white);
+            z-index: 4000; 
+            border-radius: 12px;
+            box-shadow: -5px 10px 30px rgba(0,0,0,0.15);
+            transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        #info-panel-kanan.show { right: 20px; }
+        .info-panel-header {
+            background: var(--deep-navy); color: var(--accent-gold); padding: 15px; font-size: 13px; font-weight: 700;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .info-panel-close { background: none; border: none; color: white; cursor: pointer; font-size: 16px; transition: 0.2s; }
+        .info-panel-close:hover { color: #ef4444; }
+        .info-panel-body { padding: 0; overflow-y: auto; flex-grow: 1; }
+        .info-panel-body::-webkit-scrollbar { width: 5px; }
+        .info-panel-body::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 10px; }
+
         .sidebar-tabs-nav {
             display: flex; background: rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.1);
             border-radius: 12px 12px 0 0;
@@ -248,9 +277,9 @@
         .route-btn:hover { border-color: var(--terracotta); color: var(--terracotta); background: #fff7ed; }
         .route-btn.active { background: var(--terracotta); color: white; border-color: var(--terracotta); }
 
-        /* KONTROL KANAN PETA */
+        /* KONTROL KANAN PETA - DIGESER KE BAWAH AGAR TIDAK NUMPUK DEKAT GEOMAN */
         .right-controls { 
-            position: absolute; top: 220px; right: 10px; z-index: 1000; 
+            position: absolute; bottom: 120px; right: 20px; z-index: 1000; 
             display: flex; flex-direction: column; gap: 10px; 
             transition: var(--transition);
         }
@@ -324,6 +353,13 @@
                 bottom: calc(55vh + 15px);
                 left: 10px;
             }
+            #info-panel-kanan {
+                width: calc(100% - 20px);
+                left: 10px; right: auto;
+                top: auto; bottom: -500px;
+                max-height: 50vh;
+            }
+            #info-panel-kanan.show { bottom: 10px; right: auto; }
         }
 
         /* --- TENTANG KAMI (TIM PENYUSUN) --- */
@@ -837,6 +873,17 @@
                         </div>
                     </div>
 
+                    <!-- PANEL INFO KANAN (KHUSUS POLA RUANG MENGGANTIKAN POPUP) -->
+                    <div id="info-panel-kanan">
+                        <div class="info-panel-header">
+                            <span><i class="fa-solid fa-map"></i> INFORMASI POLA RUANG</span>
+                            <button class="info-panel-close" onclick="closeInfoPanel()"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                        <div class="info-panel-body" id="info-panel-body">
+                            <!-- Konten Data Pola Ruang Disuntikkan Lewat JS -->
+                        </div>
+                    </div>
+
                     <!-- LEGENDA PETA KANAN BAWAH -->
                     <div id="slide-legend" class="legend-bottom-wrapper">
                         <div class="legend-content">
@@ -987,6 +1034,25 @@
 
     <!-- Skrip Utama Pengendali Sistem -->
     <script>
+        // PUSTAKA MENCARI DAN MENYARING DAFTAR KEGIATAN ITBX
+        window.filterKegiatan = function(input) {
+            let filter = input.value.toLowerCase();
+            let container = input.closest('.popup-tab-content').querySelector('.kegiatan-list-container');
+            let groups = container.children;
+            for (let i = 0; i < groups.length; i++) {
+                if (groups[i].tagName.toLowerCase() !== 'div') continue; 
+                let items = groups[i].querySelectorAll('li');
+                let groupHasVisibleItem = false;
+                items.forEach(li => {
+                    let text = li.textContent || li.innerText;
+                    if (text.toLowerCase().indexOf(filter) > -1) {
+                        li.style.display = ""; groupHasVisibleItem = true;
+                    } else { li.style.display = "none"; }
+                });
+                groups[i].style.display = groupHasVisibleItem ? "" : "none";
+            }
+        };
+
         // FUNGSI PENGHASIL HTML DAFTAR KEGIATAN MATRIKS ITBX (DARI GEOJSON)
         function generateKegiatanHtml(props) {
             const statuses = [
@@ -1007,7 +1073,12 @@
                 { keys: ['ZONINGTEXT_ITBX2_X', 'X'], label: 'Dilarang (X)', color: '#ef4444', bg: '#fef2f2' }
             ];
 
-            let html = '<div style="max-height: 200px; overflow-y: auto; padding-right:5px;">';
+            let html = `
+                <div style="margin-bottom: 10px;">
+                    <input type="text" placeholder="Cari izin kegiatan..." onkeyup="filterKegiatan(this)" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-family:'Inter', sans-serif; outline:none; transition:0.3s;" onfocus="this.style.borderColor='var(--terracotta)'" onblur="this.style.borderColor='#cbd5e1'">
+                </div>
+                <div class="kegiatan-list-container" style="max-height: 250px; overflow-y: auto; padding-right:5px;">
+            `;
             let hasAny = false;
 
             statuses.forEach(s => {
@@ -1045,6 +1116,11 @@
             container.querySelector('#' + tabId).style.display = 'block';
             btn.style.color = 'var(--deep-navy)';
             btn.style.borderBottom = '2px solid var(--accent-gold)';
+        }
+
+        // FUNGSI MENUTUP PANEL KANAN
+        window.closeInfoPanel = function() {
+            document.getElementById('info-panel-kanan').classList.remove('show');
         }
 
         // PUSTAKA NOTIFIKASI ELEGAN
@@ -1303,6 +1379,7 @@
             turf.featureEach(data, function(f) {
                 try {
                     if(!f || !f.geometry) return;
+                    
                     let keg = getPropValue(f.properties, 'Keg_Objek', 'keg_objek', 'Kategori');
                     let nama = getPropValue(f.properties, 'Nama', 'nama', 'NAMA') || keg;
                     let s = getFasilitasStyle(keg);
@@ -1316,7 +1393,9 @@
                         centerLatLng = tempLayer.getBounds().getCenter();
                     }
                     
-                    let lat = centerLatLng.lat; let lng = centerLatLng.lng;
+                    let lat = centerLatLng.lat;
+                    let lng = centerLatLng.lng;
+                    
                     let htmlIcon = `<div style="background:${s.bg}; color:${s.color}; border:2px solid ${s.color}; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 6px rgba(0,0,0,0.3); font-size:12px;"><i class="fa-solid ${s.icon}"></i></div>`;
                     let marker = L.marker([lat, lng], { icon: L.divIcon({ className: 'fas-marker', html: htmlIcon, iconSize: [28,28], iconAnchor: [14,14] }) });
                     
@@ -1336,20 +1415,19 @@
                     let buff = turf.buffer(turfPt, s.r, {units: 'meters'});
                     buff.properties = { ...f.properties, radius_m: s.r, color: s.color, layer: layerName };
                     bufferFeatures.push(buff);
-                } catch(err) { console.error("Turf buffer error", err); }
+                } catch(err) { console.error("Turf process error", err); }
             });
 
             let rawBufferData = turf.featureCollection(bufferFeatures);
             let bufferLayer = L.geoJSON(rawBufferData, {
-                style: function(feature) { return { color: feature.properties.color, fillColor: feature.properties.color, fillOpacity: 0.15, weight: 1.5, dashArray: '4,4' }; },
-                onEachFeature: function(f, l) { l.on('click', interceptLayerClick); }
+                style: function(feature) { return { color: feature.properties.color, fillColor: feature.properties.color, fillOpacity: 0.15, weight: 1.5, dashArray: '4,4' }; }
             });
 
             let combinedLayer = L.layerGroup([bufferLayer, ...pointFeatures]);
             return { rawData: rawBufferData, bufferLayer: bufferLayer, combinedLayer: combinedLayer };
         }
 
-        // PENARIKAN DATA POLA RUANG DENGAN TAB POP-UP BARU
+        // PENARIKAN DATA POLA RUANG DENGAN TAB POP-UP BARU (SIDEBAR KANAN)
         fetch('polruwunutfix.geojson').then(res => res.json()).then(data => { 
             rawPolaRuangData = data; 
             polaRuangLayer = L.geoJSON(data, { 
@@ -1358,7 +1436,7 @@
                     l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); 
                     l.on('mouseout', e => polaRuangLayer.resetStyle(e.target)); 
                     l.on('click', function(e) {
-                        if (modePilihPeta) { setTimeout(() => map.closePopup(), 10); return; }
+                        if (modePilihPeta) { return; }
                         
                         let props = f.properties;
                         let zona = getPropValue(props, 'ZONA', 'Zona', 'zona', 'NAMOBJ');
@@ -1374,27 +1452,23 @@
                         let ketinggian = getPropValue(props, 'Ketinggian Bangunan', 'Ketinggian_Bangunan', 'Ketinggian', 'tinggi_bgn') || '-';
                         let gsb = getPropValue(props, 'GSB', 'gsb') || '-';
 
-                        let popupContent = `
-                            <div class="popup-container-itbx" style="font-family:'Inter', sans-serif; min-width:320px; max-width: 350px; margin:-14px -14px 0 -14px;">
-                                <div style="background:var(--deep-navy); color:var(--accent-gold); padding:12px; border-radius:6px 6px 0 0; text-align:center; font-weight:700; font-size:13px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-                                    <i class="fa-solid fa-map"></i> INFORMASI POLA RUANG
-                                </div>
-                                
-                                <div style="display:flex; border-bottom:1px solid #cbd5e1; background:#f8fafc;">
-                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-zonasi', this)" style="flex:1; border:none; background:transparent; padding:8px 0; font-size:10px; font-weight:700; cursor:pointer; color:var(--deep-navy); border-bottom:2px solid var(--accent-gold);">Zonasi</button>
-                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-keg', this)" style="flex:1; border:none; background:transparent; padding:8px 0; font-size:10px; font-weight:700; cursor:pointer; color:var(--text-body); border-bottom:2px solid transparent;">Kegiatan</button>
-                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-int', this)" style="flex:1; border:none; background:transparent; padding:8px 0; font-size:10px; font-weight:700; cursor:pointer; color:var(--text-body); border-bottom:2px solid transparent;">Intensitas</button>
-                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-bgn', this)" style="flex:1; border:none; background:transparent; padding:8px 0; font-size:10px; font-weight:700; cursor:pointer; color:var(--text-body); border-bottom:2px solid transparent;">Bangunan</button>
+                        let panelContent = `
+                            <div class="popup-container-itbx" style="font-family:'Inter', sans-serif;">
+                                <div style="display:flex; border-bottom:1px solid #cbd5e1; background:#f8fafc; margin-bottom:15px;">
+                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-zonasi', this)" style="flex:1; border:none; background:transparent; padding:10px 0; font-size:11px; font-weight:700; cursor:pointer; color:var(--deep-navy); border-bottom:2px solid var(--accent-gold);">Zonasi</button>
+                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-keg', this)" style="flex:1; border:none; background:transparent; padding:10px 0; font-size:11px; font-weight:700; cursor:pointer; color:var(--text-body); border-bottom:2px solid transparent;">Kegiatan</button>
+                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-int', this)" style="flex:1; border:none; background:transparent; padding:10px 0; font-size:11px; font-weight:700; cursor:pointer; color:var(--text-body); border-bottom:2px solid transparent;">Intensitas</button>
+                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-bgn', this)" style="flex:1; border:none; background:transparent; padding:10px 0; font-size:11px; font-weight:700; cursor:pointer; color:var(--text-body); border-bottom:2px solid transparent;">Bangunan</button>
                                 </div>
 
-                                <div style="padding:12px;">
+                                <div style="padding:0 15px 15px 15px;">
                                     <!-- SECTION ZONASI -->
                                     <div id="tab-zonasi" class="popup-tab-content" style="display:block;">
-                                        <table style="width:100%; font-size:11px;">
-                                            <tr><td style="width:90px; color:var(--text-body); padding:3px 0;">Zona Utama</td><td>: <b style="color:var(--deep-navy);">${zona}</b></td></tr>
-                                            <tr><td style="color:var(--text-body); padding:3px 0;">Sub Zona</td><td>: <b style="color:var(--deep-navy);">${subZona}</b></td></tr>
-                                            <tr><td style="color:var(--text-body); padding:3px 0;">Kode Zona</td><td>: <b style="color:var(--deep-navy);">${kodeZona}</b></td></tr>
-                                            <tr><td style="color:var(--text-body); padding:3px 0;">Kode Subzona</td><td>: <b style="color:var(--deep-navy);">${kodeSubZona}</b></td></tr>
+                                        <table style="width:100%; font-size:12px; line-height:1.6;">
+                                            <tr><td style="width:100px; color:var(--text-body); padding:4px 0;">Zona Utama</td><td>: <b style="color:var(--deep-navy);">${zona}</b></td></tr>
+                                            <tr><td style="color:var(--text-body); padding:4px 0;">Sub Zona</td><td>: <b style="color:var(--deep-navy);">${subZona}</b></td></tr>
+                                            <tr><td style="color:var(--text-body); padding:4px 0;">Kode Zona</td><td>: <b style="color:var(--deep-navy);">${kodeZona}</b></td></tr>
+                                            <tr><td style="color:var(--text-body); padding:4px 0;">Kode Subzona</td><td>: <b style="color:var(--deep-navy);">${kodeSubZona}</b></td></tr>
                                         </table>
                                     </div>
 
@@ -1405,27 +1479,29 @@
 
                                     <!-- SECTION INTENSITAS -->
                                     <div id="tab-int" class="popup-tab-content" style="display:none;">
-                                        <table style="width:100%; font-size:11px;">
-                                            <tr><td style="width:40px; font-weight:800; color:var(--terracotta); padding:3px 0;">KDB</td><td>: <b>${kdb}</b></td></tr>
-                                            <tr><td style="font-weight:800; color:var(--terracotta); padding:3px 0;">KLB</td><td>: <b>${klb}</b></td></tr>
-                                            <tr><td style="font-weight:800; color:var(--terracotta); padding:3px 0;">KDH</td><td>: <b>${kdh}</b></td></tr>
+                                        <table style="width:100%; font-size:12px; line-height:1.6;">
+                                            <tr><td style="width:50px; font-weight:800; color:var(--terracotta); padding:4px 0;">KDB</td><td>: <b>${kdb}</b></td></tr>
+                                            <tr><td style="font-weight:800; color:var(--terracotta); padding:4px 0;">KLB</td><td>: <b>${klb}</b></td></tr>
+                                            <tr><td style="font-weight:800; color:var(--terracotta); padding:4px 0;">KDH</td><td>: <b>${kdh}</b></td></tr>
                                         </table>
                                     </div>
 
                                     <!-- SECTION TATA BANGUNAN -->
                                     <div id="tab-bgn" class="popup-tab-content" style="display:none;">
-                                        <table style="width:100%; font-size:11px;">
-                                            <tr><td style="width:110px; color:var(--text-body); padding:3px 0;">Ketinggian Bgn</td><td>: <b style="color:var(--deep-navy);">${ketinggian}</b></td></tr>
-                                            <tr><td style="color:var(--text-body); padding:3px 0;">GSB</td><td>: <b style="color:var(--deep-navy);">${gsb}</b></td></tr>
-                                            <tr><td style="color:var(--text-body); padding-top:10px;" colspan="2">
-                                                ${dokumen !== '-' && dokumen !== '' ? `<a href="${dokumen}" target="_blank" style="display:block; background:var(--accent-primary); color:white; text-align:center; padding:6px; border-radius:4px; text-decoration:none; font-weight:700;"><i class="fa-solid fa-file-pdf"></i> Buka Dokumen Regulasi</a>` : '<i style="color:#ef4444;">Dokumen tidak tersedia</i>'}
+                                        <table style="width:100%; font-size:12px; line-height:1.6;">
+                                            <tr><td style="width:120px; color:var(--text-body); padding:4px 0;">Ketinggian Bgn</td><td>: <b style="color:var(--deep-navy);">${ketinggian}</b></td></tr>
+                                            <tr><td style="color:var(--text-body); padding:4px 0;">GSB</td><td>: <b style="color:var(--deep-navy);">${gsb}</b></td></tr>
+                                            <tr><td style="color:var(--text-body); padding-top:15px;" colspan="2">
+                                                ${dokumen !== '-' && dokumen !== '' ? `<a href="${dokumen}" target="_blank" style="display:block; background:var(--accent-primary); color:white; text-align:center; padding:10px; border-radius:6px; text-decoration:none; font-weight:700;"><i class="fa-solid fa-file-pdf"></i> Buka Dokumen Regulasi</a>` : '<i style="color:#ef4444; font-size:11px;">Dokumen regulasi tidak tersedia</i>'}
                                             </td></tr>
                                         </table>
                                     </div>
                                 </div>
                             </div>
                         `;
-                        L.popup().setLatLng(e.latlng).setContent(popupContent).openOn(map);
+                        
+                        document.getElementById('info-panel-body').innerHTML = panelContent;
+                        document.getElementById('info-panel-kanan').classList.add('show');
                     });
                 } 
             }); 
@@ -1900,7 +1976,7 @@
                         <div style="background:#fef2f2; border:1px solid #fecaca; color:#ef4444; padding:15px; border-radius:8px; text-align:center;">
                             <i class="fa-solid fa-road-circle-xmark fa-2x" style="margin-bottom:10px;"></i><br>
                             <b style="font-size:12px;">Rute Gagal Dikalkulasi</b><br>
-                            <span style="font-size:11px; display:block; margin-top:5px; line-height:1.4;">Jaringan peladen OSRM menolak rute karena titik koordinat yang dipilih berada terlalu jauh dari jalan. Silakan geser titik A atau B agar mendekati jalan raya.</span>
+                            <span style="font-size:11px; display:block; margin-top:5px; line-height:1.4;">Jaringan peladen OSRM menolak rute karena titik koordinat yang dipilih berada terlalu jauh dari jalan. Silakan geser sedikit titik A atau B agar mendekati jalan raya.</span>
                         </div>`;
                 }
             }).addTo(map);
@@ -1983,7 +2059,7 @@
             const l2 = getRawDataForIntersect(id2);
 
             if (!l1.data || !l2.data) {
-                return showToast('Data spasial sedang dimuat dari server. Mohon tunggu.', 'error');
+                return showToast('Data spasial sedang dimuat dari server. Mohon tunggu beberapa detik.', 'error');
             }
 
             intersectLayerGroup.clearLayers();
@@ -2029,7 +2105,7 @@
                         intersectLayerGroup.bringToFront();
                         map.fitBounds(intersectLayerGroup.getBounds(), {padding: [30,30]});
                         showToast(`Analisis Selesai! Ditemukan ${overlapCount} area irisan.`, 'success');
-                    } else { showToast('Tidak ada area yang tumpang tindih.', 'info'); }
+                    } else { showToast('Tidak ada area yang tumpang tindih antar dua lapisan tersebut.', 'info'); }
                 } catch (e) { console.error(e); showToast('Gagal memproses analisis.', 'error'); }
             }, 500);
         }
