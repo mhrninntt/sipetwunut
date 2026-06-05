@@ -7,12 +7,14 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@700&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     
+    <!-- Pustaka Spasial & UI -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
+    <!-- PUSTAKA UTAMA GIS, ROUTING, DAN ANALISIS BUFFER (TURF.JS) -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
     <script src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
@@ -20,8 +22,10 @@
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
     
+    <!-- Pustaka Pembaca Matriks ITBX (CSV) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     
+    <!-- Pustaka Utility -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -381,6 +385,7 @@
 </head>
 <body>
 
+    <!-- Antarmuka Autentikasi -->
     <div id="login-overlay">
         <div class="login-card" id="login-box">
             <button class="close-btn" onclick="closeLogin()"><i class="fa-solid fa-xmark"></i></button>
@@ -402,6 +407,7 @@
         </div>
     </div>
 
+    <!-- Lightbox Foto Profil -->
     <div id="lightbox-overlay" onclick="closeLightbox(event)">
         <div class="lightbox-content">
             <button class="lightbox-close" onclick="closeLightbox(event)"><i class="fa-solid fa-xmark"></i></button>
@@ -427,6 +433,7 @@
         </header>
 
         <main>
+            <!-- HALAMAN BERANDA -->
             <div id="beranda" class="content-section active-section">
                 <div class="hero">
                     <div class="hero-img" style="background: url('header.jpg') center/cover;"></div>
@@ -581,13 +588,16 @@
                 </div>
             </div>
 
+            <!-- HALAMAN WEBGIS SPASIAL -->
             <div id="peta" class="content-section">
                 <div class="map-wrapper">
 
+                    <!-- LAPISAN KACA ANTI-GAGAL UNTUK MENANGKAP KLIK RUTE (BYPASS SEMUA LAYER) -->
                     <div id="routing-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:4000; display:none; cursor:crosshair;"></div>
 
                     <div id="map"></div>
 
+                    <!-- PENGATURAN PANEL KIRI WEBGIS -->
                     <div class="floating-sidebar">
                         <div class="sidebar-tabs-nav">
                             <button class="s-tab active" onclick="openSidebarTab('s-layers', this)"><i class="fa-solid fa-layer-group"></i> Layer</button>
@@ -597,6 +607,7 @@
                         </div>
 
                         <div class="sidebar-content-wrapper">
+                            <!-- PANEL 1: PENGATURAN LAPISAN (LAYER) -->
                             <div id="s-layers" class="s-panel active">
                                 <div class="control-group">
                                     <div class="control-title">Peta Dasar Terapan</div>
@@ -650,6 +661,7 @@
                                     </div>
                                 </div>
 
+                                <!-- MANAJEMEN LAYER UNGGAHAN -->
                                 <div class="control-group">
                                     <hr style="border-top:1px solid rgba(0,0,0,0.1); margin:15px 0;">
                                     <div class="control-title"><i class="fa-solid fa-cloud-arrow-up"></i> Data Referensi Eksternal (Unggahan)</div>
@@ -667,6 +679,7 @@
                                 </div>
                             </div>
 
+                            <!-- PANEL 2: PENCARIAN ATRIBUT SPASIAL -->
                             <div id="s-search" class="s-panel">
                                 <div class="control-group">
                                     <div class="control-title">Pencarian Data Spasial</div>
@@ -699,6 +712,7 @@
                                 </div>
                             </div>
                             
+                            <!-- PANEL 3: RUTE PERJALANAN (ROUTING) - DESAIN UI RAPI -->
                             <div id="s-route" class="s-panel">
                                 <div class="control-group">
                                     <div class="control-title">Kalkulasi Rute Jaringan Jalan</div>
@@ -725,6 +739,7 @@
                                     <button class="btn-map-action" onclick="hitungRute()" style="background: #10b981; color: white; padding: 12px; font-size: 13px; margin-top: 5px;"><i class="fa-solid fa-route"></i> Hitung Rute Jalan</button>
                                     <button class="btn-map-action" onclick="bersihkanRute()" style="background: #fff5f5; color: #ef4444; border: 1px solid #fecaca; padding: 12px; font-size: 13px;"><i class="fa-solid fa-eraser"></i> Bersihkan Rute</button>
                                     
+                                    <!-- PANDUAN PERJALANAN (HASIL ROUTING) -->
                                     <div style="margin-top: 20px; border-top: 1px dashed #cbd5e1; padding-top: 15px;">
                                         <h4 style="font-size: 11px; color: var(--terracotta); margin: 0 0 10px; text-transform: uppercase;">PANDUAN PERJALANAN</h4>
                                         <div id="routing-itinerary-container" style="font-size: 11px; color: var(--text-body); max-height: 250px; overflow-y: auto; padding-right: 5px; overflow-x: hidden;">
@@ -734,7 +749,9 @@
                                 </div>
                             </div>
 
+                            <!-- PANEL 4: FITUR DIGITASI & ANALISIS INTERSECT -->
                             <div id="s-digitize" class="s-panel">
+                                <!-- FITUR BUFFER RADIUS FASILITAS -->
                                 <div class="control-group">
                                     <div class="control-title"><i class="fa-solid fa-satellite-dish"></i> Analisis Jangkauan Fasilitas (Buffer)</div>
                                     <p style="font-size: 11px; color: var(--text-body); margin-top: 0;">Tampilkan radius area pelayanan fasilitas umum untuk analisis spasial.</p>
@@ -753,6 +770,7 @@
                                 </div>
                                 <hr style="border-top:1px solid rgba(0,0,0,0.1); margin:15px 0;">
 
+                                <!-- FITUR ANALISIS INTERSECT SPASIAL -->
                                 <div class="control-group">
                                     <div class="control-title"><i class="fa-solid fa-object-ungroup"></i> Analisis Tumpang Tindih (Intersect)</div>
                                     <p style="font-size: 11px; color: var(--text-body); margin-top: 0;">Deteksi dan potong area yang saling bertumpukan antar dua lapisan data spasial.</p>
@@ -786,6 +804,7 @@
                                 </div>
                                 <hr style="border-top:1px dashed rgba(0,0,0,0.1); margin:20px 0;">
 
+                                <!-- FITUR LAMA: DIGITASI -->
                                 <div class="control-group">
                                     <div class="control-title">Alat Digitasi dan Ekspor Atribut</div>
                                     <p style="font-size: 11px; color: var(--text-body); margin-top: 0;">Gambar area poligon di peta untuk mendigitasi lahan baru.</p>
@@ -802,6 +821,7 @@
                                         <button class="btn-map-action" onclick="saveAttributes()" style="margin-bottom: 0;"><i class="fa-solid fa-floppy-disk"></i> SIMPAN DATA ATRIBUT</button>
                                     </div>
                                     
+                                    <!-- Daftar Hasil Digitasi -->
                                     <div id="digitized-list-container" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px; display: none;">
                                         <div style="font-size: 11px; font-weight: 700; color: var(--deep-navy); margin-bottom: 10px;">DAFTAR HASIL DIGITASI:</div>
                                         <ul id="digitized-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px; max-height: 120px; overflow-y: auto;"></ul>
@@ -817,6 +837,7 @@
                         </div>
                     </div>
 
+                    <!-- LEGENDA PETA KANAN BAWAH -->
                     <div id="slide-legend" class="legend-bottom-wrapper">
                         <div class="legend-content">
                             <div style="font-size: 0.8rem; font-weight: 700; color: var(--terracotta); margin-bottom: 10px; text-align: center;">KETERANGAN PETA</div>
@@ -825,12 +846,14 @@
                         <button class="legend-toggle-btn" onclick="toggleLegendPanel()"><i class="fa-solid fa-list" id="legend-icon"></i> Tampilkan Legenda Peta</button>
                     </div>
 
+                    <!-- KONTROL NAVIGASI PETA -->
                     <div class="right-controls">
                         <button class="btn-icon" onclick="goHome()" title="Kembali ke Titik Awal Desa Wunut"><i class="fa-solid fa-house"></i></button>
                         <button class="btn-icon" onclick="findLocation()" title="Lacak Lokasi Saya Saat Ini"><i class="fa-solid fa-location-crosshairs"></i></button>
                         <button class="btn-icon" onclick="toggleFullScreen()" title="Beralih ke Layar Penuh"><i class="fa-solid fa-expand"></i></button>
                     </div>
 
+                    <!-- INDIKATOR ARAH MATA ANGIN -->
                     <div class="north-arrow">
                         <i class="fa-solid fa-caret-up" style="color: var(--terracotta); font-size: 20px;"></i>
                         <div style="font-weight: 800; font-size: 12px; margin-top: -5px; color:var(--deep-navy);">U</div>
@@ -838,6 +861,7 @@
                 </div>
             </div>
 
+            <!-- HALAMAN TENTANG KAMI / TIM PENYUSUN -->
             <div id="profil" class="content-section">
                 <div class="container">
                     <h2 class="section-title" data-aos="fade-up" style="margin-bottom: 20px;">Tentang Kami</h2>
@@ -848,6 +872,7 @@
                     <h3 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--deep-navy); margin-bottom: 10px; text-align: center;" data-aos="fade-up" data-aos-delay="200">Tim Penyusun</h3>
                     <p style="text-align: center; color: var(--terracotta); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 40px;" data-aos="fade-up" data-aos-delay="300">Universitas Diponegoro</p>
                     
+                    <!-- Hierarki Tim Penyusun -->
                     <div class="team-leader-wrapper" data-aos="fade-up" data-aos-delay="400">
                         <div class="team-card team-leader-card" onclick="openLightbox('quinn.jpeg', 'Maharani Quinn Qonita', '40030623620004')">
                             <div class="team-img-wrapper">
@@ -930,6 +955,7 @@
         </footer>
     </div>
 
+    <!-- Integrasi Firebase Keseluruhan (Auth & Firestore) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } 
@@ -959,7 +985,68 @@
         window.getDoc = getDoc;
     </script>
 
+    <!-- Skrip Utama Pengendali Sistem -->
     <script>
+        // FUNGSI PENGHASIL HTML DAFTAR KEGIATAN MATRIKS ITBX (DARI GEOJSON)
+        function generateKegiatanHtml(props) {
+            const statuses = [
+                { keys: ['ZONINGTEXT_ITBX2_I', 'I'], label: 'Diizinkan (I)', color: '#10b981', bg: '#ecfdf5' },
+                { keys: ['ZONINGTEXT_ITBX2_T1', 'T1'], label: 'Terbatas (T1)', color: '#f59e0b', bg: '#fffbeb' },
+                { keys: ['ZONINGTEXT_ITBX2_T2', 'T2'], label: 'Terbatas (T2)', color: '#f59e0b', bg: '#fffbeb' },
+                { keys: ['ZONINGTEXT_ITBX2_T3', 'T3'], label: 'Terbatas (T3)', color: '#f59e0b', bg: '#fffbeb' },
+                { keys: ['ZONINGTEXT_ITBX2_T4', 'T4'], label: 'Terbatas (T4)', color: '#f59e0b', bg: '#fffbeb' },
+                { keys: ['ZONINGTEXT_ITBX2_T5', 'T5'], label: 'Terbatas (T5)', color: '#f59e0b', bg: '#fffbeb' },
+                { keys: ['ZONINGTEXT_ITBX2_T6', 'T6'], label: 'Terbatas (T6)', color: '#f59e0b', bg: '#fffbeb' },
+                { keys: ['ZONINGTEXT_ITBX2_T7', 'T7'], label: 'Terbatas (T7)', color: '#f59e0b', bg: '#fffbeb' },
+                { keys: ['ZONINGTEXT_ITBX2_B1', 'B1'], label: 'Bersyarat (B1)', color: '#3b82f6', bg: '#eff6ff' },
+                { keys: ['ZONINGTEXT_ITBX2_B2', 'B2'], label: 'Bersyarat (B2)', color: '#3b82f6', bg: '#eff6ff' },
+                { keys: ['ZONINGTEXT_ITBX2_B3', 'B3'], label: 'Bersyarat (B3)', color: '#3b82f6', bg: '#eff6ff' },
+                { keys: ['ZONINGTEXT_ITBX2_B4', 'B4'], label: 'Bersyarat (B4)', color: '#3b82f6', bg: '#eff6ff' },
+                { keys: ['ZONINGTEXT_ITBX2_B5', 'B5'], label: 'Bersyarat (B5)', color: '#3b82f6', bg: '#eff6ff' },
+                { keys: ['ZONINGTEXT_ITBX2_B6', 'B6'], label: 'Bersyarat (B6)', color: '#3b82f6', bg: '#eff6ff' },
+                { keys: ['ZONINGTEXT_ITBX2_X', 'X'], label: 'Dilarang (X)', color: '#ef4444', bg: '#fef2f2' }
+            ];
+
+            let html = '<div style="max-height: 200px; overflow-y: auto; padding-right:5px;">';
+            let hasAny = false;
+
+            statuses.forEach(s => {
+                let val = null;
+                for (let k of s.keys) { val = getPropValue(props, k); if (val && val !== '-' && String(val).toLowerCase() !== 'null') break; }
+                
+                if (val && val !== '-' && String(val).trim() !== '' && String(val).toLowerCase() !== 'null') {
+                    hasAny = true;
+                    html += `<div style="margin-bottom:8px; background:${s.bg}; border:1px solid ${s.color}; padding:6px; border-radius:6px;">
+                                <div style="background:${s.color}; color:#fff; padding:3px 6px; font-weight:700; border-radius:4px; font-size:10px; display:inline-block; margin-bottom:4px;">${s.label}</div>
+                                <ul style="margin:0; padding-left:15px; font-size:10px; color:var(--deep-navy);">`;
+                    
+                    let acts = String(val).split('|');
+                    acts.forEach(a => { if(a.trim() !== '') { html += `<li style="margin-bottom:2px;">${a.trim()}</li>`; } });
+                    html += `</ul></div>`;
+                }
+            });
+
+            if (!hasAny) { html += `<div style="text-align:center; font-style:italic; font-size:10px; color:#ef4444; padding:10px;">Data kegiatan matriks ITBX tidak tersedia untuk zona ini.</div>`; }
+            html += '</div>';
+            return html;
+        }
+
+        // FUNGSI PERPINDAHAN TAB POPUP POLA RUANG
+        window.changePopupTab = function(tabId, btn) {
+            var container = btn.closest('.popup-container-itbx');
+            container.querySelectorAll('.popup-tab-content').forEach(function(content) {
+                content.style.display = 'none';
+            });
+            container.querySelectorAll('.popup-tab-btn').forEach(function(button) {
+                button.style.background = 'transparent';
+                button.style.color = 'var(--text-body)';
+                button.style.borderBottom = '2px solid transparent';
+            });
+            container.querySelector('#' + tabId).style.display = 'block';
+            btn.style.color = 'var(--deep-navy)';
+            btn.style.borderBottom = '2px solid var(--accent-gold)';
+        }
+
         // PUSTAKA NOTIFIKASI ELEGAN
         function showToast(message, iconType = 'success') {
             Swal.fire({
@@ -1114,22 +1201,6 @@
             btnContext.classList.add('active');
         }
 
-        // FUNGSI PERPINDAHAN TAB POPUP POLA RUANG
-        window.changePopupTab = function(tabId, btn) {
-            var container = btn.closest('.popup-container-itbx');
-            container.querySelectorAll('.popup-tab-content').forEach(function(content) {
-                content.style.display = 'none';
-            });
-            container.querySelectorAll('.popup-tab-btn').forEach(function(button) {
-                button.style.background = 'transparent';
-                button.style.color = 'var(--text-body)';
-                button.style.borderBottom = '2px solid transparent';
-            });
-            container.querySelector('#' + tabId).style.display = 'block';
-            btn.style.color = 'var(--deep-navy)';
-            btn.style.borderBottom = '2px solid var(--accent-gold)';
-        }
-
         new ApexCharts(document.querySelector("#chart-dinamika"), { series: [{ name: 'Tingkat Kelahiran', data: [20, 16, 7, 17, 24, 10] }, { name: 'Tingkat Kematian', data: [8, 18, 9, 18, 21, 23] }], chart: { type: 'area', height: 350, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' }, colors: ['#c5a059', '#bc6c47'], dataLabels: { enabled: false }, stroke: { curve: 'smooth', width: 3 }, fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.05, stops: [0, 90, 100] } }, xaxis: { categories: ['2020', '2021', '2022', '2023', '2024', '2025'] }, legend: { position: 'top' } }).render();
         new ApexCharts(document.querySelector("#chart-piramida"), { series: [{ name: 'Laki-laki', data: [-97, -74, -99, -78, -65, -107, -77, -67, -104, -79, -81, -70, -56, -32, -21, -25] }, { name: 'Perempuan', data: [81, 86, 86, 91, 77, 82, 76, 84, 90, 78, 82, 66, 58, 48, 24, 49] }], chart: { type: 'bar', stacked: true, height: 350, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' }, colors: ['#0a192f', '#bc6c47'], plotOptions: { bar: { horizontal: true, barHeight: '80%', borderRadius: 2 } }, dataLabels: { enabled: false }, yaxis: { title: { text: 'Kelompok Umur' } }, tooltip: { shared: false, y: { formatter: function(val) { return Math.abs(val) + " Jiwa"; } } }, xaxis: { categories: ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '>75'], labels: { formatter: function(val) { return Math.abs(Math.round(val)); } } }, legend: { position: 'top' } }).render();
 
@@ -1203,53 +1274,7 @@
         });
 
         function interceptLayerClick(e) {
-            if (modePilihPeta) {
-                setTimeout(() => map.closePopup(), 10); 
-            }
-        }
-
-        // FUNGSI PENGHASIL HTML DAFTAR KEGIATAN MATRIKS ITBX (DARI GEOJSON)
-        function generateKegiatanHtml(props) {
-            const statuses = [
-                { key: 'I', label: 'Diizinkan (I)', color: '#10b981', bg: '#ecfdf5' },
-                { key: 'T1', label: 'Terbatas (T1)', color: '#f59e0b', bg: '#fffbeb' },
-                { key: 'T2', label: 'Terbatas (T2)', color: '#f59e0b', bg: '#fffbeb' },
-                { key: 'T3', label: 'Terbatas (T3)', color: '#f59e0b', bg: '#fffbeb' },
-                { key: 'T4', label: 'Terbatas (T4)', color: '#f59e0b', bg: '#fffbeb' },
-                { key: 'T5', label: 'Terbatas (T5)', color: '#f59e0b', bg: '#fffbeb' },
-                { key: 'T6', label: 'Terbatas (T6)', color: '#f59e0b', bg: '#fffbeb' },
-                { key: 'T7', label: 'Terbatas (T7)', color: '#f59e0b', bg: '#fffbeb' },
-                { key: 'B1', label: 'Bersyarat (B1)', color: '#3b82f6', bg: '#eff6ff' },
-                { key: 'B2', label: 'Bersyarat (B2)', color: '#3b82f6', bg: '#eff6ff' },
-                { key: 'B3', label: 'Bersyarat (B3)', color: '#3b82f6', bg: '#eff6ff' },
-                { key: 'B4', label: 'Bersyarat (B4)', color: '#3b82f6', bg: '#eff6ff' },
-                { key: 'B5', label: 'Bersyarat (B5)', color: '#3b82f6', bg: '#eff6ff' },
-                { key: 'B6', label: 'Bersyarat (B6)', color: '#3b82f6', bg: '#eff6ff' },
-                { key: 'X', label: 'Dilarang (X)', color: '#ef4444', bg: '#fef2f2' }
-            ];
-
-            let html = '<div style="max-height: 200px; overflow-y: auto; padding-right:5px;">';
-            let hasAny = false;
-
-            statuses.forEach(s => {
-                let val = getPropValue(props, s.key);
-                if (val && val !== '-' && val.trim() !== '') {
-                    hasAny = true;
-                    html += `<div style="margin-bottom:8px; background:${s.bg}; border:1px solid ${s.color}; padding:6px; border-radius:6px;">
-                                <div style="background:${s.color}; color:#fff; padding:3px 6px; font-weight:700; border-radius:4px; font-size:10px; display:inline-block; margin-bottom:4px;">${s.label}</div>
-                                <ul style="margin:0; padding-left:15px; font-size:10px; color:var(--deep-navy);">`;
-                    
-                    let acts = val.split('|');
-                    acts.forEach(a => {
-                        if(a.trim() !== '') { html += `<li style="margin-bottom:2px;">${a.trim()}</li>`; }
-                    });
-                    html += `</ul></div>`;
-                }
-            });
-
-            if (!hasAny) { html += `<div style="text-align:center; font-style:italic; font-size:10px; color:#ef4444; padding:10px;">Data kegiatan matriks ITBX tidak tersedia untuk zona ini.</div>`; }
-            html += '</div>';
-            return html;
+            if (modePilihPeta) { setTimeout(() => map.closePopup(), 10); }
         }
 
         function stylePolaRuang(feature) { let val = getPropValue(feature.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona'); return { fillColor: subZonaColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: 0.8 }; }
@@ -1278,7 +1303,6 @@
             turf.featureEach(data, function(f) {
                 try {
                     if(!f || !f.geometry) return;
-                    
                     let keg = getPropValue(f.properties, 'Keg_Objek', 'keg_objek', 'Kategori');
                     let nama = getPropValue(f.properties, 'Nama', 'nama', 'NAMA') || keg;
                     let s = getFasilitasStyle(keg);
@@ -1292,9 +1316,7 @@
                         centerLatLng = tempLayer.getBounds().getCenter();
                     }
                     
-                    let lat = centerLatLng.lat;
-                    let lng = centerLatLng.lng;
-                    
+                    let lat = centerLatLng.lat; let lng = centerLatLng.lng;
                     let htmlIcon = `<div style="background:${s.bg}; color:${s.color}; border:2px solid ${s.color}; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 6px rgba(0,0,0,0.3); font-size:12px;"><i class="fa-solid ${s.icon}"></i></div>`;
                     let marker = L.marker([lat, lng], { icon: L.divIcon({ className: 'fas-marker', html: htmlIcon, iconSize: [28,28], iconAnchor: [14,14] }) });
                     
@@ -1314,7 +1336,7 @@
                     let buff = turf.buffer(turfPt, s.r, {units: 'meters'});
                     buff.properties = { ...f.properties, radius_m: s.r, color: s.color, layer: layerName };
                     bufferFeatures.push(buff);
-                } catch(err) { console.error("Turf process error", err); }
+                } catch(err) { console.error("Turf buffer error", err); }
             });
 
             let rawBufferData = turf.featureCollection(bufferFeatures);
@@ -1344,9 +1366,9 @@
                         let kodeZona = getPropValue(props, 'KODE_ZONA', 'Kode_Zona', 'kodezona');
                         let kodeSubZona = getPropValue(props, 'KODE', 'kode', 'Kode', 'KODE_SUBZONA', 'KodeSubzona');
 
-                        let kdb = getPropValue(props, 'KDB', 'kdb') || '-';
-                        let klb = getPropValue(props, 'KLB', 'klb') || '-';
-                        let kdh = getPropValue(props, 'KDH', 'kdh') || '-';
+                        let kdb = getPropValue(props, 'INTENSITAS_KDB_Maks', 'KDB') || '-';
+                        let klb = getPropValue(props, 'INTENSITAS_KLB_Maks', 'KLB') || '-';
+                        let kdh = getPropValue(props, 'INTENSITAS_KDH_Minimal', 'KDH') || '-';
 
                         let dokumen = getPropValue(props, 'Dokumen', 'dokumen', 'DOKUMEN', 'Link', 'URL');
                         let ketinggian = getPropValue(props, 'Ketinggian Bangunan', 'Ketinggian_Bangunan', 'Ketinggian', 'tinggi_bgn') || '-';
@@ -1366,19 +1388,22 @@
                                 </div>
 
                                 <div style="padding:12px;">
+                                    <!-- SECTION ZONASI -->
                                     <div id="tab-zonasi" class="popup-tab-content" style="display:block;">
                                         <table style="width:100%; font-size:11px;">
-                                            <tr><td style="width:90px; color:var(--text-body); padding:3px 0;">Zona</td><td>: <b style="color:var(--deep-navy);">${zona}</b></td></tr>
+                                            <tr><td style="width:90px; color:var(--text-body); padding:3px 0;">Zona Utama</td><td>: <b style="color:var(--deep-navy);">${zona}</b></td></tr>
                                             <tr><td style="color:var(--text-body); padding:3px 0;">Sub Zona</td><td>: <b style="color:var(--deep-navy);">${subZona}</b></td></tr>
                                             <tr><td style="color:var(--text-body); padding:3px 0;">Kode Zona</td><td>: <b style="color:var(--deep-navy);">${kodeZona}</b></td></tr>
                                             <tr><td style="color:var(--text-body); padding:3px 0;">Kode Subzona</td><td>: <b style="color:var(--deep-navy);">${kodeSubZona}</b></td></tr>
                                         </table>
                                     </div>
 
+                                    <!-- SECTION KEGIATAN -->
                                     <div id="tab-keg" class="popup-tab-content" style="display:none;">
                                         ${generateKegiatanHtml(props)}
                                     </div>
 
+                                    <!-- SECTION INTENSITAS -->
                                     <div id="tab-int" class="popup-tab-content" style="display:none;">
                                         <table style="width:100%; font-size:11px;">
                                             <tr><td style="width:40px; font-weight:800; color:var(--terracotta); padding:3px 0;">KDB</td><td>: <b>${kdb}</b></td></tr>
@@ -1387,6 +1412,7 @@
                                         </table>
                                     </div>
 
+                                    <!-- SECTION TATA BANGUNAN -->
                                     <div id="tab-bgn" class="popup-tab-content" style="display:none;">
                                         <table style="width:100%; font-size:11px;">
                                             <tr><td style="width:110px; color:var(--text-body); padding:3px 0;">Ketinggian Bgn</td><td>: <b style="color:var(--deep-navy);">${ketinggian}</b></td></tr>
@@ -1869,12 +1895,12 @@
                     attemptRouting(nextIdx); 
                 } else {
                     if(routingControl) { map.removeControl(routingControl); routingControl = null; }
-                    showToast('Gagal menemukan rute jalan.', 'error');
+                    showToast('Gagal menemukan rute jalan aspal.', 'error');
                     document.getElementById('routing-itinerary-container').innerHTML = `
                         <div style="background:#fef2f2; border:1px solid #fecaca; color:#ef4444; padding:15px; border-radius:8px; text-align:center;">
                             <i class="fa-solid fa-road-circle-xmark fa-2x" style="margin-bottom:10px;"></i><br>
                             <b style="font-size:12px;">Rute Gagal Dikalkulasi</b><br>
-                            <span style="font-size:11px; display:block; margin-top:5px; line-height:1.4;">Jaringan peladen OSRM menolak rute karena titik koordinat yang dipilih berada terlalu jauh dari jalan. Silakan geser titik A atau B agar mendekati jalan umum utama.</span>
+                            <span style="font-size:11px; display:block; margin-top:5px; line-height:1.4;">Jaringan peladen OSRM menolak rute karena titik koordinat yang dipilih berada terlalu jauh dari jalan. Silakan geser titik A atau B agar mendekati jalan raya.</span>
                         </div>`;
                 }
             }).addTo(map);
@@ -1957,7 +1983,7 @@
             const l2 = getRawDataForIntersect(id2);
 
             if (!l1.data || !l2.data) {
-                return showToast('Data spasial sedang dimuat dari server. Mohon tunggu beberapa detik.', 'error');
+                return showToast('Data spasial sedang dimuat dari server. Mohon tunggu.', 'error');
             }
 
             intersectLayerGroup.clearLayers();
@@ -2003,7 +2029,7 @@
                         intersectLayerGroup.bringToFront();
                         map.fitBounds(intersectLayerGroup.getBounds(), {padding: [30,30]});
                         showToast(`Analisis Selesai! Ditemukan ${overlapCount} area irisan.`, 'success');
-                    } else { showToast('Tidak ada area yang tumpang tindih antar dua lapisan tersebut.', 'info'); }
+                    } else { showToast('Tidak ada area yang tumpang tindih.', 'info'); }
                 } catch (e) { console.error(e); showToast('Gagal memproses analisis.', 'error'); }
             }, 500);
         }
