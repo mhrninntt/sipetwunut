@@ -960,80 +960,12 @@
     </script>
 
     <script>
-        // Memuat Data CSV ITBX
-        var itbxData = [];
-        Papa.parse('itbx.csv', {
-            download: true,
-            complete: function(results) {
-                itbxData = results.data;
-                console.log("Sistem Matriks ITBX sukses dimuat secara background.");
-            },
-            error: function(err) { console.warn("Matriks ITBX belum tersedia. Pastikan itbx.csv ada di folder."); }
-        });
-
-        function getItbxTableHtml(kode, subZona) {
-            if (!itbxData || itbxData.length < 5) return '<p style="font-size:10px; color:#ef4444; font-style:italic; padding:5px;">Data matriks ITBX (itbx.csv) belum dimuat atau tidak ditemukan di server lokal Anda.</p>';
-            
-            let colIndex = -1;
-            let headerRowKode = itbxData[3] || [];
-            let headerRowNama = itbxData[2] || [];
-            
-            const sanitize = (str) => String(str || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-            let targetK = sanitize(kode);
-            let targetS = sanitize(subZona);
-            
-            for (let i = 2; i < headerRowKode.length; i++) {
-                let csvKode = sanitize(headerRowKode[i]);
-                let csvNama = sanitize(headerRowNama[i]);
-                if ((targetK && csvKode === targetK) || (targetS && csvNama === targetS)) { colIndex = i; break; }
-            }
-            
-            if (colIndex === -1) return `<p style="font-size:10px; color:#ef4444; font-style:italic; padding:5px;">Detail kegiatan ITBX untuk zona ini tidak terdaftar di database.</p>`;
-            
-            let html = `<div style="max-height: 180px; overflow-y: auto; font-size: 10px; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom:5px;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead style="background: var(--deep-navy); color: white; position: sticky; top: 0; z-index: 10;">
-                        <tr>
-                            <th style="padding: 5px; text-align: left; border-right: 1px solid rgba(255,255,255,0.2);">Daftar Kegiatan</th>
-                            <th style="padding: 5px; text-align: center; width: 45px;">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
-                    
-            let hasData = false;
-            for (let i = 4; i < itbxData.length; i++) {
-                let row = itbxData[i];
-                if (!row || row.length < colIndex) continue;
-                
-                let kegiatan = row[1] ? row[1].trim() : ''; 
-                let status = row[colIndex] ? row[colIndex].trim() : '';
-                
-                if (kegiatan !== '' && status !== '') {
-                    hasData = true;
-                    let bg = '#fff'; let color = '#000'; let tooltip = '';
-                    if (status === 'I') { bg = '#10b981'; color = '#fff'; tooltip = 'Diizinkan'; }
-                    else if (status === 'X') { bg = '#ef4444'; color = '#fff'; tooltip = 'Tidak Diizinkan'; }
-                    else if (status.includes('T')) { bg = '#f59e0b'; color = '#fff'; tooltip = 'Bersyarat Terbatas'; }
-                    else if (status.includes('B')) { bg = '#3b82f6'; color = '#fff'; tooltip = 'Bersyarat Tertentu'; }
-                    else { bg = '#94a3b8'; color = '#fff'; }
-                    
-                    html += `<tr style="border-bottom: 1px solid #e2e8f0; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                        <td style="padding: 5px; border-right: 1px solid #e2e8f0;">${kegiatan}</td>
-                        <td style="padding: 5px; text-align: center; font-weight: 800; background: ${bg}; color: ${color}; cursor:help;" title="${tooltip}">${status}</td>
-                    </tr>`;
-                }
-            }
-            if(!hasData) html += `<tr><td colspan="2" style="padding:5px; text-align:center; font-style:italic;">Tidak ada data kegiatan.</td></tr>`;
-            html += `</tbody></table></div>`;
-            return html;
-        }
-
         // PUSTAKA NOTIFIKASI ELEGAN
         function showToast(message, iconType = 'success') {
             Swal.fire({
                 toast: true, position: 'top', 
                 icon: iconType, title: message,
-                showConfirmButton: false, timer: 1500, timerProgressBar: false,
+                showConfirmButton: false, timer: 2000, timerProgressBar: false,
                 background: '#ffffff', color: 'var(--deep-navy)',
                 customClass: { popup: 'swal2-container custom-toast-center' }
             });
@@ -1182,6 +1114,22 @@
             btnContext.classList.add('active');
         }
 
+        // FUNGSI PERPINDAHAN TAB POPUP POLA RUANG
+        window.changePopupTab = function(tabId, btn) {
+            var container = btn.closest('.popup-container-itbx');
+            container.querySelectorAll('.popup-tab-content').forEach(function(content) {
+                content.style.display = 'none';
+            });
+            container.querySelectorAll('.popup-tab-btn').forEach(function(button) {
+                button.style.background = 'transparent';
+                button.style.color = 'var(--text-body)';
+                button.style.borderBottom = '2px solid transparent';
+            });
+            container.querySelector('#' + tabId).style.display = 'block';
+            btn.style.color = 'var(--deep-navy)';
+            btn.style.borderBottom = '2px solid var(--accent-gold)';
+        }
+
         new ApexCharts(document.querySelector("#chart-dinamika"), { series: [{ name: 'Tingkat Kelahiran', data: [20, 16, 7, 17, 24, 10] }, { name: 'Tingkat Kematian', data: [8, 18, 9, 18, 21, 23] }], chart: { type: 'area', height: 350, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' }, colors: ['#c5a059', '#bc6c47'], dataLabels: { enabled: false }, stroke: { curve: 'smooth', width: 3 }, fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.05, stops: [0, 90, 100] } }, xaxis: { categories: ['2020', '2021', '2022', '2023', '2024', '2025'] }, legend: { position: 'top' } }).render();
         new ApexCharts(document.querySelector("#chart-piramida"), { series: [{ name: 'Laki-laki', data: [-97, -74, -99, -78, -65, -107, -77, -67, -104, -79, -81, -70, -56, -32, -21, -25] }, { name: 'Perempuan', data: [81, 86, 86, 91, 77, 82, 76, 84, 90, 78, 82, 66, 58, 48, 24, 49] }], chart: { type: 'bar', stacked: true, height: 350, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' }, colors: ['#0a192f', '#bc6c47'], plotOptions: { bar: { horizontal: true, barHeight: '80%', borderRadius: 2 } }, dataLabels: { enabled: false }, yaxis: { title: { text: 'Kelompok Umur' } }, tooltip: { shared: false, y: { formatter: function(val) { return Math.abs(val) + " Jiwa"; } } }, xaxis: { categories: ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '>75'], labels: { formatter: function(val) { return Math.abs(Math.round(val)); } } }, legend: { position: 'top' } }).render();
 
@@ -1254,6 +1202,56 @@
             }
         });
 
+        function interceptLayerClick(e) {
+            if (modePilihPeta) {
+                setTimeout(() => map.closePopup(), 10); 
+            }
+        }
+
+        // FUNGSI PENGHASIL HTML DAFTAR KEGIATAN MATRIKS ITBX (DARI GEOJSON)
+        function generateKegiatanHtml(props) {
+            const statuses = [
+                { key: 'I', label: 'Diizinkan (I)', color: '#10b981', bg: '#ecfdf5' },
+                { key: 'T1', label: 'Terbatas (T1)', color: '#f59e0b', bg: '#fffbeb' },
+                { key: 'T2', label: 'Terbatas (T2)', color: '#f59e0b', bg: '#fffbeb' },
+                { key: 'T3', label: 'Terbatas (T3)', color: '#f59e0b', bg: '#fffbeb' },
+                { key: 'T4', label: 'Terbatas (T4)', color: '#f59e0b', bg: '#fffbeb' },
+                { key: 'T5', label: 'Terbatas (T5)', color: '#f59e0b', bg: '#fffbeb' },
+                { key: 'T6', label: 'Terbatas (T6)', color: '#f59e0b', bg: '#fffbeb' },
+                { key: 'T7', label: 'Terbatas (T7)', color: '#f59e0b', bg: '#fffbeb' },
+                { key: 'B1', label: 'Bersyarat (B1)', color: '#3b82f6', bg: '#eff6ff' },
+                { key: 'B2', label: 'Bersyarat (B2)', color: '#3b82f6', bg: '#eff6ff' },
+                { key: 'B3', label: 'Bersyarat (B3)', color: '#3b82f6', bg: '#eff6ff' },
+                { key: 'B4', label: 'Bersyarat (B4)', color: '#3b82f6', bg: '#eff6ff' },
+                { key: 'B5', label: 'Bersyarat (B5)', color: '#3b82f6', bg: '#eff6ff' },
+                { key: 'B6', label: 'Bersyarat (B6)', color: '#3b82f6', bg: '#eff6ff' },
+                { key: 'X', label: 'Dilarang (X)', color: '#ef4444', bg: '#fef2f2' }
+            ];
+
+            let html = '<div style="max-height: 200px; overflow-y: auto; padding-right:5px;">';
+            let hasAny = false;
+
+            statuses.forEach(s => {
+                let val = getPropValue(props, s.key);
+                if (val && val !== '-' && val.trim() !== '') {
+                    hasAny = true;
+                    html += `<div style="margin-bottom:8px; background:${s.bg}; border:1px solid ${s.color}; padding:6px; border-radius:6px;">
+                                <div style="background:${s.color}; color:#fff; padding:3px 6px; font-weight:700; border-radius:4px; font-size:10px; display:inline-block; margin-bottom:4px;">${s.label}</div>
+                                <ul style="margin:0; padding-left:15px; font-size:10px; color:var(--deep-navy);">`;
+                    
+                    let acts = val.split('|');
+                    acts.forEach(a => {
+                        if(a.trim() !== '') { html += `<li style="margin-bottom:2px;">${a.trim()}</li>`; }
+                    });
+                    html += `</ul></div>`;
+                }
+            });
+
+            if (!hasAny) { html += `<div style="text-align:center; font-style:italic; font-size:10px; color:#ef4444; padding:10px;">Data kegiatan matriks ITBX tidak tersedia untuk zona ini.</div>`; }
+            html += '</div>';
+            return html;
+        }
+
         function stylePolaRuang(feature) { let val = getPropValue(feature.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona'); return { fillColor: subZonaColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: 0.8 }; }
         function styleBidangTanah(feature) { let val = getPropValue(feature.properties, 'STATUS', 'Status', 'status'); return { fillColor: statusColors[val] || '#cccccc', weight: 1.2, opacity: 1, color: '#444444', fillOpacity: 0.8 }; }
         function styleJalan(feature) { let val = getPropValue(feature.properties, 'fungsi', 'FUNGSI'); return { color: fungsiJalanColors[val] || '#94a3b8', weight: 3, opacity: 0.8 }; }
@@ -1309,6 +1307,7 @@
                             <button onclick="setRouteDestFromPopup(${lat}, ${lng})" style="background:var(--terracotta); color:white; border:none; padding:6px; border-radius:4px; cursor:pointer; font-size:11px; width:100%; font-weight:700;"><i class="fa-solid fa-route"></i> Rute ke Lokasi Ini</button>
                         </div>
                     `);
+                    marker.on('click', interceptLayerClick);
                     pointFeatures.push(marker);
 
                     let turfPt = turf.point([lng, lat]);
@@ -1320,14 +1319,16 @@
 
             let rawBufferData = turf.featureCollection(bufferFeatures);
             let bufferLayer = L.geoJSON(rawBufferData, {
-                style: function(feature) { return { color: feature.properties.color, fillColor: feature.properties.color, fillOpacity: 0.15, weight: 1.5, dashArray: '4,4' }; }
+                style: function(feature) { return { color: feature.properties.color, fillColor: feature.properties.color, fillOpacity: 0.15, weight: 1.5, dashArray: '4,4' }; },
+                onEachFeature: function(f, l) { l.on('click', interceptLayerClick); }
             });
 
             let combinedLayer = L.layerGroup([bufferLayer, ...pointFeatures]);
             return { rawData: rawBufferData, bufferLayer: bufferLayer, combinedLayer: combinedLayer };
         }
 
-        fetch('polaruangwunutbaru.geojson').then(res => res.json()).then(data => { 
+        // PENARIKAN DATA POLA RUANG DENGAN TAB POP-UP BARU
+        fetch('polruwunutfix.geojson').then(res => res.json()).then(data => { 
             rawPolaRuangData = data; 
             polaRuangLayer = L.geoJSON(data, { 
                 style: stylePolaRuang, 
@@ -1335,26 +1336,66 @@
                     l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); 
                     l.on('mouseout', e => polaRuangLayer.resetStyle(e.target)); 
                     l.on('click', function(e) {
-                        let zona = getPropValue(f.properties, 'ZONA', 'Zona', 'zona', 'NAMOBJ');
-                        let subZona = getPropValue(f.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona', 'NAMOBJ');
-                        let kode = getPropValue(f.properties, 'KODE', 'kode', 'Kode', 'KODE_ZONA');
+                        if (modePilihPeta) { setTimeout(() => map.closePopup(), 10); return; }
                         
+                        let props = f.properties;
+                        let zona = getPropValue(props, 'ZONA', 'Zona', 'zona', 'NAMOBJ');
+                        let subZona = getPropValue(props, 'SUB_ZONA', 'Sub_Zona', 'sub_zona', 'NAMOBJ');
+                        let kodeZona = getPropValue(props, 'KODE_ZONA', 'Kode_Zona', 'kodezona');
+                        let kodeSubZona = getPropValue(props, 'KODE', 'kode', 'Kode', 'KODE_SUBZONA', 'KodeSubzona');
+
+                        let kdb = getPropValue(props, 'KDB', 'kdb') || '-';
+                        let klb = getPropValue(props, 'KLB', 'klb') || '-';
+                        let kdh = getPropValue(props, 'KDH', 'kdh') || '-';
+
+                        let dokumen = getPropValue(props, 'Dokumen', 'dokumen', 'DOKUMEN', 'Link', 'URL');
+                        let ketinggian = getPropValue(props, 'Ketinggian Bangunan', 'Ketinggian_Bangunan', 'Ketinggian', 'tinggi_bgn') || '-';
+                        let gsb = getPropValue(props, 'GSB', 'gsb') || '-';
+
                         let popupContent = `
-                            <div style="font-family:'Inter', sans-serif; min-width:300px; max-width: 350px;">
-                                <div style="background:var(--deep-navy); color:var(--accent-gold); padding:10px; border-radius:6px 6px 0 0; text-align:center; font-weight:700; font-size:13px; margin:-14px -14px 12px -14px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+                            <div class="popup-container-itbx" style="font-family:'Inter', sans-serif; min-width:320px; max-width: 350px; margin:-14px -14px 0 -14px;">
+                                <div style="background:var(--deep-navy); color:var(--accent-gold); padding:12px; border-radius:6px 6px 0 0; text-align:center; font-weight:700; font-size:13px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
                                     <i class="fa-solid fa-map"></i> INFORMASI POLA RUANG
                                 </div>
-                                <div style="margin-bottom:12px;">
-                                    <b style="color:var(--terracotta); font-size:11px; display:block; border-bottom:2px solid #ccc; padding-bottom:4px; margin-bottom:6px;"><i class="fa-solid fa-layer-group"></i> SECTION 1: ZONASI</b>
-                                    <table style="width:100%; font-size:11px;">
-                                        <tr><td style="width:80px; font-weight:700; color:var(--deep-navy); padding:2px 0;">Zona Utama</td><td>: <b>${zona}</b></td></tr>
-                                        <tr><td style="font-weight:700; color:var(--deep-navy); padding:2px 0;">Sub Zona</td><td>: <b>${subZona}</b></td></tr>
-                                        <tr><td style="font-weight:700; color:var(--deep-navy); padding:2px 0;">Kode Zonasi</td><td>: <b>${kode}</b></td></tr>
-                                    </table>
+                                
+                                <div style="display:flex; border-bottom:1px solid #cbd5e1; background:#f8fafc;">
+                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-zonasi', this)" style="flex:1; border:none; background:transparent; padding:8px 0; font-size:10px; font-weight:700; cursor:pointer; color:var(--deep-navy); border-bottom:2px solid var(--accent-gold);">Zonasi</button>
+                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-keg', this)" style="flex:1; border:none; background:transparent; padding:8px 0; font-size:10px; font-weight:700; cursor:pointer; color:var(--text-body); border-bottom:2px solid transparent;">Kegiatan</button>
+                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-int', this)" style="flex:1; border:none; background:transparent; padding:8px 0; font-size:10px; font-weight:700; cursor:pointer; color:var(--text-body); border-bottom:2px solid transparent;">Intensitas</button>
+                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-bgn', this)" style="flex:1; border:none; background:transparent; padding:8px 0; font-size:10px; font-weight:700; cursor:pointer; color:var(--text-body); border-bottom:2px solid transparent;">Bangunan</button>
                                 </div>
-                                <div>
-                                    <b style="color:var(--terracotta); font-size:11px; display:block; border-bottom:2px solid #ccc; padding-bottom:4px; margin-bottom:6px;"><i class="fa-solid fa-list-check"></i> SECTION 2: DAFTAR KEGIATAN (ITBX)</b>
-                                    ${getItbxTableHtml(kode, subZona)}
+
+                                <div style="padding:12px;">
+                                    <div id="tab-zonasi" class="popup-tab-content" style="display:block;">
+                                        <table style="width:100%; font-size:11px;">
+                                            <tr><td style="width:90px; color:var(--text-body); padding:3px 0;">Zona</td><td>: <b style="color:var(--deep-navy);">${zona}</b></td></tr>
+                                            <tr><td style="color:var(--text-body); padding:3px 0;">Sub Zona</td><td>: <b style="color:var(--deep-navy);">${subZona}</b></td></tr>
+                                            <tr><td style="color:var(--text-body); padding:3px 0;">Kode Zona</td><td>: <b style="color:var(--deep-navy);">${kodeZona}</b></td></tr>
+                                            <tr><td style="color:var(--text-body); padding:3px 0;">Kode Subzona</td><td>: <b style="color:var(--deep-navy);">${kodeSubZona}</b></td></tr>
+                                        </table>
+                                    </div>
+
+                                    <div id="tab-keg" class="popup-tab-content" style="display:none;">
+                                        ${generateKegiatanHtml(props)}
+                                    </div>
+
+                                    <div id="tab-int" class="popup-tab-content" style="display:none;">
+                                        <table style="width:100%; font-size:11px;">
+                                            <tr><td style="width:40px; font-weight:800; color:var(--terracotta); padding:3px 0;">KDB</td><td>: <b>${kdb}</b></td></tr>
+                                            <tr><td style="font-weight:800; color:var(--terracotta); padding:3px 0;">KLB</td><td>: <b>${klb}</b></td></tr>
+                                            <tr><td style="font-weight:800; color:var(--terracotta); padding:3px 0;">KDH</td><td>: <b>${kdh}</b></td></tr>
+                                        </table>
+                                    </div>
+
+                                    <div id="tab-bgn" class="popup-tab-content" style="display:none;">
+                                        <table style="width:100%; font-size:11px;">
+                                            <tr><td style="width:110px; color:var(--text-body); padding:3px 0;">Ketinggian Bgn</td><td>: <b style="color:var(--deep-navy);">${ketinggian}</b></td></tr>
+                                            <tr><td style="color:var(--text-body); padding:3px 0;">GSB</td><td>: <b style="color:var(--deep-navy);">${gsb}</b></td></tr>
+                                            <tr><td style="color:var(--text-body); padding-top:10px;" colspan="2">
+                                                ${dokumen !== '-' && dokumen !== '' ? `<a href="${dokumen}" target="_blank" style="display:block; background:var(--accent-primary); color:white; text-align:center; padding:6px; border-radius:4px; text-decoration:none; font-weight:700;"><i class="fa-solid fa-file-pdf"></i> Buka Dokumen Regulasi</a>` : '<i style="color:#ef4444;">Dokumen tidak tersedia</i>'}
+                                            </td></tr>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         `;
@@ -1365,12 +1406,12 @@
             if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer); 
         });
 
-        fetch('bidangtanahwunut.geojson').then(res => res.json()).then(data => { rawBidangTanahData = data; bidangTanahLayer = L.geoJSON(data, { style: styleBidangTanah, onEachFeature: (f, l) => { l.bindPopup(`<b>Bidang Tanah</b><br>Status: ${getPropValue(f.properties, 'STATUS')}<br>Luas: ${getPropValue(f.properties, 'Luas')} m²`); l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); l.on('mouseout', e => bidangTanahLayer.resetStyle(e.target)); } }); if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer); });
-        fetch('jalanwunut.geojson').then(res => res.json()).then(data => { rawJalanData = data; jalanLayer = L.geoJSON(data, { style: styleJalan, onEachFeature: (f, l) => { l.bindPopup(`<b>Jaringan Jalan</b><br>Fungsi: ${getPropValue(f.properties, 'fungsi')}`); l.on('mouseover', e => e.target.setStyle({weight: 5, color: '#000'})); l.on('mouseout', e => jalanLayer.resetStyle(e.target)); } }); }); 
-        fetch('zntwunut.geojson').then(res => res.json()).then(data => { rawZntData = data; zntLayer = L.geoJSON(data, { style: styleZnt }); });
-        fetch('penggunaanlahan.geojson').then(res => res.json()).then(data => { rawPenggunaanData = data; penggunaanLayer = L.geoJSON(data, { style: stylePenggunaan }); });
-        fetch('kp2bwunut.geojson').then(res => res.json()).then(data => { rawKp2bData = data; kp2bLayer = L.geoJSON(data, { style: styleKp2b }); });
-        fetch('lsdwunut.geojson').then(res => res.json()).then(data => { rawLsdData = data; lsdLayer = L.geoJSON(data, { style: styleLsd }); });
+        fetch('bidangtanahwunut.geojson').then(res => res.json()).then(data => { rawBidangTanahData = data; bidangTanahLayer = L.geoJSON(data, { style: styleBidangTanah, onEachFeature: (f, l) => { l.bindPopup(`<b>Bidang Tanah</b><br>Status: ${getPropValue(f.properties, 'STATUS')}<br>Luas: ${getPropValue(f.properties, 'Luas')} m²`); l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); l.on('mouseout', e => bidangTanahLayer.resetStyle(e.target)); l.on('click', interceptLayerClick); } }); if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer); });
+        fetch('jalanwunut.geojson').then(res => res.json()).then(data => { rawJalanData = data; jalanLayer = L.geoJSON(data, { style: styleJalan, onEachFeature: (f, l) => { l.bindPopup(`<b>Jaringan Jalan</b><br>Fungsi: ${getPropValue(f.properties, 'fungsi')}`); l.on('mouseover', e => e.target.setStyle({weight: 5, color: '#000'})); l.on('mouseout', e => jalanLayer.resetStyle(e.target)); l.on('click', interceptLayerClick); } }); }); 
+        fetch('zntwunut.geojson').then(res => res.json()).then(data => { rawZntData = data; zntLayer = L.geoJSON(data, { style: styleZnt, onEachFeature: (f, l) => { l.on('click', interceptLayerClick); } }); });
+        fetch('penggunaanlahan.geojson').then(res => res.json()).then(data => { rawPenggunaanData = data; penggunaanLayer = L.geoJSON(data, { style: stylePenggunaan, onEachFeature: (f, l) => { l.on('click', interceptLayerClick); } }); });
+        fetch('kp2bwunut.geojson').then(res => res.json()).then(data => { rawKp2bData = data; kp2bLayer = L.geoJSON(data, { style: styleKp2b, onEachFeature: (f, l) => { l.on('click', interceptLayerClick); } }); });
+        fetch('lsdwunut.geojson').then(res => res.json()).then(data => { rawLsdData = data; lsdLayer = L.geoJSON(data, { style: styleLsd, onEachFeature: (f, l) => { l.on('click', interceptLayerClick); } }); });
 
         fetch('kesehatanfix.geojson').then(res => res.json()).then(data => {
             let p = processFasilitasGeoJSON(data, 'Fasilitas Kesehatan');
@@ -1517,7 +1558,7 @@
                             for(let k in userUploadedLayers) { if(userUploadedLayers[k].name === upload.fileName) alreadyLoaded = true; }
                             if(alreadyLoaded) return;
                             const geojson = JSON.parse(upload.data);
-                            const layer = L.geoJSON(geojson, { style: { color: '#8b5cf6', weight: 3, fillOpacity: 0.3 } }).addTo(map);
+                            const layer = L.geoJSON(geojson, { style: { color: '#8b5cf6', weight: 3, fillOpacity: 0.3 }, onEachFeature: (f, l) => l.on('click', interceptLayerClick) }).addTo(map);
                             addLayerToManagement(layer, upload.fileName, true);
                         });
                         showToast(`Data spasial personal dimuat dari Cloud.`, "info");
@@ -1536,7 +1577,7 @@
             if (fileName.endsWith('.zip')) {
                 reader.onload = function(e) {
                     shp(e.target.result).then(function(geojson) {
-                        const shpLayer = L.geoJSON(geojson, { style: { color: '#0284c7', weight: 3, fillOpacity: 0.3 } }).addTo(map);
+                        const shpLayer = L.geoJSON(geojson, { style: { color: '#0284c7', weight: 3, fillOpacity: 0.3 }, onEachFeature: (f, l) => l.on('click', interceptLayerClick) }).addTo(map);
                         map.fitBounds(shpLayer.getBounds(), { padding: [30, 30] });
                         addLayerToManagement(shpLayer, file.name, false);
                         showToast(`Shapefile '${file.name}' sukses diekstraksi.`, "success");
@@ -1549,7 +1590,7 @@
                 reader.onload = function(e) {
                     try {
                         const geojson = JSON.parse(e.target.result);
-                        const layer = L.geoJSON(geojson, { style: { color: '#10b981', weight: 3, fillOpacity: 0.3 } }).addTo(map);
+                        const layer = L.geoJSON(geojson, { style: { color: '#10b981', weight: 3, fillOpacity: 0.3 }, onEachFeature: (f, l) => l.on('click', interceptLayerClick) }).addTo(map);
                         map.fitBounds(layer.getBounds(), { padding: [30, 30] });
                         addLayerToManagement(layer, file.name, false);
                         showToast(`File GeoJSON '${file.name}' berhasil dimuat.`, "success");
@@ -1563,6 +1604,7 @@
                     const objectUrl = URL.createObjectURL(file);
                     const customLayer = omnivore.kml(objectUrl).on('ready', function() {
                         this.setStyle({ color: '#38bdf8', weight: 3, fillOpacity: 0.3 });
+                        this.eachLayer(function(l) { l.on('click', interceptLayerClick); });
                         map.fitBounds(this.getBounds(), { padding: [30, 30] });
                         addLayerToManagement(this, file.name, false);
                         showToast(`Berkas KML '${file.name}' sukses direfleksikan ke peta.`, "success");
@@ -1734,7 +1776,7 @@
             routingControl = L.Routing.control({
                 waypoints: [coordA, coordB],
                 routeWhileDragging: false,
-                show: true, // PERBAIKAN: Harus di-set True agar instuksi rute (directions) tetap diunduh oleh mesin
+                show: true, 
                 addWaypoints: false,
                 fitSelectedRoutes: true,
                 showAlternatives: true, 
@@ -1756,7 +1798,7 @@
                     
                     var instrs = routes[0].instructions || [];
                     var html = `<div style="background: #f0fdf4; border:1px solid #86efac; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-                                    <div style="font-weight: 800; color: #166534; font-size:14px; margin-bottom:5px;"><i class="fa-solid ${pfo === 'bike' ? 'fa-bicycle' : 'fa-car'}"></i> Rute Jalan Raya</div>
+                                    <div style="font-weight: 800; color: #166534; font-size:14px; margin-bottom:5px;"><i class="fa-solid ${pfo === 'bike' ? 'fa-bicycle' : 'fa-car'}"></i> Rute Optimal Ditemukan</div>
                                     <div style="color: #15803d; font-weight:600; display:flex; justify-content:space-between;">
                                         <span><i class="fa-solid fa-road"></i> ${distance} KM</span>
                                         <span><i class="fa-solid fa-clock"></i> ${time} Menit</span>
@@ -1794,7 +1836,6 @@
                     
                     document.getElementById('routing-itinerary-container').innerHTML = html;
                     
-                    // Sembunyikan panel bawaan karena kita membuat yang baru
                     setTimeout(() => { 
                         var lc = document.querySelector('.leaflet-routing-container'); 
                         if(lc) lc.style.display = 'none'; 
@@ -1833,7 +1874,7 @@
                         <div style="background:#fef2f2; border:1px solid #fecaca; color:#ef4444; padding:15px; border-radius:8px; text-align:center;">
                             <i class="fa-solid fa-road-circle-xmark fa-2x" style="margin-bottom:10px;"></i><br>
                             <b style="font-size:12px;">Rute Gagal Dikalkulasi</b><br>
-                            <span style="font-size:11px; display:block; margin-top:5px; line-height:1.4;">Jaringan peladen OSRM menolak rute karena titik koordinat yang dipilih berada terlalu jauh dari jalan. Silakan geser sedikit titik A atau B agar mendekati jalan raya.</span>
+                            <span style="font-size:11px; display:block; margin-top:5px; line-height:1.4;">Jaringan peladen OSRM menolak rute karena titik koordinat yang dipilih berada terlalu jauh dari jalan. Silakan geser titik A atau B agar mendekati jalan umum utama.</span>
                         </div>`;
                 }
             }).addTo(map);
@@ -2020,6 +2061,8 @@
             drawnItems.addLayer(layer);
             
             layer.on('click', function(evt) {
+                if(modePilihPeta) return; // Cegah popup digitasi jika sedang bypass map routing
+
                 selectedDrawnLayer = evt.target;
                 document.getElementById('digi-nama').value = layer.feature.properties.nama || '';
                 document.getElementById('digi-ket').value = layer.feature.properties.keterangan || '';
