@@ -1324,7 +1324,29 @@
             }
         });
 
-        function stylePolaRuang(feature) { let val = getPropValue(feature.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona'); return { fillColor: subZonaColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: 0.8 }; }
+        // ================= PERBAIKAN FITUR WARNA TAHAN BANTING =================
+        function stylePolaRuang(feature) { 
+            let val = getPropValue(feature.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona'); 
+            let color = '#dddddd'; // Warna abu-abu default
+            
+            if (val && val !== '-') {
+                val = String(val).trim(); // Membersihkan spasi nyasar
+                if (subZonaColors[val]) {
+                    color = subZonaColors[val];
+                } else {
+                    // Cek warna tanpa peduli huruf besar/kecil
+                    let lowerVal = val.toLowerCase();
+                    for (let key in subZonaColors) {
+                        if (key.toLowerCase() === lowerVal) {
+                            color = subZonaColors[key];
+                            break;
+                        }
+                    }
+                }
+            }
+            return { fillColor: color, weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: 0.8 }; 
+        }
+        
         function styleBidangTanah(feature) { let val = getPropValue(feature.properties, 'STATUS', 'Status', 'status'); return { fillColor: statusColors[val] || '#cccccc', weight: 1.2, opacity: 1, color: '#444444', fillOpacity: 0.8 }; }
         function styleJalan(feature) { let val = getPropValue(feature.properties, 'fungsi', 'FUNGSI'); return { color: fungsiJalanColors[val] || '#94a3b8', weight: 3, opacity: 0.8 }; }
         function styleZnt(feature) { return { fillColor: zntColors[getPropValue(feature.properties, 'harga', 'HARGA')] || '#dddddd', weight: 1.2, color: '#444444', fillOpacity: 0.8 }; }
@@ -1397,31 +1419,45 @@
             return { rawData: rawBufferData, bufferLayer: bufferLayer, combinedLayer: combinedLayer };
         }
 
-        // --- PENYESUAIAN LAPISAN POLA RUANG ---
-        fetch('polaruangfix.geojson').then(res => res.json()).then(data => { 
-            rawPolaRuangData = data; 
-            polaRuangLayer = L.geoJSON(data, { 
-                style: stylePolaRuang, 
-                onEachFeature: (f, l) => { 
-                    l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); 
-                    l.on('mouseout', e => {
-                        if (!e.target._isClickedHighlight) polaRuangLayer.resetStyle(e.target);
-                    });
-                    l.on('click', e => {
-                        // Reset all highlights
-                        polaRuangLayer.eachLayer(layer => { layer._isClickedHighlight = false; polaRuangLayer.resetStyle(layer); });
-                        
-                        // Highlight clicked
-                        e.target._isClickedHighlight = true;
-                        e.target.setStyle({weight: 4, color: '#ff0000', fillColor: '#ffff00', fillOpacity: 0.6});
-                        e.target.bringToFront();
-                        
-                        populateRightInfo(f.properties);
-                    });
-                } 
-            }); 
-            if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer); 
-        });
+        // --- PENYESUAIAN LAPISAN POLA RUANG DENGAN PENCEGAHAN ERROR ---
+        fetch('polaruangfix.geojson')
+            .then(res => {
+                if(!res.ok) throw new Error("Gagal membaca struktur file");
+                return res.json();
+            })
+            .then(data => { 
+                rawPolaRuangData = data; 
+                polaRuangLayer = L.geoJSON(data, { 
+                    style: stylePolaRuang, 
+                    onEachFeature: (f, l) => { 
+                        l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); 
+                        l.on('mouseout', e => {
+                            if (!e.target._isClickedHighlight) polaRuangLayer.resetStyle(e.target);
+                        });
+                        l.on('click', e => {
+                            // Reset all highlights
+                            polaRuangLayer.eachLayer(layer => { layer._isClickedHighlight = false; polaRuangLayer.resetStyle(layer); });
+                            
+                            // Highlight clicked
+                            e.target._isClickedHighlight = true;
+                            e.target.setStyle({weight: 4, color: '#ff0000', fillColor: '#ffff00', fillOpacity: 0.6});
+                            e.target.bringToFront();
+                            
+                            populateRightInfo(f.properties);
+                        });
+                    } 
+                }); 
+                if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer); 
+                
+                // Cek diam-diam jika posisi koordinat nyasar
+                if (polaRuangLayer.getBounds().isValid()) {
+                    console.log("Sihir Pola Ruang aktif!");
+                }
+            })
+            .catch(err => {
+                showToast("Duh, file Pola Ruang tidak valid atau tidak ditemukan.", "error");
+                console.error(err);
+            });
 
         fetch('bidangtanahwunut.geojson').then(res => res.json()).then(data => { rawBidangTanahData = data; bidangTanahLayer = L.geoJSON(data, { style: styleBidangTanah, onEachFeature: (f, l) => { l.bindPopup(`<b>Bidang Tanah</b><br>Status: ${getPropValue(f.properties, 'STATUS')}<br>Luas: ${getPropValue(f.properties, 'Luas')} m²`); l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); l.on('mouseout', e => bidangTanahLayer.resetStyle(e.target)); } }); if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer); });
         fetch('jalanwunut.geojson').then(res => res.json()).then(data => { rawJalanData = data; jalanLayer = L.geoJSON(data, { style: styleJalan, onEachFeature: (f, l) => { l.bindPopup(`<b>Jaringan Jalan</b><br>Fungsi: ${getPropValue(f.properties, 'fungsi')}`); l.on('mouseover', e => e.target.setStyle({weight: 5, color: '#000'})); l.on('mouseout', e => jalanLayer.resetStyle(e.target)); } }); }); 
