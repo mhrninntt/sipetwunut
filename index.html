@@ -7,14 +7,12 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@700&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     
-    <!-- Pustaka Spasial & UI -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-    <!-- PUSTAKA UTAMA GIS, ROUTING, DAN ANALISIS BUFFER (TURF.JS) -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
     <script src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
@@ -22,10 +20,6 @@
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
     
-    <!-- Pustaka Pembaca Matriks ITBX (CSV) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    
-    <!-- Pustaka Utility -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -49,24 +43,21 @@
         html { scroll-behavior: smooth; }
         body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--soft-sand); color: var(--deep-navy); overflow-x: hidden; }
 
-        /* KURSOR TEMBUS PANDANG (SIHIR ANTI-GAGAL RUTE) */
-        .map-picking { cursor: crosshair !important; }
-        .map-picking .leaflet-interactive { pointer-events: none !important; } 
+        /* KURSOR TEMBUS PANDANG SAAT MEMILIH TITIK RUTE */
+        .map-picking, .map-picking * { cursor: crosshair !important; }
 
-        /* PERBAIKAN NOTIFIKASI (MICRO-TOAST) SUPER KECIL DAN ELEGAN */
+        /* PERBAIKAN NOTIFIKASI: FLOAT TENGAH ATAS, KECIL, ELEGAN & CEPAT HILANG */
         .swal2-container { z-index: 9999999 !important; }
-        .swal2-toast { 
-            font-size: 11px !important; 
-            padding: 6px 15px !important; 
-            border-radius: 30px !important; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important; 
-            margin-top: 15px !important; 
-            width: auto !important; 
-            background: #ffffff !important; 
-            border: 1px solid var(--accent-gold) !important;
+        .custom-toast-center { 
+            padding: 8px 16px !important; 
+            font-size: 13px !important;
+            border-radius: 30px !important;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15) !important;
+            background: #ffffff !important;
             color: var(--deep-navy) !important;
-            font-family: 'Inter', sans-serif !important;
-            font-weight: 700 !important;
+            border: 1px solid var(--accent-gold) !important;
+            width: auto !important;
+            margin-top: 10px !important;
         }
 
         .logo-wrapper { display: flex; align-items: center; justify-content: center; }
@@ -202,34 +193,6 @@
             transition: var(--transition);
         }
         
-        /* PANEL INFO KANAN (KHUSUS POLA RUANG) */
-        #info-panel-kanan {
-            position: absolute;
-            top: 20px;
-            right: -450px; /* Hidden initially */
-            width: 350px;
-            max-height: calc(100vh - 110px);
-            background: var(--white);
-            z-index: 4000; 
-            border-radius: 12px;
-            box-shadow: -5px 10px 30px rgba(0,0,0,0.15);
-            transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.1);
-        }
-        #info-panel-kanan.show { right: 20px; }
-        .info-panel-header {
-            background: var(--deep-navy); color: var(--accent-gold); padding: 15px; font-size: 13px; font-weight: 700;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .info-panel-close { background: none; border: none; color: white; cursor: pointer; font-size: 16px; transition: 0.2s; }
-        .info-panel-close:hover { color: #ef4444; }
-        .info-panel-body { padding: 0; overflow-y: auto; flex-grow: 1; }
-        .info-panel-body::-webkit-scrollbar { width: 5px; }
-        .info-panel-body::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 10px; }
-
         .sidebar-tabs-nav {
             display: flex; background: rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.1);
             border-radius: 12px 12px 0 0;
@@ -279,9 +242,9 @@
         .route-btn:hover { border-color: var(--terracotta); color: var(--terracotta); background: #fff7ed; }
         .route-btn.active { background: var(--terracotta); color: white; border-color: var(--terracotta); }
 
-        /* KONTROL KANAN PETA - DIGESER KE BAWAH AGAR TIDAK NUMPUK DEKAT GEOMAN */
+        /* KONTROL KANAN PETA - DIGESER KE BAWAH AGAR TIDAK BERTUMPUK DENGAN GEOMAN */
         .right-controls { 
-            position: absolute; bottom: 120px; right: 20px; z-index: 1000; 
+            position: absolute; top: 220px; right: 10px; z-index: 1000; 
             display: flex; flex-direction: column; gap: 10px; 
             transition: var(--transition);
         }
@@ -299,7 +262,7 @@
 
         /* --- LEGENDA KANAN BAWAH --- */
         .legend-bottom-wrapper {
-            position: absolute; bottom: 30px; right: 70px; z-index: 1000; 
+            position: absolute; bottom: 30px; right: 60px; z-index: 1000; 
             display: flex; flex-direction: column; align-items: flex-end;
             transition: var(--transition);
         }
@@ -324,7 +287,7 @@
         .legend-content::-webkit-scrollbar { width: 4px; }
         .legend-content::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 4px; }
 
-        /* Menyembunyikan Itinerary Default Leaflet Routing - Kita pakai UI Sidebar */
+        /* Sembunyikan Panel Bawaan Leaflet Routing karena UI nya sudah rapi di Sidebar */
         .leaflet-routing-container { display: none !important; }
 
         /* ======== TATA LETAK PERANGKAT SELULER (RESPONSIF) ======== */
@@ -355,13 +318,6 @@
                 bottom: calc(55vh + 15px);
                 left: 10px;
             }
-            #info-panel-kanan {
-                width: calc(100% - 20px);
-                left: 10px; right: auto;
-                top: auto; bottom: -500px;
-                max-height: 50vh;
-            }
-            #info-panel-kanan.show { bottom: 10px; right: auto; }
         }
 
         /* --- TENTANG KAMI (TIM PENYUSUN) --- */
@@ -423,7 +379,6 @@
 </head>
 <body>
 
-    <!-- Antarmuka Autentikasi -->
     <div id="login-overlay">
         <div class="login-card" id="login-box">
             <button class="close-btn" onclick="closeLogin()"><i class="fa-solid fa-xmark"></i></button>
@@ -445,7 +400,6 @@
         </div>
     </div>
 
-    <!-- Lightbox Foto Profil -->
     <div id="lightbox-overlay" onclick="closeLightbox(event)">
         <div class="lightbox-content">
             <button class="lightbox-close" onclick="closeLightbox(event)"><i class="fa-solid fa-xmark"></i></button>
@@ -471,7 +425,6 @@
         </header>
 
         <main>
-            <!-- HALAMAN BERANDA -->
             <div id="beranda" class="content-section active-section">
                 <div class="hero">
                     <div class="hero-img" style="background: url('header.jpg') center/cover;"></div>
@@ -626,13 +579,13 @@
                 </div>
             </div>
 
-            <!-- HALAMAN WEBGIS SPASIAL -->
             <div id="peta" class="content-section">
                 <div class="map-wrapper">
 
+                    <div id="routing-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:4000; display:none; cursor:crosshair;"></div>
+
                     <div id="map"></div>
 
-                    <!-- PENGATURAN PANEL KIRI WEBGIS -->
                     <div class="floating-sidebar">
                         <div class="sidebar-tabs-nav">
                             <button class="s-tab active" onclick="openSidebarTab('s-layers', this)"><i class="fa-solid fa-layer-group"></i> Layer</button>
@@ -642,7 +595,6 @@
                         </div>
 
                         <div class="sidebar-content-wrapper">
-                            <!-- PANEL 1: PENGATURAN LAPISAN (LAYER) -->
                             <div id="s-layers" class="s-panel active">
                                 <div class="control-group">
                                     <div class="control-title">Peta Dasar Terapan</div>
@@ -696,7 +648,6 @@
                                     </div>
                                 </div>
 
-                                <!-- MANAJEMEN LAYER UNGGAHAN -->
                                 <div class="control-group">
                                     <hr style="border-top:1px solid rgba(0,0,0,0.1); margin:15px 0;">
                                     <div class="control-title"><i class="fa-solid fa-cloud-arrow-up"></i> Data Referensi Eksternal (Unggahan)</div>
@@ -714,7 +665,6 @@
                                 </div>
                             </div>
 
-                            <!-- PANEL 2: PENCARIAN ATRIBUT SPASIAL -->
                             <div id="s-search" class="s-panel">
                                 <div class="control-group">
                                     <div class="control-title">Pencarian Data Spasial</div>
@@ -747,7 +697,6 @@
                                 </div>
                             </div>
                             
-                            <!-- PANEL 3: RUTE PERJALANAN (ROUTING) - DESAIN UI RAPI -->
                             <div id="s-route" class="s-panel">
                                 <div class="control-group">
                                     <div class="control-title">Kalkulasi Rute Jaringan Jalan</div>
@@ -774,7 +723,6 @@
                                     <button class="btn-map-action" onclick="hitungRute()" style="background: #10b981; color: white; padding: 12px; font-size: 13px; margin-top: 5px;"><i class="fa-solid fa-route"></i> Hitung Rute Jalan</button>
                                     <button class="btn-map-action" onclick="bersihkanRute()" style="background: #fff5f5; color: #ef4444; border: 1px solid #fecaca; padding: 12px; font-size: 13px;"><i class="fa-solid fa-eraser"></i> Bersihkan Rute</button>
                                     
-                                    <!-- PANDUAN PERJALANAN (HASIL ROUTING) -->
                                     <div style="margin-top: 20px; border-top: 1px dashed #cbd5e1; padding-top: 15px;">
                                         <h4 style="font-size: 11px; color: var(--terracotta); margin: 0 0 10px; text-transform: uppercase;">PANDUAN PERJALANAN</h4>
                                         <div id="routing-itinerary-container" style="font-size: 11px; color: var(--text-body); max-height: 250px; overflow-y: auto; padding-right: 5px; overflow-x: hidden;">
@@ -784,20 +732,18 @@
                                 </div>
                             </div>
 
-                            <!-- PANEL 4: FITUR DIGITASI & ANALISIS INTERSECT -->
                             <div id="s-digitize" class="s-panel">
-                                <!-- FITUR BUFFER RADIUS FASILITAS -->
                                 <div class="control-group">
                                     <div class="control-title"><i class="fa-solid fa-satellite-dish"></i> Analisis Jangkauan Fasilitas (Buffer)</div>
                                     <p style="font-size: 11px; color: var(--text-body); margin-top: 0;">Tampilkan radius area pelayanan fasilitas umum untuk analisis spasial.</p>
                                     
-                                    <label class="control-label"><input type="checkbox" id="check-kesehatan" onchange="toggleLayers()"> Jangkauan Fasilitas Kesehatan</label>
+                                    <label class="control-label"><input type="checkbox" id="check-kesehatan" checked onchange="toggleLayers()"> Jangkauan Fasilitas Kesehatan</label>
                                     <div style="padding-left: 25px; margin-bottom: 10px;">
                                         <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:700;"><span>Transparansi Area</span><span id="val-op-kesehatan">15%</span></div>
                                         <input type="range" id="opacity-kesehatan" min="0" max="1" step="0.1" value="0.15" oninput="changeOpacity(kesehatanBufferLayer, this.value, 'val-op-kesehatan')">
                                     </div>
 
-                                    <label class="control-label"><input type="checkbox" id="check-pendidikan" onchange="toggleLayers()"> Jangkauan Fasilitas Pendidikan</label>
+                                    <label class="control-label"><input type="checkbox" id="check-pendidikan" checked onchange="toggleLayers()"> Jangkauan Fasilitas Pendidikan</label>
                                     <div style="padding-left: 25px; margin-bottom: 10px;">
                                         <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:700;"><span>Transparansi Area</span><span id="val-op-pendidikan">15%</span></div>
                                         <input type="range" id="opacity-pendidikan" min="0" max="1" step="0.1" value="0.15" oninput="changeOpacity(pendidikanBufferLayer, this.value, 'val-op-pendidikan')">
@@ -805,7 +751,6 @@
                                 </div>
                                 <hr style="border-top:1px solid rgba(0,0,0,0.1); margin:15px 0;">
 
-                                <!-- FITUR ANALISIS INTERSECT SPASIAL -->
                                 <div class="control-group">
                                     <div class="control-title"><i class="fa-solid fa-object-ungroup"></i> Analisis Tumpang Tindih (Intersect)</div>
                                     <p style="font-size: 11px; color: var(--text-body); margin-top: 0;">Deteksi dan potong area yang saling bertumpukan antar dua lapisan data spasial.</p>
@@ -839,7 +784,6 @@
                                 </div>
                                 <hr style="border-top:1px dashed rgba(0,0,0,0.1); margin:20px 0;">
 
-                                <!-- FITUR LAMA: DIGITASI -->
                                 <div class="control-group">
                                     <div class="control-title">Alat Digitasi dan Ekspor Atribut</div>
                                     <p style="font-size: 11px; color: var(--text-body); margin-top: 0;">Gambar area poligon di peta untuk mendigitasi lahan baru.</p>
@@ -856,7 +800,6 @@
                                         <button class="btn-map-action" onclick="saveAttributes()" style="margin-bottom: 0;"><i class="fa-solid fa-floppy-disk"></i> SIMPAN DATA ATRIBUT</button>
                                     </div>
                                     
-                                    <!-- Daftar Hasil Digitasi -->
                                     <div id="digitized-list-container" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px; display: none;">
                                         <div style="font-size: 11px; font-weight: 700; color: var(--deep-navy); margin-bottom: 10px;">DAFTAR HASIL DIGITASI:</div>
                                         <ul id="digitized-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px; max-height: 120px; overflow-y: auto;"></ul>
@@ -872,18 +815,6 @@
                         </div>
                     </div>
 
-                    <!-- PANEL INFO KANAN (KHUSUS POLA RUANG MENGGANTIKAN POPUP) -->
-                    <div id="info-panel-kanan">
-                        <div class="info-panel-header">
-                            <span><i class="fa-solid fa-map"></i> INFORMASI POLA RUANG</span>
-                            <button class="info-panel-close" onclick="closeInfoPanel()"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
-                        <div class="info-panel-body" id="info-panel-body">
-                            <!-- Konten Data Pola Ruang Disuntikkan Lewat JS -->
-                        </div>
-                    </div>
-
-                    <!-- LEGENDA PETA KANAN BAWAH -->
                     <div id="slide-legend" class="legend-bottom-wrapper">
                         <div class="legend-content">
                             <div style="font-size: 0.8rem; font-weight: 700; color: var(--terracotta); margin-bottom: 10px; text-align: center;">KETERANGAN PETA</div>
@@ -892,14 +823,12 @@
                         <button class="legend-toggle-btn" onclick="toggleLegendPanel()"><i class="fa-solid fa-list" id="legend-icon"></i> Tampilkan Legenda Peta</button>
                     </div>
 
-                    <!-- KONTROL NAVIGASI PETA -->
                     <div class="right-controls">
                         <button class="btn-icon" onclick="goHome()" title="Kembali ke Titik Awal Desa Wunut"><i class="fa-solid fa-house"></i></button>
                         <button class="btn-icon" onclick="findLocation()" title="Lacak Lokasi Saya Saat Ini"><i class="fa-solid fa-location-crosshairs"></i></button>
                         <button class="btn-icon" onclick="toggleFullScreen()" title="Beralih ke Layar Penuh"><i class="fa-solid fa-expand"></i></button>
                     </div>
 
-                    <!-- INDIKATOR ARAH MATA ANGIN -->
                     <div class="north-arrow">
                         <i class="fa-solid fa-caret-up" style="color: var(--terracotta); font-size: 20px;"></i>
                         <div style="font-weight: 800; font-size: 12px; margin-top: -5px; color:var(--deep-navy);">U</div>
@@ -907,7 +836,6 @@
                 </div>
             </div>
 
-            <!-- HALAMAN TENTANG KAMI / TIM PENYUSUN -->
             <div id="profil" class="content-section">
                 <div class="container">
                     <h2 class="section-title" data-aos="fade-up" style="margin-bottom: 20px;">Tentang Kami</h2>
@@ -918,7 +846,6 @@
                     <h3 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--deep-navy); margin-bottom: 10px; text-align: center;" data-aos="fade-up" data-aos-delay="200">Tim Penyusun</h3>
                     <p style="text-align: center; color: var(--terracotta); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 40px;" data-aos="fade-up" data-aos-delay="300">Universitas Diponegoro</p>
                     
-                    <!-- Hierarki Tim Penyusun -->
                     <div class="team-leader-wrapper" data-aos="fade-up" data-aos-delay="400">
                         <div class="team-card team-leader-card" onclick="openLightbox('quinn.jpeg', 'Maharani Quinn Qonita', '40030623620004')">
                             <div class="team-img-wrapper">
@@ -1001,7 +928,6 @@
         </footer>
     </div>
 
-    <!-- Integrasi Firebase Keseluruhan (Auth & Firestore) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } 
@@ -1031,105 +957,15 @@
         window.getDoc = getDoc;
     </script>
 
-    <!-- Skrip Utama Pengendali Sistem -->
     <script>
-        // PUSTAKA MENCARI DAN MENYARING DAFTAR KEGIATAN ITBX
-        window.filterKegiatan = function(input) {
-            let filter = input.value.toLowerCase();
-            let container = input.closest('.popup-tab-content').querySelector('.kegiatan-list-container');
-            let groups = container.children;
-            for (let i = 0; i < groups.length; i++) {
-                if (groups[i].tagName.toLowerCase() !== 'div') continue; 
-                let items = groups[i].querySelectorAll('li');
-                let groupHasVisibleItem = false;
-                items.forEach(li => {
-                    let text = li.textContent || li.innerText;
-                    if (text.toLowerCase().indexOf(filter) > -1) {
-                        li.style.display = ""; groupHasVisibleItem = true;
-                    } else { li.style.display = "none"; }
-                });
-                groups[i].style.display = groupHasVisibleItem ? "" : "none";
-            }
-        };
-
-        // FUNGSI PENGHASIL HTML DAFTAR KEGIATAN MATRIKS ITBX (DARI GEOJSON)
-        function generateKegiatanHtml(props) {
-            const statuses = [
-                { keys: ['ZONINGTEXT_ITBX2_I', 'I'], label: 'Diizinkan (I)', color: '#10b981', bg: '#ecfdf5' },
-                { keys: ['ZONINGTEXT_ITBX2_T1', 'T1'], label: 'Terbatas (T1)', color: '#f59e0b', bg: '#fffbeb' },
-                { keys: ['ZONINGTEXT_ITBX2_T2', 'T2'], label: 'Terbatas (T2)', color: '#f59e0b', bg: '#fffbeb' },
-                { keys: ['ZONINGTEXT_ITBX2_T3', 'T3'], label: 'Terbatas (T3)', color: '#f59e0b', bg: '#fffbeb' },
-                { keys: ['ZONINGTEXT_ITBX2_T4', 'T4'], label: 'Terbatas (T4)', color: '#f59e0b', bg: '#fffbeb' },
-                { keys: ['ZONINGTEXT_ITBX2_T5', 'T5'], label: 'Terbatas (T5)', color: '#f59e0b', bg: '#fffbeb' },
-                { keys: ['ZONINGTEXT_ITBX2_T6', 'T6'], label: 'Terbatas (T6)', color: '#f59e0b', bg: '#fffbeb' },
-                { keys: ['ZONINGTEXT_ITBX2_T7', 'T7'], label: 'Terbatas (T7)', color: '#f59e0b', bg: '#fffbeb' },
-                { keys: ['ZONINGTEXT_ITBX2_B1', 'B1'], label: 'Bersyarat (B1)', color: '#3b82f6', bg: '#eff6ff' },
-                { keys: ['ZONINGTEXT_ITBX2_B2', 'B2'], label: 'Bersyarat (B2)', color: '#3b82f6', bg: '#eff6ff' },
-                { keys: ['ZONINGTEXT_ITBX2_B3', 'B3'], label: 'Bersyarat (B3)', color: '#3b82f6', bg: '#eff6ff' },
-                { keys: ['ZONINGTEXT_ITBX2_B4', 'B4'], label: 'Bersyarat (B4)', color: '#3b82f6', bg: '#eff6ff' },
-                { keys: ['ZONINGTEXT_ITBX2_B5', 'B5'], label: 'Bersyarat (B5)', color: '#3b82f6', bg: '#eff6ff' },
-                { keys: ['ZONINGTEXT_ITBX2_B6', 'B6'], label: 'Bersyarat (B6)', color: '#3b82f6', bg: '#eff6ff' },
-                { keys: ['ZONINGTEXT_ITBX2_X', 'X'], label: 'Dilarang (X)', color: '#ef4444', bg: '#fef2f2' }
-            ];
-
-            let html = `
-                <div style="margin-bottom: 10px;">
-                    <input type="text" placeholder="Cari izin kegiatan..." onkeyup="filterKegiatan(this)" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-family:'Inter', sans-serif; outline:none; transition:0.3s;" onfocus="this.style.borderColor='var(--terracotta)'" onblur="this.style.borderColor='#cbd5e1'">
-                </div>
-                <div class="kegiatan-list-container" style="max-height: 250px; overflow-y: auto; padding-right:5px;">
-            `;
-            let hasAny = false;
-
-            statuses.forEach(s => {
-                let val = null;
-                for (let k of s.keys) { val = getPropValue(props, k); if (val && val !== '-' && String(val).toLowerCase() !== 'null') break; }
-                
-                if (val && val !== '-' && String(val).trim() !== '' && String(val).toLowerCase() !== 'null') {
-                    hasAny = true;
-                    html += `<div style="margin-bottom:8px; background:${s.bg}; border:1px solid ${s.color}; padding:6px; border-radius:6px;">
-                                <div style="background:${s.color}; color:#fff; padding:3px 6px; font-weight:700; border-radius:4px; font-size:10px; display:inline-block; margin-bottom:4px;">${s.label}</div>
-                                <ul style="margin:0; padding-left:15px; font-size:10px; color:var(--deep-navy);">`;
-                    
-                    let acts = String(val).split('|');
-                    acts.forEach(a => { if(a.trim() !== '') { html += `<li style="margin-bottom:2px;">${a.trim()}</li>`; } });
-                    html += `</ul></div>`;
-                }
-            });
-
-            if (!hasAny) { html += `<div style="text-align:center; font-style:italic; font-size:10px; color:#ef4444; padding:10px;">Data kegiatan matriks ITBX tidak tersedia untuk zona ini.</div>`; }
-            html += '</div>';
-            return html;
-        }
-
-        // FUNGSI PERPINDAHAN TAB POPUP POLA RUANG
-        window.changePopupTab = function(tabId, btn) {
-            var container = btn.closest('.popup-container-itbx');
-            container.querySelectorAll('.popup-tab-content').forEach(function(content) {
-                content.style.display = 'none';
-            });
-            container.querySelectorAll('.popup-tab-btn').forEach(function(button) {
-                button.style.background = 'transparent';
-                button.style.color = 'var(--text-body)';
-                button.style.borderBottom = '2px solid transparent';
-            });
-            container.querySelector('#' + tabId).style.display = 'block';
-            btn.style.color = 'var(--deep-navy)';
-            btn.style.borderBottom = '2px solid var(--accent-gold)';
-        }
-
-        // FUNGSI MENUTUP PANEL KANAN
-        window.closeInfoPanel = function() {
-            document.getElementById('info-panel-kanan').classList.remove('show');
-        }
-
         // PUSTAKA NOTIFIKASI ELEGAN
         function showToast(message, iconType = 'success') {
             Swal.fire({
                 toast: true, position: 'top', 
                 icon: iconType, title: message,
                 showConfirmButton: false, timer: 1500, timerProgressBar: false,
-                background: 'transparent',
-                customClass: { popup: 'swal2-container custom-toast-center', title: 'toast-title-custom' }
+                background: '#ffffff', color: 'var(--deep-navy)',
+                customClass: { popup: 'swal2-container custom-toast-center' }
             });
         }
 
@@ -1265,10 +1101,9 @@
         }
 
         function openSidebarTab(tabId, btnContext) {
-            // Matikan fungsi bypass kursor jika user pindah tab
             if(modePilihPeta) {
                 modePilihPeta = null;
-                document.getElementById('map').classList.remove('map-picking');
+                document.getElementById('routing-overlay').style.display = 'none';
                 document.querySelectorAll('.route-btn').forEach(b => b.classList.remove('active'));
             }
             document.querySelectorAll('.s-panel').forEach(p => p.classList.remove('active'));
@@ -1315,18 +1150,16 @@
         function getPropValue(properties, ...possibleKeys) { for (let key of possibleKeys) { if (properties[key] !== undefined) return properties[key]; for (let actualKey in properties) { if (actualKey.toLowerCase() === key.toLowerCase()) return properties[actualKey]; } } return '-'; }
         function changeOpacity(layer, val, textId) { if(layer) { if(layer.setStyle) { layer.setStyle({fillOpacity: val, opacity: val}); } else { layer.eachLayer(l => { if(l.setStyle) l.setStyle({fillOpacity: val, opacity: val}); }); } if(document.getElementById(textId)) document.getElementById(textId).innerText = Math.round(val * 100) + '%'; } }
 
-        // --- SISTEM TANGKAPAN KLIK TEMBUS LAYER ASLI (NATIVE CAPTURE PHASE) ---
-        // Ini adalah sihir pamungkas yang tidak bisa diblokir oleh layer Leaflet manapun.
-        document.getElementById('map').addEventListener('click', function(e) {
-            if (modePilihPeta) {
-                // Cegah agar klik pada kontrol (zoom/sidebar) tidak dianggap klik peta
-                if (e.target.closest('.leaflet-control') || e.target.closest('.floating-sidebar') || e.target.closest('.right-controls') || e.target.closest('.legend-bottom-wrapper')) return;
-                
-                e.stopPropagation(); 
-                e.preventDefault();
-                map.closePopup();
+        // --- SISTEM TANGKAPAN KLIK TEMBUS LAYER (LAPISAN KACA OVERLAY) ---
+        let coordA = null; 
+        let coordB = null; 
+        let modePilihPeta = null; 
+        let markerStart = null; 
+        let markerEnd = null;
 
-                var rect = document.getElementById('map').getBoundingClientRect();
+        document.getElementById('routing-overlay').addEventListener('click', function(e) {
+            if (modePilihPeta) {
+                var rect = this.getBoundingClientRect();
                 var x = e.clientX - rect.left;
                 var y = e.clientY - rect.top;
                 var latlng = map.containerPointToLatLng([x, y]);
@@ -1346,31 +1179,10 @@
                     document.getElementById('btn-set-end').classList.remove('active');
                     showToast('Titik Tujuan berhasil ditetapkan.', 'success');
                 }
-                
                 modePilihPeta = null;
-                document.getElementById('map').classList.remove('map-picking');
+                this.style.display = 'none';
             }
-        }, true); // parameter true = CAPTURE PHASE, dieksekusi sebelum Leaflet tahu ada klik!
-
-        function interceptLayerClick(e) {
-            if (modePilihPeta) { setTimeout(() => map.closePopup(), 10); return true; }
-            return false;
-        }
-
-        // FUNGSI POPUP MINOR ELEGAN
-        function createElegantPopup(title, dataObj, color) {
-            let html = `<div style="font-family:'Inter', sans-serif; min-width:200px; margin:-14px -14px 0 -14px;">
-                <div style="background:${color}; color:#fff; padding:10px 15px; border-radius:6px 6px 0 0; text-align:center; font-weight:700; font-size:12px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-                    ${title}
-                </div>
-                <div style="padding: 12px;">
-                <table style="width:100%; font-size:11px; line-height:1.6;">`;
-            for(let key in dataObj) {
-                html += `<tr><td style="color:var(--text-body); padding:3px 0; width:45%; border-bottom:1px solid #f1f5f9;">${key}</td><td style="border-bottom:1px solid #f1f5f9;">: <b style="color:var(--deep-navy);">${dataObj[key]}</b></td></tr>`;
-            }
-            html += `</table></div></div>`;
-            return html;
-        }
+        });
 
         function stylePolaRuang(feature) { let val = getPropValue(feature.properties, 'SUB_ZONA', 'Sub_Zona', 'sub_zona'); return { fillColor: subZonaColors[val] || '#dddddd', weight: 1.2, opacity: 1, color: '#ffffff', fillOpacity: 0.8 }; }
         function styleBidangTanah(feature) { let val = getPropValue(feature.properties, 'STATUS', 'Status', 'status'); return { fillColor: statusColors[val] || '#cccccc', weight: 1.2, opacity: 1, color: '#444444', fillOpacity: 0.8 }; }
@@ -1418,9 +1230,15 @@
                     let htmlIcon = `<div style="background:${s.bg}; color:${s.color}; border:2px solid ${s.color}; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 6px rgba(0,0,0,0.3); font-size:12px;"><i class="fa-solid ${s.icon}"></i></div>`;
                     let marker = L.marker([lat, lng], { icon: L.divIcon({ className: 'fas-marker', html: htmlIcon, iconSize: [28,28], iconAnchor: [14,14] }) });
                     
-                    marker.bindPopup(createElegantPopup(nama, {'Kategori': keg, 'Radius Layanan': s.r + ' m'}, s.color) + `<button onclick="setRouteDestFromPopup(${lat}, ${lng})" style="background:var(--terracotta); color:white; border:none; padding:6px; border-radius:4px; cursor:pointer; font-size:11px; width:100%; font-weight:700; margin-top:5px;"><i class="fa-solid fa-route"></i> Rute ke Lokasi Ini</button>`);
-                    
-                    marker.on('click', function(e){ if(interceptLayerClick(e)) return; });
+                    marker.bindPopup(`
+                        <div style="font-family:'Inter', sans-serif; min-width:180px;">
+                            <b style="color:var(--deep-navy); font-size:14px;">${nama}</b>
+                            <hr style="border:0; border-top:1px solid #ccc; margin:5px 0;">
+                            <div style="font-size:11px; margin-bottom:4px;"><i class="fa-solid fa-tag"></i> <b>Kategori:</b> ${keg}</div>
+                            <div style="font-size:11px; margin-bottom:10px;"><i class="fa-solid fa-satellite-dish"></i> <b>Radius Layanan:</b> ${s.r} m</div>
+                            <button onclick="setRouteDestFromPopup(${lat}, ${lng})" style="background:var(--terracotta); color:white; border:none; padding:6px; border-radius:4px; cursor:pointer; font-size:11px; width:100%; font-weight:700;"><i class="fa-solid fa-route"></i> Rute ke Lokasi Ini</button>
+                        </div>
+                    `);
                     pointFeatures.push(marker);
 
                     let turfPt = turf.point([lng, lat]);
@@ -1439,104 +1257,24 @@
             return { rawData: rawBufferData, bufferLayer: bufferLayer, combinedLayer: combinedLayer };
         }
 
-        // PENARIKAN DATA POLA RUANG DENGAN TAB POP-UP BARU (SIDEBAR KANAN)
-        fetch('polruwunutfix.geojson').then(res => res.json()).then(data => { 
-            rawPolaRuangData = data; 
-            polaRuangLayer = L.geoJSON(data, { 
-                style: stylePolaRuang, 
-                onEachFeature: (f, l) => { 
-                    l.on('mouseover', e => { if(!modePilihPeta) e.target.setStyle({weight: 3, color: '#000'}); }); 
-                    l.on('mouseout', e => { if(!modePilihPeta) polaRuangLayer.resetStyle(e.target); }); 
-                    l.on('click', function(e) {
-                        if (interceptLayerClick(e)) return;
-                        
-                        let props = f.properties;
-                        let zona = getPropValue(props, 'ZONA', 'Zona', 'zona', 'NAMOBJ');
-                        let subZona = getPropValue(props, 'SUB_ZONA', 'Sub_Zona', 'sub_zona', 'NAMOBJ');
-                        let kodeZona = getPropValue(props, 'KODE_ZONA', 'Kode_Zona', 'kodezona');
-                        let kodeSubZona = getPropValue(props, 'KODESUBZON', 'KODESUBZONA', 'KODE_SUBZON', 'KODE', 'kode', 'Kode'); // PENYELARASAN URUTAN
+        fetch('polaruangwunutbaru.geojson').then(res => res.json()).then(data => { rawPolaRuangData = data; polaRuangLayer = L.geoJSON(data, { style: stylePolaRuang, onEachFeature: (f, l) => { l.bindPopup(`<b>Pola Ruang</b><br>Sub Zona: ${getPropValue(f.properties, 'SUB_ZONA')}`); l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); l.on('mouseout', e => polaRuangLayer.resetStyle(e.target)); } }); if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer); });
+        fetch('bidangtanahwunut.geojson').then(res => res.json()).then(data => { rawBidangTanahData = data; bidangTanahLayer = L.geoJSON(data, { style: styleBidangTanah, onEachFeature: (f, l) => { l.bindPopup(`<b>Bidang Tanah</b><br>Status: ${getPropValue(f.properties, 'STATUS')}<br>Luas: ${getPropValue(f.properties, 'Luas')} m²`); l.on('mouseover', e => e.target.setStyle({weight: 3, color: '#000'})); l.on('mouseout', e => bidangTanahLayer.resetStyle(e.target)); } }); if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer); });
+        fetch('jalanwunut.geojson').then(res => res.json()).then(data => { rawJalanData = data; jalanLayer = L.geoJSON(data, { style: styleJalan, onEachFeature: (f, l) => { l.bindPopup(`<b>Jaringan Jalan</b><br>Fungsi: ${getPropValue(f.properties, 'fungsi')}`); l.on('mouseover', e => e.target.setStyle({weight: 5, color: '#000'})); l.on('mouseout', e => jalanLayer.resetStyle(e.target)); } }); }); 
+        fetch('zntwunut.geojson').then(res => res.json()).then(data => { rawZntData = data; zntLayer = L.geoJSON(data, { style: styleZnt }); });
+        fetch('penggunaanlahan.geojson').then(res => res.json()).then(data => { rawPenggunaanData = data; penggunaanLayer = L.geoJSON(data, { style: stylePenggunaan }); });
+        fetch('kp2bwunut.geojson').then(res => res.json()).then(data => { rawKp2bData = data; kp2bLayer = L.geoJSON(data, { style: styleKp2b }); });
+        fetch('lsdwunut.geojson').then(res => res.json()).then(data => { rawLsdData = data; lsdLayer = L.geoJSON(data, { style: styleLsd }); });
 
-                        let kdb = getPropValue(props, 'INTENSITAS_KDB_Maks', 'KDB') || '-';
-                        let klb = getPropValue(props, 'INTENSITAS_KLB_Maks', 'KLB') || '-';
-                        let kdh = getPropValue(props, 'INTENSITAS_KDH_Minimal', 'KDH') || '-';
-
-                        let dokumen = getPropValue(props, 'Dokumen', 'dokumen', 'DOKUMEN', 'Link', 'URL');
-                        let ketinggian = getPropValue(props, 'Ketinggian Bangunan', 'Ketinggian_Bangunan', 'Ketinggian', 'tinggi_bgn') || '-';
-                        let gsb = getPropValue(props, 'GSB', 'gsb') || '-';
-
-                        let panelContent = `
-                            <div class="popup-container-itbx" style="font-family:'Inter', sans-serif;">
-                                <div style="display:flex; border-bottom:1px solid #cbd5e1; background:#f8fafc; margin-bottom:15px;">
-                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-zonasi', this)" style="flex:1; border:none; background:transparent; padding:10px 0; font-size:11px; font-weight:700; cursor:pointer; color:var(--deep-navy); border-bottom:2px solid var(--accent-gold);">Zonasi</button>
-                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-keg', this)" style="flex:1; border:none; background:transparent; padding:10px 0; font-size:11px; font-weight:700; cursor:pointer; color:var(--text-body); border-bottom:2px solid transparent;">Kegiatan</button>
-                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-int', this)" style="flex:1; border:none; background:transparent; padding:10px 0; font-size:11px; font-weight:700; cursor:pointer; color:var(--text-body); border-bottom:2px solid transparent;">Intensitas</button>
-                                    <button class="popup-tab-btn" onclick="changePopupTab('tab-bgn', this)" style="flex:1; border:none; background:transparent; padding:10px 0; font-size:11px; font-weight:700; cursor:pointer; color:var(--text-body); border-bottom:2px solid transparent;">Bangunan</button>
-                                </div>
-
-                                <div style="padding:0 15px 15px 15px;">
-                                    <!-- SECTION ZONASI -->
-                                    <div id="tab-zonasi" class="popup-tab-content" style="display:block;">
-                                        <table style="width:100%; font-size:12px; line-height:1.6;">
-                                            <tr><td style="width:100px; color:var(--text-body); padding:4px 0; border-bottom:1px solid #f1f5f9;">Zona Utama</td><td style="border-bottom:1px solid #f1f5f9;">: <b style="color:var(--deep-navy);">${zona}</b></td></tr>
-                                            <tr><td style="color:var(--text-body); padding:4px 0; border-bottom:1px solid #f1f5f9;">Sub Zona</td><td style="border-bottom:1px solid #f1f5f9;">: <b style="color:var(--deep-navy);">${subZona}</b></td></tr>
-                                            <tr><td style="color:var(--text-body); padding:4px 0; border-bottom:1px solid #f1f5f9;">Kode Zona</td><td style="border-bottom:1px solid #f1f5f9;">: <b style="color:var(--deep-navy);">${kodeZona}</b></td></tr>
-                                            <tr><td style="color:var(--text-body); padding:4px 0;">Kode Subzona</td><td>: <b style="color:var(--deep-navy);">${kodeSubZona}</b></td></tr>
-                                        </table>
-                                    </div>
-
-                                    <!-- SECTION KEGIATAN -->
-                                    <div id="tab-keg" class="popup-tab-content" style="display:none;">
-                                        ${generateKegiatanHtml(props)}
-                                    </div>
-
-                                    <!-- SECTION INTENSITAS -->
-                                    <div id="tab-int" class="popup-tab-content" style="display:none;">
-                                        <table style="width:100%; font-size:12px; line-height:1.6;">
-                                            <tr><td style="width:50px; font-weight:800; color:var(--text-body); padding:4px 0; border-bottom:1px solid #f1f5f9;">KDB</td><td style="border-bottom:1px solid #f1f5f9;">: <b style="color:var(--terracotta);">${kdb}</b></td></tr>
-                                            <tr><td style="font-weight:800; color:var(--text-body); padding:4px 0; border-bottom:1px solid #f1f5f9;">KLB</td><td style="border-bottom:1px solid #f1f5f9;">: <b style="color:var(--terracotta);">${klb}</b></td></tr>
-                                            <tr><td style="font-weight:800; color:var(--text-body); padding:4px 0;">KDH</td><td>: <b style="color:var(--terracotta);">${kdh}</b></td></tr>
-                                        </table>
-                                    </div>
-
-                                    <!-- SECTION TATA BANGUNAN -->
-                                    <div id="tab-bgn" class="popup-tab-content" style="display:none;">
-                                        <table style="width:100%; font-size:12px; line-height:1.6;">
-                                            <tr><td style="width:120px; color:var(--text-body); padding:4px 0; border-bottom:1px solid #f1f5f9;">Ketinggian Bgn</td><td style="border-bottom:1px solid #f1f5f9;">: <b style="color:var(--deep-navy);">${ketinggian}</b></td></tr>
-                                            <tr><td style="color:var(--text-body); padding:4px 0;">GSB</td><td>: <b style="color:var(--deep-navy);">${gsb}</b></td></tr>
-                                            <tr><td style="color:var(--text-body); padding-top:15px;" colspan="2">
-                                                ${dokumen !== '-' && dokumen !== '' ? `<a href="${dokumen}" target="_blank" style="display:block; background:var(--accent-primary); color:white; text-align:center; padding:10px; border-radius:6px; text-decoration:none; font-weight:700;"><i class="fa-solid fa-file-pdf"></i> Buka Dokumen Regulasi</a>` : '<div style="text-align:center; background:#fef2f2; color:#ef4444; padding:8px; border-radius:4px; font-size:11px; font-style:italic;">Dokumen regulasi tidak tersedia</div>'}
-                                            </td></tr>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        
-                        document.getElementById('info-panel-body').innerHTML = panelContent;
-                        document.getElementById('info-panel-kanan').classList.add('show');
-                    });
-                } 
-            }); 
-            if (document.getElementById('check-polaruang').checked) map.addLayer(polaRuangLayer); 
-        });
-
-        // PERBAIKAN POP-UP LAYER MINOR ELEGAN
-        fetch('bidangtanahwunut.geojson').then(res => res.json()).then(data => { rawBidangTanahData = data; bidangTanahLayer = L.geoJSON(data, { style: styleBidangTanah, onEachFeature: (f, l) => { l.bindPopup(createElegantPopup('BIDANG TANAH', {'Status': getPropValue(f.properties, 'STATUS'), 'Luas': getPropValue(f.properties, 'Luas') + ' m²'}, 'var(--deep-navy)')); l.on('mouseover', e => { if(!modePilihPeta) e.target.setStyle({weight: 3, color: '#000'})}); l.on('mouseout', e => { if(!modePilihPeta) bidangTanahLayer.resetStyle(e.target)}); l.on('click', function(e){ if(interceptLayerClick(e)) return; }); } }); if (document.getElementById('check-bidangtanah').checked) map.addLayer(bidangTanahLayer); });
-        fetch('jalanwunut.geojson').then(res => res.json()).then(data => { rawJalanData = data; jalanLayer = L.geoJSON(data, { style: styleJalan, onEachFeature: (f, l) => { l.bindPopup(createElegantPopup('JARINGAN JALAN', {'Fungsi': getPropValue(f.properties, 'fungsi')}, 'var(--terracotta)')); l.on('mouseover', e => { if(!modePilihPeta) e.target.setStyle({weight: 5, color: '#000'})}); l.on('mouseout', e => { if(!modePilihPeta) jalanLayer.resetStyle(e.target)}); l.on('click', function(e){ if(interceptLayerClick(e)) return; }); } }); }); 
-        fetch('zntwunut.geojson').then(res => res.json()).then(data => { rawZntData = data; zntLayer = L.geoJSON(data, { style: styleZnt, onEachFeature: (f, l) => { l.bindPopup(createElegantPopup('ZONA NILAI TANAH', {'Estimasi Harga': 'Rp ' + getPropValue(f.properties, 'harga', 'HARGA')}, '#0ea5e9')); l.on('click', function(e){ if(interceptLayerClick(e)) return; }); } }); });
-        fetch('penggunaanlahan.geojson').then(res => res.json()).then(data => { rawPenggunaanData = data; penggunaanLayer = L.geoJSON(data, { style: stylePenggunaan, onEachFeature: (f, l) => { l.bindPopup(createElegantPopup('PENGGUNAAN LAHAN', {'Tipe Penggunaan': getPropValue(f.properties, 'penggunaan', 'PENGGUNAAN')}, '#10b981')); l.on('click', function(e){ if(interceptLayerClick(e)) return; }); } }); });
-        fetch('kp2bwunut.geojson').then(res => res.json()).then(data => { rawKp2bData = data; kp2bLayer = L.geoJSON(data, { style: styleKp2b, onEachFeature: (f, l) => { l.bindPopup(createElegantPopup('LAHAN PERTANIAN', {'Status': 'Kawasan Pertanian Pangan Berkelanjutan (KP2B)'}, '#4b5320')); l.on('click', function(e){ if(interceptLayerClick(e)) return; }); } }); });
-        fetch('lsdwunut.geojson').then(res => res.json()).then(data => { rawLsdData = data; lsdLayer = L.geoJSON(data, { style: styleLsd, onEachFeature: (f, l) => { l.bindPopup(createElegantPopup('LAHAN SAWAH', {'Status': 'Lahan Sawah Dilindungi (LSD)'}, '#22c55e')); l.on('click', function(e){ if(interceptLayerClick(e)) return; }); } }); });
-
-        // PERBAIKAN: RADIUS FASILITAS DISEMBUNYIKAN PADA AWAL MUAT (AUTO-CHECK DIMATIKAN)
         fetch('kesehatanfix.geojson').then(res => res.json()).then(data => {
             let p = processFasilitasGeoJSON(data, 'Fasilitas Kesehatan');
             rawKesehatanData = p.rawData; kesehatanBufferLayer = p.bufferLayer; kesehatanLayer = p.combinedLayer;
+            if(document.getElementById('check-kesehatan').checked) map.addLayer(kesehatanLayer);
         }).catch(e => console.log('Tidak ada kesehatanfix.geojson'));
         
         fetch('pendidikanfix.geojson').then(res => res.json()).then(data => {
             let p = processFasilitasGeoJSON(data, 'Fasilitas Pendidikan');
             rawPendidikanData = p.rawData; pendidikanBufferLayer = p.bufferLayer; pendidikanLayer = p.combinedLayer;
+            if(document.getElementById('check-pendidikan').checked) map.addLayer(pendidikanLayer);
         }).catch(e => console.log('Tidak ada pendidikanfix.geojson'));
 
         function toggleLayers() {
@@ -1672,7 +1410,7 @@
                             for(let k in userUploadedLayers) { if(userUploadedLayers[k].name === upload.fileName) alreadyLoaded = true; }
                             if(alreadyLoaded) return;
                             const geojson = JSON.parse(upload.data);
-                            const layer = L.geoJSON(geojson, { style: { color: '#8b5cf6', weight: 3, fillOpacity: 0.3 }, onEachFeature: (f, l) => { l.on('click', function(e) { interceptLayerClick(e); }); } }).addTo(map);
+                            const layer = L.geoJSON(geojson, { style: { color: '#8b5cf6', weight: 3, fillOpacity: 0.3 } }).addTo(map);
                             addLayerToManagement(layer, upload.fileName, true);
                         });
                         showToast(`Data spasial personal dimuat dari Cloud.`, "info");
@@ -1691,12 +1429,12 @@
             if (fileName.endsWith('.zip')) {
                 reader.onload = function(e) {
                     shp(e.target.result).then(function(geojson) {
-                        const shpLayer = L.geoJSON(geojson, { style: { color: '#0284c7', weight: 3, fillOpacity: 0.3 }, onEachFeature: (f, l) => { l.on('click', function(e) { interceptLayerClick(e); }); } }).addTo(map);
+                        const shpLayer = L.geoJSON(geojson, { style: { color: '#0284c7', weight: 3, fillOpacity: 0.3 } }).addTo(map);
                         map.fitBounds(shpLayer.getBounds(), { padding: [30, 30] });
                         addLayerToManagement(shpLayer, file.name, false);
                         showToast(`Shapefile '${file.name}' sukses diekstraksi.`, "success");
                         if(isUserLoggedIn && window.firebaseAuth.currentUser) saveToCloud(window.firebaseAuth.currentUser.uid, geojson, file.name);
-                    }).catch(function(err) { showToast("Gagal memproses Shapefile.", "error"); });
+                    }).catch(function(err) { showToast("Gagal memproses Shapefile. Format arsip .zip bermasalah.", "error"); });
                 };
                 reader.readAsArrayBuffer(file);
             } 
@@ -1704,7 +1442,7 @@
                 reader.onload = function(e) {
                     try {
                         const geojson = JSON.parse(e.target.result);
-                        const layer = L.geoJSON(geojson, { style: { color: '#10b981', weight: 3, fillOpacity: 0.3 }, onEachFeature: (f, l) => { l.on('click', function(e) { interceptLayerClick(e); }); } }).addTo(map);
+                        const layer = L.geoJSON(geojson, { style: { color: '#10b981', weight: 3, fillOpacity: 0.3 } }).addTo(map);
                         map.fitBounds(layer.getBounds(), { padding: [30, 30] });
                         addLayerToManagement(layer, file.name, false);
                         showToast(`File GeoJSON '${file.name}' berhasil dimuat.`, "success");
@@ -1718,10 +1456,9 @@
                     const objectUrl = URL.createObjectURL(file);
                     const customLayer = omnivore.kml(objectUrl).on('ready', function() {
                         this.setStyle({ color: '#38bdf8', weight: 3, fillOpacity: 0.3 });
-                        this.eachLayer(function(l) { l.on('click', function(e) { interceptLayerClick(e); }); });
                         map.fitBounds(this.getBounds(), { padding: [30, 30] });
                         addLayerToManagement(this, file.name, false);
-                        showToast(`Berkas KML '${file.name}' direfleksikan ke peta.`, "success");
+                        showToast(`Berkas KML '${file.name}' sukses direfleksikan ke peta.`, "success");
                         if(isUserLoggedIn && window.firebaseAuth.currentUser) {
                             const kmlAsGeojson = this.toGeoJSON();
                             saveToCloud(window.firebaseAuth.currentUser.uid, kmlAsGeojson, file.name);
@@ -1729,14 +1466,16 @@
                     }).on('error', function() { showToast("Gagal membaca struktur KML.", "error"); }).addTo(map);
                 } catch (error) { showToast("Gagal memproses KML.", "error"); }
             } 
-            else { showToast("Sistem hanya mendukung .zip (Shapefile), .geojson, dan .kml.", "error"); }
+            else { showToast("Sistem hanya mendukung ekstensi arsip .zip (Shapefile), .geojson, dan .kml.", "error"); }
             
             event.target.value = '';
         }
 
         renderUploadedLayersList();
 
+        // --- SISTEM PENCARIAN ATRIBUT ---
         function performSearch() {
+            resetSearchStyle(); 
             const targetId = document.getElementById('search-layer').value;
             const keyword = document.getElementById('search-keyword').value.toLowerCase().trim();
             const minAreaRaw = document.getElementById('search-area-min').value;
@@ -1818,6 +1557,9 @@
         }
 
         // --- SISTEM RUTE PERJALANAN MURNI ASPAL (Routing Machine) ---
+        var routingControl = null;
+        var highlightRuteLayer = null;
+
         function startSetRoute(jenis) {
             document.getElementById('btn-set-start').classList.remove('active');
             document.getElementById('btn-set-end').classList.remove('active');
@@ -1831,9 +1573,8 @@
                 document.getElementById('btn-set-end').classList.add('active');
                 showToast('Klik lokasi pada peta untuk menetapkan Titik Tujuan', 'info'); 
             }
-            document.getElementById('map').classList.add('map-picking');
-            let pane = document.querySelector('.leaflet-overlay-pane');
-            if(pane) pane.style.pointerEvents = 'none';
+            // Munculkan layar kaca penangkap klik (bypass poligon layer)
+            document.getElementById('routing-overlay').style.display = 'block';
         }
 
         function setRuteLokasiSaya(jenis) {
@@ -1855,7 +1596,9 @@
                     showToast("Titik tujuan menggunakan lokasi Anda", "success");
                 }
                 map.setView(latlng, 16);
-            }, () => { showToast("Gagal melacak lokasi.", "error"); });
+            }, () => {
+                showToast("Gagal melacak lokasi. Mohon izinkan akses lokasi browser.", "error");
+            });
         }
 
         function setRouteDestFromPopup(lat, lng) {
@@ -1868,6 +1611,7 @@
             if(coordA) { hitungRute(); } 
         }
 
+        // Tiga Server Routing OSRM Publik Jalan Aspal
         const routeServers = [
             'https://router.project-osrm.org/route/v1',
             'https://routing.openstreetmap.de/routed-car/route/v1',
@@ -1876,25 +1620,31 @@
 
         function hitungRute() {
             if(!coordA || !coordB) { return showToast('Mohon lengkapi Titik Awal (A) dan Titik Tujuan (B).', 'warning'); }
-            
-            if(routingControl) { map.removeControl(routingControl); }
+            attemptRouting(0); // Mulai dari server utama
+        }
+
+        function attemptRouting(serverIdx) {
+            if(routingControl) map.removeControl(routingControl);
             if(highlightRuteLayer) { map.removeLayer(highlightRuteLayer); highlightRuteLayer = null; }
             
-            showToast(`Mengalkulasi rute jalan aspal...`, 'info');
+            const pfo = serverIdx === 2 ? 'bike' : 'driving';
+            showToast(`Mengalkulasi rute jalan...`, 'info');
             document.getElementById('routing-itinerary-container').innerHTML = '<div style="text-align:center; padding:20px;"><i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--terracotta);"></i><br><br>Menghitung jarak dan kalkulasi rute...</div>';
             
-            const idTranslation = { "Head": "Menuju ke", "Continue": "Lanjutkan di", "SlightRight": "Sedikit ke kanan di", "Right": "Belok kanan di", "SharpRight": "Tikungan tajam ke kanan di", "TurnAround": "Putar balik di", "SharpLeft": "Tikungan tajam ke kiri di", "Left": "Belok kiri di", "SlightLeft": "Sedikit ke kiri di", "WaypointReached": "Anda telah sampai di titik persinggahan", "Roundabout": "Di bundaran, ambil jalan keluar ke-", "DestinationReached": "Anda telah tiba di tujuan" };
-
             routingControl = L.Routing.control({
                 waypoints: [coordA, coordB],
                 routeWhileDragging: false,
-                show: true, 
+                show: true, // WAJIB TRUE AGAR INSTRUCTIONS DIEKSTRAK DARI API
                 addWaypoints: false,
                 fitSelectedRoutes: true,
                 showAlternatives: true, 
                 lineOptions: { styles: [{color: '#10b981', weight: 6, opacity: 0.9 }] },
                 altLineOptions: { styles: [{color: '#94a3b8', weight: 4, opacity: 0.6 }] },
-                createMarker: function() { return null; }
+                createMarker: function() { return null; }, 
+                router: L.Routing.osrmv1({
+                    serviceUrl: routeServers[serverIdx],
+                    profile: pfo
+                })
             }).on('routesfound', function(e) {
                 try {
                     var routes = e.routes;
@@ -1906,13 +1656,13 @@
                     
                     var instrs = routes[0].instructions || [];
                     var html = `<div style="background: #f0fdf4; border:1px solid #86efac; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-                                    <div style="font-weight: 800; color: #166534; font-size:14px; margin-bottom:5px;"><i class="fa-solid fa-car"></i> Rute Optimal Ditemukan</div>
+                                    <div style="font-weight: 800; color: #166534; font-size:14px; margin-bottom:5px;"><i class="fa-solid ${pfo === 'bike' ? 'fa-bicycle' : 'fa-car'}"></i> Rute Optimal Ditemukan</div>
                                     <div style="color: #15803d; font-weight:600; display:flex; justify-content:space-between;">
                                         <span><i class="fa-solid fa-road"></i> ${distance} KM</span>
                                         <span><i class="fa-solid fa-clock"></i> ${time} Menit</span>
                                     </div>
                                 </div>
-                                <div style="margin-bottom: 10px; font-weight: 700; color: var(--deep-navy); font-size: 11px;">PANDUAN ARAH OSRM:</div>
+                                <div style="margin-bottom: 10px; font-weight: 700; color: var(--deep-navy); font-size: 11px;">INSTRUKSI NAVIGASI:</div>
                                 <ul id="nav-instruction-list" style="list-style:none; padding:0; margin:0;">`;
                     
                     if(instrs.length > 0) {
@@ -1923,16 +1673,12 @@
                             else if(inst.type === "Right" || inst.type === "SlightRight" || inst.type === "SharpRight") icon = "fa-arrow-turn-up";
                             else if(inst.type === "TurnAround") icon = "fa-arrow-rotate-left";
                             else if(inst.type === "DestinationReached") icon = "fa-flag-checkered";
+                            else if(inst.type === "Roundabout") icon = "fa-arrows-spin";
                             
-                            var teksArah = inst.text;
-                            for (var key in idTranslation) { if (teksArah.includes(key)) { teksArah = teksArah.replace(key, idTranslation[key]); } }
-                            if (inst.type === "Straight" || inst.type === "Continue") teksArah = "Terus lurus di " + (inst.road || "jalan ini");
-                            if (inst.type === "DestinationReached") teksArah = "Tiba di tujuan Anda";
-
                             html += `<li data-idx="${idx}" class="nav-step" style="padding: 12px 10px; border-bottom: 1px solid #e2e8f0; display:flex; gap:12px; align-items:flex-start; cursor:pointer; transition:background 0.2s; border-radius:4px;">
                                         <div style="flex:0 0 20px; color:var(--deep-navy); font-size:14px; padding-top:2px; text-align:center;"><i class="fa-solid ${icon}"></i></div>
                                         <div style="flex:1;">
-                                            <div style="font-weight:600; color:var(--deep-navy); margin-bottom:3px; line-height:1.4;">${teksArah}</div>
+                                            <div style="font-weight:600; color:var(--deep-navy); margin-bottom:3px; line-height:1.4;">${inst.text}</div>
                                             ${inst.distance > 0 ? `<div style="color:var(--terracotta); font-size:10px; font-weight:700;">${dist}</div>` : ''}
                                         </div>
                                      </li>`;
@@ -1941,13 +1687,7 @@
                         html += `<li style="padding: 12px 0; color:var(--text-body); font-style:italic;">Ikuti jalur utama menuju tujuan.</li>`;
                     }
                     html += `</ul>`;
-                    
                     document.getElementById('routing-itinerary-container').innerHTML = html;
-                    
-                    setTimeout(() => { 
-                        var lc = document.querySelector('.leaflet-routing-container'); 
-                        if(lc) lc.style.display = 'none'; 
-                    }, 50);
 
                     const navItems = document.querySelectorAll('.nav-step');
                     navItems.forEach(item => {
@@ -1972,14 +1712,19 @@
                     });
                 } catch(err) { console.error("UI Routing Error: ", err); }
             }).on('routingerror', function(err) {
-                if(routingControl) { map.removeControl(routingControl); routingControl = null; }
-                showToast('Gagal menemukan rute jalan aspal.', 'error');
-                document.getElementById('routing-itinerary-container').innerHTML = `
-                    <div style="background:#fef2f2; border:1px solid #fecaca; color:#ef4444; padding:15px; border-radius:8px; text-align:center;">
-                        <i class="fa-solid fa-road-circle-xmark fa-2x" style="margin-bottom:10px;"></i><br>
-                        <b style="font-size:12px;">Rute Gagal Dikalkulasi</b><br>
-                        <span style="font-size:11px; display:block; margin-top:5px; line-height:1.4;">Titik yang Anda pilih terlalu jauh dari jalan raya (berada di tengah persawahan/hutan yang tidak tercatat di server). Silakan hapus rute dan geser titik mendekati jalan aspal.</span>
-                    </div>`;
+                let nextIdx = serverIdx + 1;
+                if (nextIdx < routeServers.length) {
+                    attemptRouting(nextIdx); 
+                } else {
+                    if(routingControl) { map.removeControl(routingControl); routingControl = null; }
+                    showToast('Gagal menemukan rute jalan aspal.', 'error');
+                    document.getElementById('routing-itinerary-container').innerHTML = `
+                        <div style="background:#fef2f2; border:1px solid #fecaca; color:#ef4444; padding:15px; border-radius:8px; text-align:center;">
+                            <i class="fa-solid fa-road-circle-xmark fa-2x" style="margin-bottom:10px;"></i><br>
+                            <b style="font-size:12px;">Rute Gagal Dikalkulasi</b><br>
+                            <span style="font-size:11px; display:block; margin-top:5px; line-height:1.4;">Jaringan peladen menolak rute. Hal ini disebabkan titik koordinat berada terlalu jauh dari akses jalan umum OSM. Silakan hapus rute dan geser sedikit posisi titik Anda.</span>
+                        </div>`;
+                }
             }).addTo(map);
         }
 
@@ -1989,9 +1734,7 @@
             if(markerStart) { map.removeLayer(markerStart); markerStart = null; }
             if(markerEnd) { map.removeLayer(markerEnd); markerEnd = null; }
             
-            coordA = null; coordB = null; modePilihPeta = null; document.getElementById('map').classList.remove('map-picking');
-            let pane = document.querySelector('.leaflet-overlay-pane');
-            if(pane) pane.style.pointerEvents = 'auto';
+            coordA = null; coordB = null; modePilihPeta = null; document.getElementById('routing-overlay').style.display = 'none';
             
             document.getElementById('btn-set-start').classList.remove('active');
             document.getElementById('btn-set-end').classList.remove('active');
@@ -2166,8 +1909,6 @@
             drawnItems.addLayer(layer);
             
             layer.on('click', function(evt) {
-                if(modePilihPeta) return; 
-
                 selectedDrawnLayer = evt.target;
                 document.getElementById('digi-nama').value = layer.feature.properties.nama || '';
                 document.getElementById('digi-ket').value = layer.feature.properties.keterangan || '';
